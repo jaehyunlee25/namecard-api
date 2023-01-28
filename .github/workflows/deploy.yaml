@@ -17,17 +17,18 @@ jobs:
       - name: phase 추출
         run: echo "PHASE=$(echo ${{ github.REF_NAME }})" >> $GITHUB_ENV
 
-      - name: slack 알림
-        uses: rtCamp/action-slack-notify@v2
-        env:
-          SLACK_WEBHOOK: "${{ secrets.SLACK_DEPLOY_CHANNEL }}"
-          SLACK_TITLE: "${{ env.PHASE }} 서버 배포 알림"
-          SLACK_MESSAGE: "<${{ github.event.repository.html_url }}|${{ env.REPO }}> by ${{ github.ACTOR}}"
+      # - name: slack 알림
+      #   uses: rtCamp/action-slack-notify@v2
+      #   env:
+      #     SLACK_WEBHOOK: "${{ secrets.SLACK_DEPLOY_CHANNEL }}"
+      #     SLACK_TITLE: "${{ env.PHASE }} 서버 배포 알림"
+      #     SLACK_MESSAGE: "<${{ github.event.repository.html_url }}|${{ env.REPO }}> by ${{ github.ACTOR}}"
+      #     MSG_MINIMAL: true
 
-      - name: 배포 요청
-        uses: indiesdev/curl@v1.1
-        with:
-          url: https://${{ env.PHASE }}.mnemosyne.co.kr/deployer/crawler-script-golf.sh
-          method: "POST"
-          headers: '{ "authorization": "${{ secrets.DEPLOY_AUTHORIZATION }}" }'
-          timeout: 15000
+      # - name: 배포 요청
+      #   uses: indiesdev/curl@v1.1
+      #   with:
+      #     url: https://${{ env.PHASE }}.mnemosyne.co.kr/deployer/crawler-script-golf.sh
+      #     method: "POST"
+      #     headers: '{ "authorization": "${{ secrets.DEPLOY_AUTHORIZATION }}" }'
+      #     timeout: 15000
