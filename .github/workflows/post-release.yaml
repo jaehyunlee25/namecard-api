@@ -36,6 +36,7 @@ jobs:
         with:
           tag_name: ${{ env.CURRENT_VERSION }}
           release_name: ${{ env.CURRENT_VERSION }}
+          body: "${{ github.event.pull_request.body }}"
 
       - name: 헤드 브랜치 삭제
         continue-on-error: true
