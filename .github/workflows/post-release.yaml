@@ -1,0 +1,51 @@
+name: Post Release
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [op]
+
+permissions: write-all
+
+jobs:
+  post-release:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.pull_request.merged }}
+
+    steps:
+      - name: 체크아웃
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.title }}
+
+      - name: Github 토큰 설정
+        uses: fregante/setup-git-token@v1
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+
+      - name: repo 명 추출
+        run: echo "REPO=$(echo ${{ github.REPOSITORY }} | cut -d / -f 2)" >> $GITHUB_ENV
+
+      - name: version 추출
+        run: echo "CURRENT_VERSION=$(echo ${{ github.event.pull_request.title }} | cut -d / -f 2)" >> $GITHUB_ENV
+
+      - name: Release 생성
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        with:
+          tag_name: ${{ env.CURRENT_VERSION }}
+          release_name: ${{ env.CURRENT_VERSION }}
+
+      - name: 헤드 브랜치 삭제
+        continue-on-error: true
+        run: git push origin --delete ${{ github.event.pull_request.title }}
+
+      - name: slack 알림
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_USERNAME: ReleaseNote
+          SLACK_WEBHOOK: "{{ secrets.SLACK_RELEASE_CHANNEL }}"
+          SLACK_TITLE: "${{ env.REPO }}"
+          SLACK_MESSAGE: "${{ github.event.pull_request.body }}"
+          MSG_MINIMAL: true

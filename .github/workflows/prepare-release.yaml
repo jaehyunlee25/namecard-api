@@ -1,0 +1,93 @@
+name: Prepare Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      phase:
+        description: "배포 phase 선택"
+        required: true
+        default: "op"
+        type: choice
+        options:
+          - op
+      bumpLevel:
+        description: "버전 업 방식 (Semver) 선택"
+        required: true
+        default: "patch"
+        type: choice
+        options:
+          - major
+          - minor
+          - patch
+
+permissions: write-all
+
+jobs:
+  pre-deploy:
+    runs-on: ubuntu-latest
+    if: ${{ inputs.phase && inputs.bumpLevel }}
+
+    steps:
+      - name: 릴리즈 대상 브랜치 체크아웃
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ inputs.phase }}
+
+      - name: Node.js 16 설정
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16
+
+      - name: Github 토큰 설정
+        uses: fregante/setup-git-token@v1
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+
+      - name: 현재 버전 가져오기
+        working-directory: ./
+        run: node -p -e '`CURRENT_VERSION=${require("fs").readFileSync("./${{ inputs.phase }}Version").toString()}`' >> $GITHUB_ENV
+
+      - name: 신규 버전 생성
+        id: get-new-version
+        uses: actions-ecosystem/action-bump-semver@v1
+        with:
+          current_version: ${{ env.CURRENT_VERSION }}
+          level: ${{ inputs.bumpLevel }}
+
+      - name: 개발 브랜치 체크아웃
+        uses: actions/checkout@v3
+        with:
+          ref: main
+
+      - name: Node.js 16 설정
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16
+
+      - name: version 파일 갱신
+        working-directory: ./
+        run: node -p -e '`CURRENT_VERSION=${require("fs").writeFileSync("./${{ inputs.phase }}Version", "${{ steps.get-new-version.outputs.new_version }}")}`'
+
+      - name: commit
+        uses: EndBug/add-and-commit@v9
+        with:
+          add: "./"
+          author_name: "action"
+          message: "${{ steps.get-new-version.outputs.new_version }}"
+
+      - name: 릴리즈 브랜치 생성
+        run: git checkout -b release/${{ inputs.phase }}_${{ steps.get-new-version.outputs.new_version }}
+
+      - name: 릴리즈 브랜치 Origin으로 푸시
+        run: git push origin release/${{ inputs.phase }}_${{ steps.get-new-version.outputs.new_version }}
+
+      - name: 릴리즈 PR 생성
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          HEAD_BRANCH: release/${{ inputs.phase }}_${{ steps.get-new-version.outputs.new_version }}
+          BASE_BRANCH: ${{ inputs.phase }}
+          TITLE: release/${{ inputs.phase }}_${{ steps.get-new-version.outputs.new_version }}
+          BODY: |
+            ${{ inputs.phase }} v${{ steps.get-new-version.outputs.new_version }} by @${{ github.actor }}
+            - 변경사항을 적어주세요
+        run: gh pr create --head $HEAD_BRANCH --base $BASE_BRANCH --title "$TITLE" --body "$BODY"
