@@ -46,7 +46,7 @@ jobs:
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_USERNAME: ReleaseNote
-          SLACK_WEBHOOK: "{{ secrets.SLACK_RELEASE_CHANNEL }}"
+          SLACK_WEBHOOK: "${{ secrets.SLACK_RELEASE_CHANNEL }}"
           SLACK_TITLE: "${{ env.REPO }}"
           SLACK_MESSAGE: "${{ github.event.pull_request.body }}"
           MSG_MINIMAL: true
