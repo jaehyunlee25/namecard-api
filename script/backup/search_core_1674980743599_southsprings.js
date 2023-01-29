@@ -32,7 +32,7 @@ function mneCallDetail(arrDate) {
 
   EXTZLOG("search", "mneCallDetail pre ajax", { LOGID, step: "pre mneCallDetail" });
   fCall[method](addr, param, {}, (data) => {
-
+log(data);
     EXTZLOG("search", data.length, { LOGID, step: "mneCallDetail ajax" });
     const ifr = doc.clm("div");
     ifr.innerHTML = data;

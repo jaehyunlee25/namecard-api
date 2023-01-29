@@ -32,13 +32,13 @@ function mneCallDetail(arrDate) {
 
   EXTZLOG("search", "mneCallDetail pre ajax", { LOGID, step: "pre mneCallDetail" });
   fCall[method](addr, param, {}, (data) => {
-
+log(data);
     EXTZLOG("search", data.length, { LOGID, step: "mneCallDetail ajax" });
     const ifr = doc.clm("div");
     ifr.innerHTML = data;
 
     const attr = "href";
-    const els = ifr.gba(attr, "JavaScript:onclick=", true);
+    const els = ifr.gba(attr, "JavaScript:onclick=diChk", true);
     EXTZLOG("search", els.length, { LOGID, step: "mneCallDetail catch els" });
     Array.from(els).forEach((el) => {
       const time = el.nm(2, 0).innerHTML.split("<br>")[0].rm(":");

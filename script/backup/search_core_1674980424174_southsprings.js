@@ -32,14 +32,12 @@ function mneCallDetail(arrDate) {
 
   EXTZLOG("search", "mneCallDetail pre ajax", { LOGID, step: "pre mneCallDetail" });
   fCall[method](addr, param, {}, (data) => {
-
-    EXTZLOG("search", data.length, { LOGID, step: "mneCallDetail ajax" });
+    EXTZLOG("search", data, { LOGID, step: "mneCallDetail ajax" });
     const ifr = doc.clm("div");
     ifr.innerHTML = data;
 
     const attr = "href";
-    const els = ifr.gba(attr, "JavaScript:onclick=", true);
-    EXTZLOG("search", els.length, { LOGID, step: "mneCallDetail catch els" });
+    const els = ifr.gba(attr, "JavaScript:onclick=diChk", true);
     Array.from(els).forEach((el) => {
       const time = el.nm(2, 0).innerHTML.split("<br>")[0].rm(":");
       const hole = el.nm(2, 0, 1, 0).str().ct(1);
@@ -60,7 +58,7 @@ function mneCallDetail(arrDate) {
         others: hole + "홀",
       });
     });
-    EXTZLOG("search", data.length, { LOGID, step: "pre procDate" });
+    EXTZLOG("search", data, { LOGID, step: "pre procDate" });
     procDate();
   });
 }
