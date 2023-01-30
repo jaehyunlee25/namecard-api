@@ -67,5 +67,5 @@ mneCall(thisdate, () => {
   doc.gcn("arw-next")[0].click();
   setTimeout(() => {
     mneCall(nextdate, procDate);
-  }, 1500);  
+  }, 500);  
 });
