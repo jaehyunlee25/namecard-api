@@ -1,7 +1,7 @@
 function mneCall(date, callback) {
   const dt = (date + "01").datify("/");
   const param = {
-    coDiv: "02",
+    coDiv: "03",
     selYM: date,
     _: new Date().getTime(),
   };
@@ -24,7 +24,7 @@ function mneCallDetail(arrDate) {
     B: "East",
   };
   const param = {
-    coDiv: "02",
+    coDiv: "03",
     date: date,
     _: new Date().getTime(),
   };
@@ -58,6 +58,4 @@ function mneCallDetail(arrDate) {
 /* <============line_div==========> */
 
 /* <============line_div==========> */
-mneCall(thisdate, () => {
-  mneCall(nextdate,procDate);
-});
+mneCall(thisdate, procDate);

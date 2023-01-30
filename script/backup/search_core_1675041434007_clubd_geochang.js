@@ -1,7 +1,7 @@
 function mneCall(date, callback) {
   const dt = (date + "01").datify("/");
   const param = {
-    coDiv: "02",
+    coDiv: "05",
     selYM: date,
     _: new Date().getTime(),
   };
@@ -20,11 +20,12 @@ function mneCall(date, callback) {
 function mneCallDetail(arrDate) {
   const [date, option] = arrDate;
   const dictCourse = {
-    A: "West",
-    B: "East",
+    A: "SOUTH",
+    B: "EAST",
+    C: "WEST",
   };
   const param = {
-    coDiv: "02",
+    coDiv: "05",
     date: date,
     _: new Date().getTime(),
   };
@@ -58,6 +59,4 @@ function mneCallDetail(arrDate) {
 /* <============line_div==========> */
 
 /* <============line_div==========> */
-mneCall(thisdate, () => {
-  mneCall(nextdate,procDate);
-});
+mneCall(thisdate, procDate);

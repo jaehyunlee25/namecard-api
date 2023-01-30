@@ -6,6 +6,7 @@ function mneCall(date, callback) {
     _: new Date().getTime(),
   };
   get("/clubd/reservation/getCalendar.do", param, {}, (data) => {
+    log(data);
     const { rows: els } = data.jp();
     Array.from(els).forEach((el) => {
       if (el.BK_TEAM == "0") return;
@@ -58,4 +59,6 @@ function mneCallDetail(arrDate) {
 /* <============line_div==========> */
 
 /* <============line_div==========> */
-mneCall(thisdate, procDate);
+mneCall(thisdate, () => {
+  mneCall(nextdate,procDate);
+});

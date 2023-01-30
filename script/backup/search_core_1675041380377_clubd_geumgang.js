@@ -1,11 +1,12 @@
 function mneCall(date, callback) {
   const dt = (date + "01").datify("/");
   const param = {
-    coDiv: "02",
+    coDiv: "03",
     selYM: date,
     _: new Date().getTime(),
   };
   get("/clubd/reservation/getCalendar.do", param, {}, (data) => {
+    log(data);
     const { rows: els } = data.jp();
     Array.from(els).forEach((el) => {
       if (el.BK_TEAM == "0") return;
@@ -24,7 +25,7 @@ function mneCallDetail(arrDate) {
     B: "East",
   };
   const param = {
-    coDiv: "02",
+    coDiv: "03",
     date: date,
     _: new Date().getTime(),
   };
@@ -58,6 +59,4 @@ function mneCallDetail(arrDate) {
 /* <============line_div==========> */
 
 /* <============line_div==========> */
-mneCall(thisdate, () => {
-  mneCall(nextdate,procDate);
-});
+mneCall(thisdate, procDate);

@@ -58,6 +58,4 @@ function mneCallDetail(arrDate) {
 /* <============line_div==========> */
 
 /* <============line_div==========> */
-mneCall(thisdate, () => {
-  mneCall(nextdate,procDate);
-});
+mneCall(thisdate, procDate);
