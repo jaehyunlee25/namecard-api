@@ -1,4 +1,3 @@
-EXTZLOG("common", "common function area entrance");
 const log = console.log;
 const dir = console.dir;
 const doc = document;
