@@ -142,5 +142,7 @@ function mneCallDetail(arrDate) {
 /* <============line_div==========> */
 
 /* <============line_div==========> */
+setTimeout(() => {
 mneCall(thisdate, procDate);
+}, 5000);
 

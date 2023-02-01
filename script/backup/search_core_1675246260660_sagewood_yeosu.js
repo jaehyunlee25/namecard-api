@@ -143,4 +143,3 @@ function mneCallDetail(arrDate) {
 
 /* <============line_div==========> */
 mneCall(thisdate, procDate);
-
