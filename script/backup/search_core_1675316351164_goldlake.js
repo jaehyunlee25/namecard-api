@@ -1,5 +1,5 @@
 function mneCall(date, callback) {
-  const els = doc.gba("onclick", "javascript:fnAccept(", true);
+  const els = doc.gba("onclick", "bookyesbgcolor", true);
   Array.from(els).forEach((el) => {
     const param = el.attr("onclick").inparen();
     const [fulldate] = param;
