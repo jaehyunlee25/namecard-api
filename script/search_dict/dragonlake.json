@@ -1,1 +1,12 @@
-[["login_url","http://www.dragonlake.co.kr/mobile/member/login.asp","funcLogin"],["search_url","http://www.dragonlake.co.kr/mobile/reservation/reservation.asp","funcReserve"],["main_url","http://www.dragonlake.co.kr/mobile/index.asp","funcMain"],["reserve_url","http://www.dragonlake.co.kr/mobile/mypage/reserCheck.asp","funcList"]]
+[
+    [
+        "login_url",
+        "https://m.golfzoncounty.com/member/login",
+        "funcLogin"
+    ],
+    [
+        "search_url",
+        "https://m.golfzoncounty.com/gcounty/info/main",
+        "funcReserve"
+    ]
+]
