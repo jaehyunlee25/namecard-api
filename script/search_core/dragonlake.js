@@ -1,14 +1,25 @@
 function mneCall(date, callback) {
+  const obj = {};
+  location.href
+    .split("?")[1]
+    .split("&")
+    .forEach((el) => {
+      const [key, val] = el.split("=");
+      obj[key] = val;
+    });
+  const ClubNumber = obj.gc_no;
   const param = {
-    method: "getCalendar",
-    coDiv: "944",
-    selYm: date,
+    gc_no: ClubNumber ,
+    search_type: "simple",
+    rand: "",
   };
-  post("/controller/ReservationController.asp", param, {}, (data) => {
-    const els = JSON.parse(data).rows;
-    Array.from(els).forEach((el) => {
-      if (el.BK_TEAM === 0) return;
-      dates.push([el.CL_SOLAR, ""]);
+  post("/reserve/ajax/commonTeeList", param, {}, (data) => {
+    const json = JSON.parse(data);
+    const els = json.reservePossibleDateMap;
+    Object.keys(els).forEach((date) => {
+      const obj = els[date];
+      if (obj.reserve_possible_cnt == 0) return;
+      dates.push([date, ""]);
     });
     callback();
   });
@@ -16,28 +27,43 @@ function mneCall(date, callback) {
 
 /* <============line_div==========> */
 function mneCallDetail(arrDate) {
-  const [date, option] = arrDate;
-  const dictCourse = {
-    A: "Dragon",
-    B: "Lake",
-    C: "Sky",
-  };
+  const [date, num] = arrDate;
   const param = {
-    method: "getTeeList",
-    coDiv: "944",
-    date: date,
-    cos: "",
+    select_date: date,
+    rand: "",
   };
-  post("/controller/ReservationController.asp", param, {}, (data) => {
-    const els = JSON.parse(data).rows;
-    Array.from(els).forEach((el, i) => {
-      const course = dictCourse[el.BK_COS];
-      const time = el.BK_TIME;
-      let fee_normal = el.BK_CHARGE_NM.getFee();
-      let fee_discount = el.BK_CHARGE_NM.getFee();
+  const dictCourse = {
+    레이크: "Lake",
+    드래곤: "Dragon",
+    스카이: "Sky",
+  };
 
-      if (isNaN(fee_normal)) fee_normal = -1;
-      if (isNaN(fee_discount)) fee_discount = -1;
+  const obj = {};
+  location.href
+    .split("?")[1]
+    .split("&")
+    .forEach((el) => {
+      const [key, val] = el.split("=");
+      obj[key] = val;
+    });
+  const ClubNumber = obj.gc_no;
+
+  post("/reserve/ajax/teeList/" + ClubNumber, param, {}, (data) => {
+    const json = JSON.parse(data);
+    const els = json.teeList;
+    Array.from(els).forEach((el) => {
+      let {
+        teeup_time: time,
+        price,
+        dc_price,
+        course_nm: course,
+        time_date: date,
+        bk_round: hole,
+      } = el;
+      course = dictCourse[course];
+      const fee_discount = price - dc_price;
+      const fee_normal = price;
+      hole = hole + "홀";
 
       golf_schedule.push({
         golf_club_id: clubId,
@@ -48,7 +74,7 @@ function mneCallDetail(arrDate) {
         persons: "",
         fee_normal,
         fee_discount,
-        others: "18홀",
+        others: hole,
       });
     });
     procDate();
