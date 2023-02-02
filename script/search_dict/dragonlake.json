@@ -5,8 +5,13 @@
         "funcLogin"
     ],
     [
+        "login_url",
+        "http://www.golfzoncounty.com/member/login",
+        "funcLogin"
+    ],
+    [
         "search_url",
-        "https://m.golfzoncounty.com/gcounty/info/main",
+        "http://www.golfzoncounty.com/reserve/main",
         "funcReserve"
     ]
 ]
