@@ -1,1 +1,12 @@
-[["login_url","https://kxalpensia.com/member/login","funcLogin"],["search_url","https://kxalpensia.com/alpensia700/reservation/golf","funcReserve"]]
+[
+    [
+        "login_url",
+        "https://kxleisure.com/member/login",
+        "funcLogin"
+    ],
+    [
+        "search_url",
+        "https://kxleisure.com/reservation/golf",
+        "funcReserve"
+    ]
+]
