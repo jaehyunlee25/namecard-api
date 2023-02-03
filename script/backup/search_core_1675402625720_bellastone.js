@@ -1,26 +1,29 @@
 function mneCall(date, callback) {
   const els = doc.gcn("reserv");
   Array.from(els).forEach((el) => {
-    const [, date, sign] = el.attr("href").inparen();
+    const [, date] = el.attr("href").inparen();
     const fulldate = date.rm("-");
-    dates.push([fulldate, sign]);
+    dates.push([fulldate, ""]);
   });
   callback();
 }
 
 /* <============line_div==========> */
 function mneCallDetail(arrDate) {
-  const [date, sign] = arrDate;
+  const [date, option] = arrDate;
   const param = {};
   param["thisDate"] = (date.ct(2) + "01").datify();
   param["strReserveDate"] = date.datify();
-  param["strDayGubun"] = sign;
+  param["strDayGubun"] = option[2];
   const dictCourse = {};
   post("/Mobile/Reservation/ReservationTimeList.aspx", param, {}, (data) => {
-    const ifr = doc.clm("div");
+    const ifr = document.createElement("div");
     ifr.innerHTML = data;
 
-    const els = ifr.gcn("timeTbl")[0].gtn("tbody")[0].gtn("tr");
+    const els = ifr
+      .getElementsByClassName("timeTbl")[0]
+      .getElementsByTagName("tbody")[0]
+      .getElementsByTagName("tr");
 
     Array.from(els).forEach((el, i) => {
       const course = el.children[0].innerText;
