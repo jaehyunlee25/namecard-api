@@ -1,39 +1,125 @@
-function mneCall(year, callback) {
-  const param = {};
-  const els = document.getElementsByClassName("can");
-  Array.from(els).forEach((el) => {
-    const href = el.getAttribute("href");
-    const m = el.innerText.split("/")[0].addzero();
-    const d = el.innerText.split("/")[1];
-    const date = year + m + d;
-    dates.push([date, ""]);
+function mneCall(date, callback) {
+  const compSign = "J56";
+  const param = {
+    companyCd: "",
+    clickTdId: "",
+    clickTdClass: "",
+    workMonth: date,
+    workDate: date + "01",
+    bookgDate: "",
+    bookgTime: "",
+    bookgCourse: "",
+    searchTime: "",
+    selfTYn: "",
+    temp001: "",
+    bookgComment: "",
+    temp007: "",
+    certSeq: "",
+    selectTime: "",
+    payGubun: "",
+    payAmt: "",
+    eventYn: "",
+    eventGubun: "",
+    cponYn: "",
+    eventYn: "",
+    tabSessionId: "",
+    joinYn: "",
+    flagCd: "",
+    cartAvlYn: "",
+    timeOpenYn: "N",
+    companyOpenYn: "N",
+    selCompany: compSign,
+    delegYn: "",
+    agencyReservationYn: "",
+    selectMember: selectMember.value,
+    selectCompany: compSign,
+    agencyBookgName: "",
+    agencyHp1: "010",
+    agencyHp2: "",
+    agencyHp3: "",
+    certNoChk: "",
+  };
+  post("/reservation/ajax/golfCalendar", param, {}, (data) => {
+    const ifr = doc.clm("div");
+    ifr.innerHTML = data;
+
+    const attr = "onclick";
+    const els = ifr.gba(attr, "clickCal(", true);
+    Array.from(els).forEach((el) => {
+      const [sign, gb, fulldate, opt] = el.attr(attr).split(";")[0].inparen();
+      if (opt != "OPEN") return;
+      dates.push([fulldate, sign, gb]);
+    });
+    callback();
   });
-  callback();
 }
 
 /* <============line_div==========> */
 function mneCallDetail(arrDate) {
-  const [date, strParam] = arrDate;
+  const fCall = { post, get };
+  const [date, sign, gb] = arrDate;
+  const addr = "/reservation/ajax/golfTimeList";
+  const method = "post";
+  const compSign = "J56";
   const param = {
-    strReserveDate: date.gh(4) + "-" + date.ch(4).gh(2) + "-" + date.gt(2),
-    strGolfLgubun: 120,
+    companyCd: "",
+    clickTdId: "A" + date,
+    clickTdClass: "",
+    workMonth: date.ct(2),
+    workDate: date,
+    bookgDate: "",
+    bookgTime: "",
+    bookgCourse: "ALL",
+    searchTime: "",
+    selfTYn: "",
+    temp001: "",
+    bookgComment: "",
+    temp007: "",
+    certSeq: "",
+    selectTime: "",
+    payGubun: "",
+    payAmt: "",
+    eventYn: "",
+    eventGubun: "",
+    cponYn: "",
+    eventYn: "",
+    tabSessionId: "",
+    joinYn: "",
+    flagCd: "",
+    cartAvlYn: "",
+    timeOpenYn: "N",
+    companyOpenYn: "N",
+    selCompany: compSign,
+    delegYn: "",
+    agencyReservationYn: "",
+    selectMember: selectMember.value,
+    selectCompany: compSign,
+    agencyBookgName: "",
+    agencyHp1: "010",
+    agencyHp2: "",
+    agencyHp3: "",
+    certNoChk: "",
+  };
+  const dictCourse = {
+    1: "힐",
+    2: "포레스트",
   };
 
-  get("/Mobile/Reservation/ReservationTimeList.aspx", param, {}, (data) => {
-    const ifr = document.createElement("div");
+  fCall[method](addr, param, {}, (data) => {
+    const ifr = doc.clm("div");
     ifr.innerHTML = data;
 
-    const els = ifr.gcn("can");
-    Array.from(els).forEach((el, i) => {
-      const param = el.attr("href").inparen();
-        let [, time, course, , , , , , , fee_discount] = param;
-        const dictCourse = {
-          11: "힐",
-          22: "포레스트",
-        };
-        course = dictCourse[course];
-        fee_discount *= 1;
-        const fee_normal = fee_discount;
+    const attr = "onclick";
+    const els = ifr.gba(attr, "golfConfirm(", true);
+    Array.from(els).forEach((el) => {
+      let [, , date, time, course, , , hole, fee_normal, fee_discount] = el
+        .attr(attr)
+        .replace(/\s/g, "")
+        .inparen(true);
+      course = dictCourse[course];
+      hole = hole.ct(1);
+      fee_normal = fee_normal.rm(",") * 1;
+      fee_discount = fee_discount.rm(",") * 1;
 
       golf_schedule.push({
         golf_club_id: clubId,
@@ -44,7 +130,7 @@ function mneCallDetail(arrDate) {
         persons: "",
         fee_normal,
         fee_discount,
-        others: "9홀",
+        others: hole + "홀",
       });
     });
     procDate();
@@ -54,4 +140,6 @@ function mneCallDetail(arrDate) {
 /* <============line_div==========> */
 
 /* <============line_div==========> */
-mneCall(thisyear, procDate);
+mneCall(thisdate, () => {
+  mneCall(nextdate, procDate);
+});

@@ -1,5 +1,5 @@
 function mneCall(date, callback) {
-  const compSign = "J53";
+  const compSign = "J54";
   const param = {
     companyCd: "",
     clickTdId: "",
@@ -60,7 +60,7 @@ function mneCallDetail(arrDate) {
   const [date, sign, gb] = arrDate;
   const addr = "/reservation/ajax/golfTimeList";
   const method = "post";
-  const compSign = "J53";
+  const compSign = "J54";
   const param = {
     companyCd: "",
     clickTdId: "A" + date,
@@ -101,7 +101,8 @@ function mneCallDetail(arrDate) {
     certNoChk: "",
   };
   const dictCourse = {
-    2: "단일",
+    1: "서",
+    2: "동",
   };
 
   fCall[method](addr, param, {}, (data) => {

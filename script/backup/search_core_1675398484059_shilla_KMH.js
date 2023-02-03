@@ -92,7 +92,7 @@ function mneCallDetail(arrDate) {
     selCompany: compSign,
     delegYn: "",
     agencyReservationYn: "",
-    selectMember: selectMember.value,
+    selectMember: "",
     selectCompany: compSign,
     agencyBookgName: "",
     agencyHp1: "010",
