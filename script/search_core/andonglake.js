@@ -1,44 +1,53 @@
 function mneCall(date, callback) {
-  const els = ReservationDate.getElementsByTagName("a");
-  Array.from(els).forEach((el) => {
-    const fulldate = el.innerText.split("-").join("");
-    dates.push([fulldate, 0]);
+  const param = {
+    method: "getCalendar",
+    coDiv: "461",
+    selYm: date,
+  };
+  post("/controller/ReservationController.asp", param, {}, (data) => {
+    const json = JSON.parse(data);
+    const els = json.rows;
+    els.forEach((el) => {
+      if (el.BK_TEAM == "0") return;
+      dates.push([el.CL_SOLAR, el.CL_BUSINESS, el.CL_DAYDIV]);
+    });
+    callback();
   });
-  callback();
 }
 
 /* <============line_div==========> */
 function mneCallDetail(arrDate) {
-  const [date] = arrDate;
+  const fCall = { post, get };
+  const [date, sign, gb] = arrDate;
+  const addr = "/controller/ReservationController.asp";
+  const method = "get";
   const param = {
-    Date: [date.gh(4), date.ch(4).gh(2), date.gt(2)].join("-"),
+    method: "getTeeList",
+    coDiv: "461",
+    date: date,
+    cos: "All",
+    _: new Date().getTime(),
   };
-  get("/BookingAdd.aspx", param, {}, (data) => {
-    const ifr = document.createElement("div");
-    ifr.innerHTML = data;
+  const dictCourse = {
+    A: "Out",
+    B: "In",
+  };
 
-    const trs1 = (() => {
-      let target;
-      Array.from(ifr.getElementsByTagName("div")).forEach((div) => {
-        if (div.id == "Table_1") target = div;
-      });
-      return Array.from(target.getElementsByTagName("input"));
-    })();
-    const trs2 = (() => {
-      let target;
-      Array.from(ifr.getElementsByTagName("div")).forEach((div) => {
-        if (div.id == "Table_2") target = div;
-      });
-      return Array.from(target.getElementsByTagName("input"));
-    })();
-
-    trs1.forEach((el, i) => {
-      if (i === 0) return;
-      const td = el.children[0];
-      const course = "Out";
-      const time = el.value;
-      const fee_discount = 300000;
-      const fee_normal = 300000;
+  fCall[method](addr, param, {}, (data) => {
+    const els = data.jp().rows;
+    Array.from(els).forEach((el) => {
+      let {
+        BK_DAY: date,
+        BK_TIME: time,
+        BK_COS: course,
+        BK_ROUNDF_NM: hole,
+        BK_S_CHARGE_NM: fee_normal,
+        BK_B_CHARGE_NM: fee_discount,
+      } = el;
+      course = dictCourse[course];
+      hole = hole.ct(1);
+      fee_normal = fee_normal.rm(",") * 1;
+      fee_discount = fee_discount.rm(",") * 1;
 
       golf_schedule.push({
         golf_club_id: clubId,
@@ -49,28 +58,7 @@ function mneCallDetail(arrDate) {
         persons: "",
         fee_normal,
         fee_discount,
-        others: "18홀",
-      });
-    });
-
-    trs2.forEach((el, i) => {
-      if (i === 0) return;
-      const td = el.children[0];
-      const course = "In";
-      const time = el.value;
-      const fee_discount = 300000;
-      const fee_normal = 300000;
-
-      golf_schedule.push({
-        golf_club_id: clubId,
-        golf_course_id: course,
-        date,
-        time,
-        in_out: "",
-        persons: "",
-        fee_normal,
-        fee_discount,
-        others: "18홀",
+        others: hole + "홀",
       });
     });
     procDate();
@@ -80,4 +68,6 @@ function mneCallDetail(arrDate) {
 /* <============line_div==========> */
 
 /* <============line_div==========> */
-mneCall(thisdate, procDate);
+mneCall(thisdate, () => {
+  mneCall(nextdate, procDate);
+});
