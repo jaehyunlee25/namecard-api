@@ -1,7 +1,7 @@
 git checkout main
 git pull origin main
 git add -A
-git commit -m 'renew'
+git commit -m 'bomun'
 git push origin main
 git checkout dev
 git merge main

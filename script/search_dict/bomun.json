@@ -1,1 +1,12 @@
-[["login_url","http://mgolf.gtc.co.kr/Login.aspx","funcLogin"],["search_url","http://mgolf.gtc.co.kr/Booking.aspx","funcReserve"],["div_url","http://mgolf.gtc.co.kr/BookingAdd.aspx","funcDiv"]]
+[
+    [
+        "login_url",
+        "https://golf.gtc.co.kr/member/login.asp",
+        "funcLogin"
+    ],
+    [
+        "search_url",
+        "https://golf.gtc.co.kr/main/index.asp",
+        "funcReserve"
+    ]
+]
