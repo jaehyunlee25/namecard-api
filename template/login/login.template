@@ -2,10 +2,11 @@ ${common}
 
 logParam.sub_type = "login";
 logParam.message = "start login";
-TZLOG(logParam, (data) => {}); 
+EXTZLOG("login", "start");
 
 main();
 function main() {
+    EXTZLOG("login", "main");
     /*if (precheck()) return;*/
     ${loginScript}
 };
