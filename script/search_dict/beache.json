@@ -1,4 +1,12 @@
 [
-    ["login_url","http://www.beachegolf.com/Mobile/Member/Login.aspx","funcLogin"],
-    ["search_url","http://www.beachegolf.com/html/reserve/reserve01.asp","funcReserve"]
+    [
+        "login_url",
+        "http://www.beachegolf.com/html/member/login.asp",
+        "funcLogin"
+    ],
+    [
+        "search_url",
+        "http://www.beachegolf.com/html/reserve/reserve01.asp",
+        "funcReserve"
+    ]
 ]
