@@ -50,6 +50,7 @@ function TZLOG(param, callback) {
 function EXTZLOG(subtype, message, param) {
   logParam.sub_type = subtype;
   logParam.message = message;
+  logParam.timestamp = new Date().getTime();
   if (param) logParam.parameter = JSON.stringify(param);
   TZLOG(logParam);
 }
