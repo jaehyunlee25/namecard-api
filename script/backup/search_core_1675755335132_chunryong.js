@@ -1,19 +1,11 @@
-function mneCall(type, callback) {
-  const param = {
-    pub_tp: type,
-  };
-  get("/mobile/booking/booking_01.asp", param, {}, (data) => {
-    const ifr = doc.clm("div");
-    ifr.innerHTML = data;
-    const attr = "onclick";
-    const els = ifr.gba(attr, "javascript:agree_time", true);
-    Array.from(els).forEach((el) => {
-      const [date, sign] = el.attr("onclick").inparen();
-      if (sign != "M") return;
-      dates.push([date, sign]);
-    });
-    callback();
+function mneCall(date, callback) {
+  const els = doc.body.gba("onclick", "javascript:agree_time", true);
+  Array.from(els).forEach((el) => {
+    const [date, sign] = el.attr("onclick").inparen();
+    if (sign != "M") return;
+    dates.push([date, sign]);
   });
+  callback();
 }
 
 /* <============line_div==========> */
@@ -38,7 +30,7 @@ function mneCallDetail(arrDate) {
 
     const els = ifr.gba("onclick", "javascript:checkAmt", true);
     Array.from(els).forEach((el) => {
-      let [time, course] = el.attr("onclick").inparen();
+      let [, time, course] = el.attr("onclick").inparen();
       course = dictCourse[course];
       const fee = 250000;
       const hole = 18;
@@ -64,6 +56,4 @@ function mneCallDetail(arrDate) {
 /* <============line_div==========> */
 
 /* <============line_div==========> */
-mneCall("M", () => {
-  mneCall("P", procDate);
-});
+mneCall(thisdate, procDate);

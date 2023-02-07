@@ -38,7 +38,7 @@ function mneCallDetail(arrDate) {
 
     const els = ifr.gba("onclick", "javascript:checkAmt", true);
     Array.from(els).forEach((el) => {
-      let [time, course] = el.attr("onclick").inparen();
+      let [, time, course] = el.attr("onclick").inparen();
       course = dictCourse[course];
       const fee = 250000;
       const hole = 18;
