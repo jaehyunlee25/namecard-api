@@ -137,7 +137,11 @@ function ajaxcallforgeneral() {
     if (j.xmlHttp.readyState == 4) {
       if (j.xmlHttp.status == 200) {
         var data = j.xmlHttp.responseText;
-        j.ajaxcallback(data);
+        try {
+          j.ajaxcallback(data);
+        } catch (e) {
+          EXTZLOG("search", ["script_error", e.toString()]);
+        }
       } else {
       }
     }
