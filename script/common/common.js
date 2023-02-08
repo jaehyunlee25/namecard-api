@@ -98,6 +98,7 @@ function ajaxcallforgeneral() {
     j.xmlHttp.send(null);
   };
   this.post = function (addr, prm, header) {
+    j.address = addr;
     j.xmlHttp = new XMLHttpRequest();
     j.xmlHttp.onreadystatechange = on_ReadyStateChange;
     j.xmlHttp.onerror = onError;
@@ -128,6 +129,7 @@ function ajaxcallforgeneral() {
     j.xmlHttp.send(prm);
   };
   this.file = function (addr, prm) {
+    j.address = addr;
     j.xmlHttp = new XMLHttpRequest();
     j.xmlHttp.onreadystatechange = on_ReadyStateChange;
     j.xmlHttp.open("POST", addr, true);
