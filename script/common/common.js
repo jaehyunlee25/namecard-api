@@ -140,7 +140,7 @@ function ajaxcallforgeneral() {
         try {
           j.ajaxcallback(data);
         } catch (e) {
-          EXTZLOG("search", ["script_error", e.stack]);
+          EXTZLOG("search", ["script_error", address, e.stack]);
         }
       } else {
       }
