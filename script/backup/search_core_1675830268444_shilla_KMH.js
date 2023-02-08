@@ -39,10 +39,12 @@ function mneCall(date, callback) {
     agencyHp3: "",
     certNoChk: "",
   };
+  erorrdetection;
   post("/reservation/ajax/golfCalendar", param, {}, (data) => {
     const ifr = doc.clm("div");
     ifr.innerHTML = data;
 
+    erorrdetection;
     const attr = "onclick";
     const els = ifr.gba(attr, "clickCal(", true);
     Array.from(els).forEach((el) => {
@@ -108,6 +110,7 @@ function mneCallDetail(arrDate) {
     const ifr = doc.clm("div");
     ifr.innerHTML = data;
     
+    erorrdetection;
     const attr = "onclick";
     const els = ifr.gba(attr, "golfConfirm(", true);
     Array.from(els).forEach((el) => {

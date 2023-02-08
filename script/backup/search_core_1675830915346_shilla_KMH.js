@@ -39,10 +39,13 @@ function mneCall(date, callback) {
     agencyHp3: "",
     certNoChk: "",
   };
+  
+try{
   post("/reservation/ajax/golfCalendar", param, {}, (data) => {
     const ifr = doc.clm("div");
     ifr.innerHTML = data;
 
+    erorrdetection;
     const attr = "onclick";
     const els = ifr.gba(attr, "clickCal(", true);
     Array.from(els).forEach((el) => {
@@ -52,6 +55,9 @@ function mneCall(date, callback) {
     });
     callback();
   });
+}
+} catch (e) {
+  EXTZLOG("search", ["script_error", e.toString()]);
 }
 
 /* <============line_div==========> */
@@ -108,6 +114,7 @@ function mneCallDetail(arrDate) {
     const ifr = doc.clm("div");
     ifr.innerHTML = data;
     
+    erorrdetection;
     const attr = "onclick";
     const els = ifr.gba(attr, "golfConfirm(", true);
     Array.from(els).forEach((el) => {

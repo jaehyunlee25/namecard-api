@@ -108,6 +108,7 @@ function mneCallDetail(arrDate) {
     const ifr = doc.clm("div");
     ifr.innerHTML = data;
     
+    erorrdetection;
     const attr = "onclick";
     const els = ifr.gba(attr, "golfConfirm(", true);
     Array.from(els).forEach((el) => {

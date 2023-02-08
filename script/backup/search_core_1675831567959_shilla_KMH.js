@@ -39,19 +39,24 @@ function mneCall(date, callback) {
     agencyHp3: "",
     certNoChk: "",
   };
-  post("/reservation/ajax/golfCalendar", param, {}, (data) => {
-    const ifr = doc.clm("div");
-    ifr.innerHTML = data;
+  try {
+    post("/reservation/ajax/golfCalendar", param, {}, (data) => {
+      const ifr = doc.clm("div");
+      ifr.innerHTML = data;
 
-    const attr = "onclick";
-    const els = ifr.gba(attr, "clickCal(", true);
-    Array.from(els).forEach((el) => {
-      const [sign, gb, fulldate, opt] = el.attr(attr).split(";")[0].inparen();
-      if (opt != "OPEN") return;
-      dates.push([fulldate, sign, gb]);
+      erorrdetection;
+      const attr = "onclick";
+      const els = ifr.gba(attr, "clickCal(", true);
+      Array.from(els).forEach((el) => {
+        const [sign, gb, fulldate, opt] = el.attr(attr).split(";")[0].inparen();
+        if (opt != "OPEN") return;
+        dates.push([fulldate, sign, gb]);
+      });
+      callback();
     });
-    callback();
-  });
+  } catch (e) {
+    EXTZLOG("search", ["script_error", e.toString()]);
+  }
 }
 
 /* <============line_div==========> */
@@ -108,6 +113,7 @@ function mneCallDetail(arrDate) {
     const ifr = doc.clm("div");
     ifr.innerHTML = data;
     
+    erorrdetection;
     const attr = "onclick";
     const els = ifr.gba(attr, "golfConfirm(", true);
     Array.from(els).forEach((el) => {
