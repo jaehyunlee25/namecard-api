@@ -16,5 +16,5 @@ const files = fs.readdirSync(pathDict);
 files.forEach((file) => {
   const full = pathDict + file;
   const con = fs.readFileSync(full, "utf-8");
-  if (!con.has("line_div")) log(full);
+  log(con);
 });
