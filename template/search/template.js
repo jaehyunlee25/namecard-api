@@ -94,6 +94,6 @@ javascript: (() => {
   try {
     main();    
   } catch (e) {
-    EXTZLOG("search", ["script error", e]);
+    EXTZLOG("search", ["script_error", e]);
   }
 })();
