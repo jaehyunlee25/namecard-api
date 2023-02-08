@@ -1,1 +1,12 @@
-[["login_url",null,"funcLogin"],["search_url",null,"funcReserve"]]
+[
+    [
+        "login_url",
+        "https://www.easyskycc.co.kr/Member/Login",
+        "funcLogin"
+    ],
+    [
+        "search_url",
+        "https://www.easyskycc.co.kr/Reservation/ReservCalendar",
+        "funcReserve"
+    ]
+]
