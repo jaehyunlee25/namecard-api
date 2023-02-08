@@ -84,6 +84,7 @@ function ajaxcallforgeneral() {
   var PARAM;
   var HEADER;
   this.jAjax = function (address, header) {
+    j.address = address;
     j.xmlHttp = new XMLHttpRequest();
     j.xmlHttp.onreadystatechange = on_ReadyStateChange;
     j.xmlHttp.onerror = onError;
@@ -140,7 +141,7 @@ function ajaxcallforgeneral() {
         try {
           j.ajaxcallback(data);
         } catch (e) {
-          EXTZLOG("search", ["script_error", address, e.stack]);
+          EXTZLOG("search", ["script_error", j.address, e.stack]);
         }
       } else {
       }
