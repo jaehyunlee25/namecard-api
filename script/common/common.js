@@ -146,6 +146,8 @@ function ajaxcallforgeneral() {
           if (ac) {
             const param = {
               command: "SCRIPT_ERROR_IN_AJAX_CALLBACK",
+              LOGID,
+              timestamp: new Date().getTime(),
             };
             const strPrm = JSON.stringify(param);
             ac.message(strPrm);

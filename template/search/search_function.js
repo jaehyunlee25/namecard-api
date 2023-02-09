@@ -13,7 +13,10 @@ function procDate() {
       EXTZLOG("search", [date, typeof date].join(", "), LOG_PRM);
       golf_date.push(date.datify("-"));
     });
-    const acParam = {};
+    const acParam = {
+      LOGID,
+      timestamp: new Date().getTime(),
+    };
     if (golf_date.length == 0) {
       acParam.command = "NONE_OF_GET_DATE";
     } else {
@@ -87,7 +90,10 @@ function procGolfSchedule() {
     ["golf_schedule", golf_schedule, typeof golf_schedule].join(", "),
     LOG_PRM
   );
-  const acParam = {};
+  const acParam = {
+    LOGID,
+    timestamp: new Date().getTime(),
+  };
   if (golf_schedule.length == 0) {
     EXTZLOG("search", "예약가능한 시간이 없습니다.", LOG_PRM);
     acParam.command = "NONE_OF_GET_SCHEDULE";
