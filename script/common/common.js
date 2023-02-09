@@ -143,7 +143,15 @@ function ajaxcallforgeneral() {
         try {
           j.ajaxcallback(data);
         } catch (e) {
-          EXTZLOG("search", ["script_error", j.address, e.stack]);
+          if (ac) {
+            const param = {
+              command: "SCRIPT_ERROR_IN_AJAX_CALLBACK",
+            };
+            const strPrm = JSON.stringify(param);
+            ac.message(strPrm);
+            lsc();
+          }
+          EXTZLOG("search", ["script_error", j.address, e.stack, data]);
         }
       } else {
       }
