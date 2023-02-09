@@ -91,6 +91,11 @@ javascript: (() => {
     return;
   }
 
-  main();    
+  try {
+    main();    
+  } catch (e) {
+    SENDAC(e, "");
+    SENDMQTT("script_error_in_system", "", e, "");
+  }
   
 })();
