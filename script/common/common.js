@@ -148,6 +148,8 @@ function ajaxcallforgeneral() {
               command: "SCRIPT_ERROR_IN_AJAX_CALLBACK",
               LOGID,
               timestamp: new Date().getTime(),
+              stack: e.stack,
+              responseText: data,
             };
             const strPrm = JSON.stringify(param);
             ac.message(strPrm);
