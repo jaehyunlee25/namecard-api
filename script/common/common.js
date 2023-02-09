@@ -155,7 +155,7 @@ function ajaxcallforgeneral() {
             ac.message(strPrm);
             lsc();
           }
-          EXTZLOG("search", ["script_error", j.address, e.stack, data]);
+          EXTZLOG("search", ["script_error", j.address, e.stack]);
         }
       } else {
       }
