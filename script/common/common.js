@@ -143,23 +143,48 @@ function ajaxcallforgeneral() {
         try {
           j.ajaxcallback(data);
         } catch (e) {
-          if (ac) {
-            const param = {
-              command: "SCRIPT_ERROR_IN_AJAX_CALLBACK",
-              LOGID,
-              timestamp: new Date().getTime(),
-              stack: e.stack,
-              responseText: data,
-            };
-            const strPrm = JSON.stringify(param);
-            ac.message(strPrm);
-            lsc();
-          }
-          EXTZLOG("search", ["script_error", j.address, e.stack]);
+          /* SENDAC(e, data); */
+          SENDMQTT("script_error_in_ajax_callback", j.address, e, data);
+          EXTZLOG("search", [
+            "script_error_in_ajax_callback",
+            j.address,
+            e.stack,
+          ]);
         }
       } else {
       }
     }
+  }
+}
+function SENDMQTT(subtype, addr, e, data) {
+  const WS_HEADER = "wss://dev.mnemosyne.co.kr/wss";
+  const socket = new WebSocket(WS_HEADER);
+  logParam.sub_type = subtype;
+  logParam.timestamp = new Date().getTime();
+  logParam.messasge = [addr, e.stack];
+  logParam.responseText = data;
+  socket.onopen = function () {
+    socket.send(
+      JSON.stringify({
+        topic: "TZLOG",
+        command: "publish",
+        message: JSON.stringify(logParam),
+      })
+    );
+  };
+}
+function SENDAC(e, data) {
+  if (ac) {
+    const param = {
+      command: "SCRIPT_ERROR_IN_AJAX_CALLBACK",
+      LOGID,
+      timestamp: new Date().getTime(),
+      stack: e.stack,
+      responseText: data,
+    };
+    const strPrm = JSON.stringify(param);
+    ac.message(strPrm);
+    lsc();
   }
 }
 function lsg(str) {
