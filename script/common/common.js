@@ -143,13 +143,13 @@ function ajaxcallforgeneral() {
         try {
           j.ajaxcallback(data);
         } catch (e) {
-          /* SENDAC(e, data); */
+          SENDAC(e, data);
           SENDMQTT("script_error_in_ajax_callback", j.address, e, data);
-          EXTZLOG("search", [
+          /* EXTZLOG("search", [
             "script_error_in_ajax_callback",
             j.address,
             e.stack,
-          ]);
+          ]); */
         }
       } else {
       }
@@ -179,8 +179,6 @@ function SENDAC(e, data) {
       command: "SCRIPT_ERROR_IN_AJAX_CALLBACK",
       LOGID,
       timestamp: new Date().getTime(),
-      stack: e.stack,
-      responseText: data,
     };
     const strPrm = JSON.stringify(param);
     ac.message(strPrm);
