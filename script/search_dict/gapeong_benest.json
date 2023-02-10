@@ -1,1 +1,12 @@
-[["login_url","https://www.golfsamsung.com/web/join.do?method=loginMav","funcLogin"],["search_url","https://www.golfsamsung.com/reve/mo/reserve/choice.do?companyCd=L153","funcReserve"]]
+[
+    [
+        "login_url",
+        "https://www.golfsamsung.com/web/join.do?method=loginMav",
+        "funcLogin"
+    ],
+    [
+        "search_url",
+        "https://www.golfsamsung.com/reve/mo/reserve/choice.do",
+        "funcReserve"
+    ]
+]
