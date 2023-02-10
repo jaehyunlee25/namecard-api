@@ -34,6 +34,7 @@ function mneCallDetail(arrDate) {
     2: "Pine",
   };
 
+  errordetection;
   fCall[method](addr, param, {}, (data) => {
     const ifr = doc.clm("div");
     ifr.innerHTML = data;

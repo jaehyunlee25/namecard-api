@@ -6,7 +6,6 @@ function mneCall(date, callback) {
     year: date.gh(4),
     memsel: "",
   };
-
   get("/mobile/reservation/m_reserve_pv.jsp", param, {}, (data) => {
     const ifr = doc.clm("div");
     ifr.innerHTML = data;

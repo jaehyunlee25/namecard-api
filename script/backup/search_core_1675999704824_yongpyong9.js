@@ -6,11 +6,13 @@ function mneCall(date, callback) {
     mobile: "mobile",
   };
   post("/IRS/golf/golfavailablelist.do", param, {}, (data) => {
-    const [json] = JSON.parse(data);
-    Object.keys(json).forEach((key) => {
-      if (key.indexOf("wOpenType") == -1) return;
-      let [dt] = key.regex(/[0-9]+/g);
-      const fulldate = date + dt.addzero();
+    const ifr = doc.clm("div");
+    ifr.innerHTML = data;
+
+    const attr = "onclick";
+    const els = doc.gba(attr, "javascript:movetoStep2(", true);
+    Array.from(els).forEach((el) => {
+      const [fulldate] = el.attr(attr).inparen();
       dates.push([fulldate, ""]);
     });
     callback();
