@@ -7,7 +7,7 @@ function mneCall(date, callback) {
   get("/reve/mo/reserve/choice/calendar.do", param, {}, (data) => {
     const els = JSON.parse(data).data;
     Array.from(els).forEach((el) => {
-      if (el.status != "SOON" && el.status != "ENOUGH") return;
+      if (el.status != "SOON") return;
       const fulldate = date + ("" + el.day).addzero();
       dates.push([fulldate, 0]);
     });

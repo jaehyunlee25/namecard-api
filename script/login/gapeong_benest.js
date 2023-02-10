@@ -3,7 +3,7 @@ log("tLoginCount", tLoginCount);
 const tLogin = setInterval(timeraction, 1000);
 timeraction();
 function timeraction() {
-  if (!window["mem_id"]) {
+  if (!window["dispUserId"]) {
     tLoginCount++;
     log("tLoginCount", tLoginCount);
     if (tLoginCount > 4) clearInterval(tLogin);
@@ -11,7 +11,7 @@ function timeraction() {
   }
   clearInterval(tLogin);
   if (precheck()) return;
-  mem_id.value = "${login_id}";
-  mem_pw.value = "${login_password}";
-  doc.body.gba("onclick", "chkLogValue();return false;")[0].click();
+  dispUserId.value = "${login_id}";
+  dispUserPwd.value = "${login_password}";
+  chkLogValue();
 }

@@ -2,7 +2,7 @@ function mneCall(date, callback) {
   const param = {
     calDay: date.gh(4) + "/" + date.gt(2) + "/" + new Date().getDate(),
     today: thisdate.gh(4) + "/" + thisdate.gt(2) + "/" + new Date().getDate(),
-    companyCd: "L154",
+    companyCd: "L153",
   };
   get("/reve/mo/reserve/choice/calendar.do", param, {}, (data) => {
     const els = JSON.parse(data).data;
@@ -19,10 +19,12 @@ function mneCall(date, callback) {
 function mneCallDetail(arrDate) {
   const [date] = arrDate;
   const dictCourse = {
-    1: "단일",
+    1: "maple",
+    2: "pine",
+    3: "birch",
   };
   const param = {
-    companyCd: "L154",
+    companyCd: "L153",
     bookgDt: date,
     bookgCourse: "",
   };
@@ -31,7 +33,7 @@ function mneCallDetail(arrDate) {
     ifr.innerHTML = data;
     const els = ifr.gcn("listBox")[0].gtn("li");
     Array.from(els).forEach((el, i) => {
-      const course = dictCourse[1];
+      const course = dictCourse[el.attr("data-bookg-course")];
       const time = el.attr("time");
       let fee_normal = el.attr("data-basic-amt").getFee();
       let fee_discount = el.attr("data-basic-amt").getFee();
