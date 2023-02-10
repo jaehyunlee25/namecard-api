@@ -6,7 +6,7 @@
     ],
     [
         "search_url",
-        "\t https://www.golfsamsung.com/reve/mo/reserve/choice.do",
+        "https://www.golfsamsung.com/reve/mo/reserve/choice.do",
         "funcReserve"
     ]
 ]
