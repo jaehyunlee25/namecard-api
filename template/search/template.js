@@ -29,7 +29,7 @@ javascript: (() => {
       return;
     }
 
-    const func = dict[aDDr];
+    const func = dict[addr];
     if (!func) funcOther();
     else func();
   }
@@ -62,6 +62,7 @@ javascript: (() => {
   }
   function funcOther() {
     EXTZLOG("search", "funcOther");
+    SENDMQTT("script_error_in_system", addr, {stack: "link address error"}, addr);
 
     const chk = LSCHK("TZ_SEARCH_OTHER" + clubId, 10);
     EXTZLOG("search", ["timeout chk", chk]);
