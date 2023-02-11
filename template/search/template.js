@@ -29,7 +29,7 @@ javascript: (() => {
       return;
     }
 
-    const func = dict[addr];
+    const func = dict[aDDr];
     if (!func) funcOther();
     else func();
   }
