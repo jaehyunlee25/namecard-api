@@ -1,11 +1,11 @@
 const http = require("http");
 const mysql = require("mysql");
 const fs = require("fs");
-const admin = require("firebase-admin");
+/* const admin = require("firebase-admin");
 const serviceAccount = require("./teezzim-webview-test-firebase-adminsdk-i8hfk-ef88a22eeb.json");
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-});
+}); */
 
 /* const connection = mysql.createConnection(
   JSON.parse(fs.readFileSync("db.json"))
@@ -262,6 +262,18 @@ function procPost(request, response, data) {
       response.end();
     });
     objResp = 0;
+  } else if (reqUrl == "/getLogReport") {
+    "sql/getLogReport.sql".gfdp(data).query((err, rows, fields) => {
+      objResp = stdSQLProc(err, rows);
+      response.write(JSON.stringify(objResp));
+      response.end();
+    });
+  } else if (reqUrl == "/getMacroId") {
+    "sql/getMacroId.sql".gfdp(data).query((err, rows, fields) => {
+      objResp = stdSQLProc(err, rows);
+      response.write(JSON.stringify(objResp));
+      response.end();
+    });
   } else if (reqUrl == "/getDeviceRound") {
     "sql/getDeviceRound.sql".gfdp(data).query((err, rows, fields) => {
       if (err) {
@@ -1247,6 +1259,21 @@ function procPost(request, response, data) {
     response.write(JSON.stringify(objResp));
     response.end();
   }
+}
+function stdSQLProc(err, rows) {
+  let objResp;
+  if (err) {
+    objResp = {
+      type: "error",
+      data: err,
+    };
+  } else {
+    objResp = {
+      type: "okay",
+      data: rows,
+    };
+  }
+  return objResp;
 }
 function delDeviceDate(data, callback) {
   /* const connection = mysql.createConnection("db.json".gfjp());
