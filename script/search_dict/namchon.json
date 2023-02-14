@@ -1,4 +1,12 @@
 [
-    ["login_url","https://www.namchoncc.co.kr/Mobile/Member/Login","funcLogin"],
-    ["search_url","","funcReserve"],
+    [
+        "login_url",
+        "https://www.namchoncc.co.kr/Mobile/Member/Login",
+        "funcLogin"
+    ],
+    [
+        "search_url",
+        "",
+        "funcReserve"
+    ]
 ]
