@@ -15,11 +15,10 @@ function mneCallDetail(arrDate) {
   const [date, sign, str] = arrDate;
   const param = {};
   Array.from(aspnetForm.elements).forEach((el) => (param[el.name] = el.value));
-  param["ctl00$ContentPlaceHolder1$scManager"] = "ctl00$ContentPlaceHolder1$scManager|ctl00$ContentPlaceHolder1$btnUp";
-param["__EVENTTARGET"] = "ctl00$ContentPlaceHolder1$btnUp";
+  param["SelectedDate"] = date.datify();
   param["Day_Gubun"] = sign;
-  param["ctl00$ContentPlaceHolder1$hdfReserveDate"] = date.datify();
   param["ctl00$ContentPlaceHolder1$htbArgs"] = str;
+  param["ctl00$ContentPlaceHolder1$hdfReserveDate"] = date.datify();
   param["__ASYNCPOST"] = true;
 
   const dictCourse = {
@@ -33,7 +32,7 @@ param["__EVENTTARGET"] = "ctl00$ContentPlaceHolder1$btnUp";
     88: "LAKE",
     99: "REED",
   };
-
+  log(JSON.stringify(param));
   post("/Mobile/Reservation/Reservation.aspx", param, {}, (data) => {
     const ifr = doc.clm("div");
     ifr.innerHTML = data;
