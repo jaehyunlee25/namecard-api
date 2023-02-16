@@ -39,8 +39,7 @@ function mneCallDetail(arrDate) {
     bsns: "12",
     memNo: memberNo,
     guestNo: custm.cmNo,
-    frDate: date,
-    rsvnType: "GG",
+    frDate: [date.gh(4), date.ch(4).gh(2), date.gt(2)].join("-"),
   };
   $.ajax({
     url: "/reservation/namhae/ajax/search-only-golf",
