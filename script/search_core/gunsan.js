@@ -1,5 +1,5 @@
 function mneCall(date, callback) {
-EXTZLOG("search", "mneCall");
+  EXTZLOG("search", "mneCall");
   const els = doc.gba("href", "javascript:Update('LIST", true);
   Array.from(els).forEach((el) => {
     if (el.nm(1).className.indexOf("possible") == -1) return;
@@ -15,8 +15,9 @@ function mneCallDetail(arrDate) {
   const [date, sign, str] = arrDate;
   const param = {};
   Array.from(aspnetForm.elements).forEach((el) => (param[el.name] = el.value));
-  param["ctl00$ContentPlaceHolder1$scManager"] = "ctl00$ContentPlaceHolder1$scManager|ctl00$ContentPlaceHolder1$btnUp";
-param["__EVENTTARGET"] = "ctl00$ContentPlaceHolder1$btnUp";
+  param["ctl00$ContentPlaceHolder1$scManager"] =
+    "ctl00$ContentPlaceHolder1$scManager|ctl00$ContentPlaceHolder1$btnUp";
+  param["__EVENTTARGET"] = "ctl00$ContentPlaceHolder1$btnUp";
   param["Day_Gubun"] = sign;
   param["ctl00$ContentPlaceHolder1$hdfReserveDate"] = date.datify();
   param["ctl00$ContentPlaceHolder1$htbArgs"] = str;
@@ -70,5 +71,5 @@ mneCall(thisdate, () => {
   doc.gcn("arw-next")[0].click();
   setTimeout(() => {
     mneCall(nextdate, procDate);
-  }, 1500);  
+  }, 1500);
 });
