@@ -8,7 +8,7 @@ function procDate() {
   }
 
   if (COMMAND == "GET_DATE") {
-    const golf_date = [];
+    let golf_date = [];
     dates.forEach(([date]) => {
       EXTZLOG("search", [date, typeof date].join(", "), LOG_PRM);
       golf_date.push(date.datify("-"));
