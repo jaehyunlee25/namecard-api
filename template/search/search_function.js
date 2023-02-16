@@ -21,7 +21,6 @@ function procDate() {
       acParam.command = "NONE_OF_GET_DATE";
     } else {
       acParam.command = "SUCCESS_OF_GET_DATE";
-      if (logParam.golf_club_id == "${golfClubId}") golf_date = [];
       acParam.content = golf_date;
     }
     if (ac) {
