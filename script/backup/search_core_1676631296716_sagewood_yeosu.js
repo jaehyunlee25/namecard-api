@@ -1,53 +1,50 @@
 function mneCall(date, callback) {
   EXTZLOG("search", "mneCall");
-  setInterval(exec, 2000);
-  function exec() {
-    const res = {};
-    let els = doc.gcn("valid");
-    Array.from(els).forEach((el, i) => {
-      if (el.children.length == 0) return;
-      const time = el.attr("time") * 1;
-      const day = new Date(time);
-      const year = day.getFullYear();
-      const month = (day.getMonth() + 1 + "").addzero();
-      const dt = (day.getDate() + "").addzero();
-      res[[year, month, dt].join("")] = true;
-    });
-    doc.gcn("btn_calendar_next")[0].click();
-    els = doc.gcn("valid");
-    Array.from(els).forEach((el, i) => {
-      if (el.children.length == 0) return;
-      const time = el.attr("time") * 1;
-      const day = new Date(time);
-      const year = day.getFullYear();
-      const month = (day.getMonth() + 1 + "").addzero();
-      const dt = (day.getDate() + "").addzero();
-      res[[year, month, dt].join("")] = true;
-    });
-    Object.keys(res).forEach((date) => {
-      dates.push([date, ""]);
-    });
-    doc.gcn("btn_calendar_next")[0].click();
-    els = doc.gcn("valid");
-    Array.from(els).forEach((el, i) => {
-      if (el.children.length == 0) return;
-      const time = el.attr("time") * 1;
-      const day = new Date(time);
-      const year = day.getFullYear();
-      const month = (day.getMonth() + 1 + "").addzero();
-      const dt = (day.getDate() + "").addzero();
-      res[[year, month, dt].join("")] = true;
-    });
-    EXTZLOG("search", Object.keys(res).length);
-    const distinct = {};
-    Object.keys(res).forEach((date) => {
-      if (distinct[date]) return;
-      distinct[date] = true;
-      EXTZLOG("search", date);
-      dates.push([date, ""]);
-    });
-    callback();
-  }
+  const res = {};
+  let els = doc.gcn("valid");
+  Array.from(els).forEach((el, i) => {
+    if (el.children.length == 0) return;
+    const time = el.attr("time") * 1;
+    const day = new Date(time);
+    const year = day.getFullYear();
+    const month = (day.getMonth() + 1 + "").addzero();
+    const dt = (day.getDate() + "").addzero();
+    res[[year, month, dt].join("")] = true;
+  });
+  doc.gcn("btn_calendar_next")[0].click();
+  els = doc.gcn("valid");
+  Array.from(els).forEach((el, i) => {
+    if (el.children.length == 0) return;
+    const time = el.attr("time") * 1;
+    const day = new Date(time);
+    const year = day.getFullYear();
+    const month = (day.getMonth() + 1 + "").addzero();
+    const dt = (day.getDate() + "").addzero();
+    res[[year, month, dt].join("")] = true;
+  });
+  Object.keys(res).forEach((date) => {
+    dates.push([date, ""]);
+  });
+  doc.gcn("btn_calendar_next")[0].click();
+  els = doc.gcn("valid");
+  Array.from(els).forEach((el, i) => {
+    if (el.children.length == 0) return;
+    const time = el.attr("time") * 1;
+    const day = new Date(time);
+    const year = day.getFullYear();
+    const month = (day.getMonth() + 1 + "").addzero();
+    const dt = (day.getDate() + "").addzero();
+    res[[year, month, dt].join("")] = true;
+  });
+  EXTZLOG("search", Object.keys(res).length);
+  const distinct = {};
+  Object.keys(res).forEach((date) => {
+    if (distinct[date]) return;
+    distinct[date] = true;
+    EXTZLOG("search", date);
+    dates.push([date, ""]);
+  });
+  callback();
 }
 
 /* <============line_div==========> */
