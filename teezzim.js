@@ -596,7 +596,7 @@ function procPost(request, response, data) {
       }
       objResp = {
         type: "okay",
-        data: row,
+        data: rows,
       };
       response.write(JSON.stringify(objResp));
       response.end();
@@ -614,7 +614,7 @@ function procPost(request, response, data) {
       }
       objResp = {
         type: "okay",
-        data: row,
+        data: rows,
       };
       response.write(JSON.stringify(objResp));
       response.end();
@@ -632,7 +632,7 @@ function procPost(request, response, data) {
       }
       objResp = {
         type: "okay",
-        data: row,
+        data: rows,
       };
       response.write(JSON.stringify(objResp));
       response.end();
