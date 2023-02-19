@@ -39,6 +39,7 @@ function mneCallDetail(arrDate) {
     Array.from(els).forEach((el) => {
       let [date, , course, fee, time] = el.attr(attr).inparen();
 
+      date = date.ct(1);
       course = dictCourse[course];
       const fee_normal = fee * 1;
       const fee_discount = fee * 1;
