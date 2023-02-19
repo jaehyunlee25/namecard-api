@@ -649,13 +649,13 @@ function procPost(request, response, data) {
         return;
       }
       "sql/getGolfClubRaw.sql".gf().query((err, rows, fields) => {
-        golfClubs = {};
+        const clubs = {};
         rows.forEach((row) => {
-          golfClubs[row.id] = row;
+          clubs[row.id] = row;
         });
         objResp = {
           type: "okay",
-          data: golfClubs,
+          data: clubs,
         };
         response.write(JSON.stringify(objResp));
         response.end();
