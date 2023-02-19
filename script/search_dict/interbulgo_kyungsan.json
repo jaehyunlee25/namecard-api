@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 [
     [
         "login_url",
@@ -11,6 +10,3 @@
         "funcReserve"
     ]
 ]
-=======
-[["login_url","https://www.interburgocc.com/mobile/login.asp","funcLogin"],["search_url","https://www.interburgocc.com/mobile/index.asp","funcReserve"]]
->>>>>>> dev
