@@ -1,1 +1,12 @@
-[["login_url","http://www.dongpusancc.co.kr/_mobile/login/login.asp","funcLogin"],["search_url",null,"funcReserve"]]
+[
+    [
+        "login_url",
+        "http://www.dongpusancc.co.kr/_mobile/login/login.asp",
+        "funcLogin"
+    ],
+    [
+        "search_url",
+        "http://www.dongpusancc.co.kr/_mobile/golfRes/real_calendar.asp",
+        "funcReserve"
+    ]
+]
