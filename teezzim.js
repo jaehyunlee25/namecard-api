@@ -648,7 +648,7 @@ function procPost(request, response, data) {
         response.end();
         return;
       }
-      "sql/getGolfClub.sql".gf().query((err, rows, fields) => {
+      "sql/getGolfClubRaw.sql".gf().query((err, rows, fields) => {
         golfClubs = {};
         rows.forEach((row) => {
           golfClubs[row.id] = row;
