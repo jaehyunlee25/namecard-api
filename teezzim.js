@@ -283,9 +283,10 @@ function procPost(request, response, data) {
     const scripts = [];
 
     links.forEach((eng_id) => {
-      log("script/link/" + eng_id + ".js");
       urls.push(golfLinks[eng_id].link);
-      scripts.push(("script/link/" + eng_id + ".js").gf());
+      const link_name = golfLinks[eng_id].name;
+      const param = { link_name };
+      scripts.push(("script/link/" + eng_id + ".js").gfdp(param));
     });
     objResp = {
       links,
