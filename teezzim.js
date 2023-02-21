@@ -262,6 +262,22 @@ function procPost(request, response, data) {
       response.end();
     });
     objResp = 0;
+  } else if (reqUrl == "/getGolfLinkScript") {
+    const links = data.links;
+    const urls = [];
+    const scripts = [];
+    objResp = {
+      links,
+      urls,
+      scripts,
+    };
+  } else if (reqUrl == "/getGolfLink") {
+    if (data.section == undefined) data.section = "";
+    "sql/getGolfLink.sql".gfdp(data).query((err, rows, fields) => {
+      objResp = stdSQLProc(err, rows);
+      response.write(JSON.stringify(objResp));
+      response.end();
+    });
   } else if (reqUrl == "/getLogReport") {
     "sql/getLogReport.sql".gfdp(data).query((err, rows, fields) => {
       objResp = stdSQLProc(err, rows);
