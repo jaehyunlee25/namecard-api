@@ -85,6 +85,7 @@ let golfClubGroups = {};
 let groupClubs = {};
 let LINE_DIVISION = "\n/* <============line_div==========> */\n";
 let ENV = ".env".gfjp();
+let golfLinks = {};
 
 "sql/getGolfClub.sql".gf().query(getGolfClub);
 "sql/getGolfCourse.sql".gf().query(getGolfCourse);
@@ -97,6 +98,18 @@ let ENV = ".env".gfjp();
 "sql/proc_login.sql".gf().query(getProcLogins);
 "sql/getGolfClubGroup.sql".gf().query(getGolfClubGroup);
 
+DATACOLLECT();
+setInterval(DATACOLLECT, 1000 * 60);
+
+function DATACOLLECT() {
+  log("DATACOLLECT");
+  "sql/getGolfLink.sql".gfdp({ section: "" }).query(getGolfLink);
+}
+function getGolfLink(err, rows, fields) {
+  rows.forEach((row) => {
+    golfLinks[row.eng_id] = row;
+  });
+}
 function getGolfClubGroup(err, rows, fields) {
   rows.forEach((row) => {
     groupClubs[row.golf_club_id] = row.name;
@@ -202,8 +215,10 @@ const server = http
           let data;
           data = body.join("");
           try {
+            log(data);
             data = JSON.parse(data);
           } catch (e) {
+            console.log(e);
             console.log(data);
             return;
           }
@@ -266,6 +281,12 @@ function procPost(request, response, data) {
     const links = data.links;
     const urls = [];
     const scripts = [];
+
+    links.forEach((eng_id) => {
+      log("script/link/" + eng_id + ".js");
+      urls.push(golfLinks[eng_id].link);
+      scripts.push(("script/link/" + eng_id + ".js").gf());
+    });
     objResp = {
       links,
       urls,
