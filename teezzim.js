@@ -278,15 +278,18 @@ function procPost(request, response, data) {
     });
     objResp = 0;
   } else if (reqUrl == "/getGolfLinkScript") {
+    const commonScript = "script/link/common.js".gfdp(ENV);
     const links = data.links;
     const urls = [];
     const scripts = [];
 
     links.forEach((eng_id) => {
-      urls.push(golfLinks[eng_id].link);
       const link_name = golfLinks[eng_id].name;
-      const param = { link_name };
-      scripts.push(("script/link/" + eng_id + ".js").gfdp(param));
+      const link = golfLinks[eng_id].link;
+      const param = { link, link_name, commonScript };
+      const file = "script/link/" + eng_id + ".js";
+      urls.push(link);
+      scripts.push(file.gfdp(param));
     });
     objResp = {
       links,
