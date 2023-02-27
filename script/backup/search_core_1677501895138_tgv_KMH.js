@@ -1,60 +1,57 @@
 function mneCall(date, callback) {
-  setTimeout(exec, 1500);
-  function exec() {
-    const compSign = "J54";
-    const param = {
-      companyCd: "",
-      clickTdId: "",
-      clickTdClass: "",
-      workMonth: date,
-      workDate: date + "01",
-      bookgDate: "",
-      bookgTime: "",
-      bookgCourse: "",
-      searchTime: "",
-      selfTYn: "",
-      temp001: "",
-      bookgComment: "",
-      temp007: "",
-      certSeq: "",
-      selectTime: "",
-      payGubun: "",
-      payAmt: "",
-      eventYn: "",
-      eventGubun: "",
-      cponYn: "",
-      eventYn: "",
-      tabSessionId: "",
-      joinYn: "",
-      flagCd: "",
-      cartAvlYn: "",
-      timeOpenYn: "N",
-      companyOpenYn: "N",
-      selCompany: compSign,
-      delegYn: "",
-      agencyReservationYn: "",
-      selectMember: selectMember.value,
-      selectCompany: compSign,
-      agencyBookgName: "",
-      agencyHp1: "010",
-      agencyHp2: "",
-      agencyHp3: "",
-      certNoChk: "",
-    };
-    post("/reservation/ajax/golfCalendar", param, {}, (data) => {
-      const ifr = doc.clm("div");
-      ifr.innerHTML = data;
+  const compSign = "J55";
+  const param = {
+    companyCd: "",
+    clickTdId: "",
+    clickTdClass: "",
+    workMonth: date,
+    workDate: date + "01",
+    bookgDate: "",
+    bookgTime: "",
+    bookgCourse: "",
+    searchTime: "",
+    selfTYn: "",
+    temp001: "",
+    bookgComment: "",
+    temp007: "",
+    certSeq: "",
+    selectTime: "",
+    payGubun: "",
+    payAmt: "",
+    eventYn: "",
+    eventGubun: "",
+    cponYn: "",
+    eventYn: "",
+    tabSessionId: "",
+    joinYn: "",
+    flagCd: "",
+    cartAvlYn: "",
+    timeOpenYn: "N",
+    companyOpenYn: "N",
+    selCompany: compSign,
+    delegYn: "",
+    agencyReservationYn: "",
+    selectMember: selectMember.value,
+    selectCompany: compSign,
+    agencyBookgName: "",
+    agencyHp1: "010",
+    agencyHp2: "",
+    agencyHp3: "",
+    certNoChk: "",
+  };
+  post("/reservation/ajax/golfCalendar", param, {}, (data) => {
+    const ifr = doc.clm("div");
+    ifr.innerHTML = data;
 
-      const attr = "onclick";
-      const els = ifr.gba(attr, "clickCal(", true);
-      Array.from(els).forEach((el) => {
-        const [sign, gb, fulldate, opt] = el.attr(attr).split(";")[0].inparen();
-        if (opt != "OPEN") return;
-        dates.push([fulldate, sign, gb]);
-      });
-      callback();
+    const attr = "onclick";
+    const els = ifr.gba(attr, "clickCal(", true);
+    Array.from(els).forEach((el) => {
+      const [sign, gb, fulldate, opt] = el.attr(attr).split(";")[0].inparen();
+      if (opt != "OPEN") return;
+      dates.push([fulldate, sign, gb]);
     });
-  }
+    callback();
+  });
 }
 
 /* <============line_div==========> */
@@ -63,7 +60,7 @@ function mneCallDetail(arrDate) {
   const [date, sign, gb] = arrDate;
   const addr = "/reservation/ajax/golfTimeList";
   const method = "post";
-  const compSign = "J54";
+  const compSign = "J55";
   const param = {
     companyCd: "",
     clickTdId: "A" + date,
@@ -104,8 +101,7 @@ function mneCallDetail(arrDate) {
     certNoChk: "",
   };
   const dictCourse = {
-    1: "동",
-    2: "서",
+    2: "단일",
   };
 
   fCall[method](addr, param, {}, (data) => {
@@ -119,7 +115,7 @@ function mneCallDetail(arrDate) {
         .attr(attr)
         .replace(/\s/g, "")
         .inparen(true);
-      course = dictCourse[course];
+      course = dictCourse[2];
       hole = hole.ct(1);
       fee_normal = fee_normal.rm(",") * 1;
       fee_discount = fee_discount.rm(",") * 1;

@@ -1,7 +1,7 @@
 function mneCall(date, callback) {
-  setTimeout(exec, 1500);
+  setTimeout(exec, 2000);
   function exec() {
-    const compSign = "J54";
+    const compSign = "J55";
     const param = {
       companyCd: "",
       clickTdId: "",
@@ -63,7 +63,7 @@ function mneCallDetail(arrDate) {
   const [date, sign, gb] = arrDate;
   const addr = "/reservation/ajax/golfTimeList";
   const method = "post";
-  const compSign = "J54";
+  const compSign = "J55";
   const param = {
     companyCd: "",
     clickTdId: "A" + date,
@@ -104,8 +104,7 @@ function mneCallDetail(arrDate) {
     certNoChk: "",
   };
   const dictCourse = {
-    1: "동",
-    2: "서",
+    2: "단일",
   };
 
   fCall[method](addr, param, {}, (data) => {
@@ -119,7 +118,7 @@ function mneCallDetail(arrDate) {
         .attr(attr)
         .replace(/\s/g, "")
         .inparen(true);
-      course = dictCourse[course];
+      course = dictCourse[2];
       hole = hole.ct(1);
       fee_normal = fee_normal.rm(",") * 1;
       fee_discount = fee_discount.rm(",") * 1;

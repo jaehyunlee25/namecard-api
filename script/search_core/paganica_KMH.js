@@ -1,57 +1,60 @@
 function mneCall(date, callback) {
-  const compSign = "J56";
-  const param = {
-    companyCd: "",
-    clickTdId: "",
-    clickTdClass: "",
-    workMonth: date,
-    workDate: date + "01",
-    bookgDate: "",
-    bookgTime: "",
-    bookgCourse: "",
-    searchTime: "",
-    selfTYn: "",
-    temp001: "",
-    bookgComment: "",
-    temp007: "",
-    certSeq: "",
-    selectTime: "",
-    payGubun: "",
-    payAmt: "",
-    eventYn: "",
-    eventGubun: "",
-    cponYn: "",
-    eventYn: "",
-    tabSessionId: "",
-    joinYn: "",
-    flagCd: "",
-    cartAvlYn: "",
-    timeOpenYn: "N",
-    companyOpenYn: "N",
-    selCompany: compSign,
-    delegYn: "",
-    agencyReservationYn: "",
-    selectMember: selectMember.value,
-    selectCompany: compSign,
-    agencyBookgName: "",
-    agencyHp1: "010",
-    agencyHp2: "",
-    agencyHp3: "",
-    certNoChk: "",
-  };
-  post("/reservation/ajax/golfCalendar", param, {}, (data) => {
-    const ifr = doc.clm("div");
-    ifr.innerHTML = data;
+  setTimeout(exec, 1500);
+  function exec() {
+    const compSign = "J56";
+    const param = {
+      companyCd: "",
+      clickTdId: "",
+      clickTdClass: "",
+      workMonth: date,
+      workDate: date + "01",
+      bookgDate: "",
+      bookgTime: "",
+      bookgCourse: "",
+      searchTime: "",
+      selfTYn: "",
+      temp001: "",
+      bookgComment: "",
+      temp007: "",
+      certSeq: "",
+      selectTime: "",
+      payGubun: "",
+      payAmt: "",
+      eventYn: "",
+      eventGubun: "",
+      cponYn: "",
+      eventYn: "",
+      tabSessionId: "",
+      joinYn: "",
+      flagCd: "",
+      cartAvlYn: "",
+      timeOpenYn: "N",
+      companyOpenYn: "N",
+      selCompany: compSign,
+      delegYn: "",
+      agencyReservationYn: "",
+      selectMember: selectMember.value,
+      selectCompany: compSign,
+      agencyBookgName: "",
+      agencyHp1: "010",
+      agencyHp2: "",
+      agencyHp3: "",
+      certNoChk: "",
+    };
+    post("/reservation/ajax/golfCalendar", param, {}, (data) => {
+      const ifr = doc.clm("div");
+      ifr.innerHTML = data;
 
-    const attr = "onclick";
-    const els = ifr.gba(attr, "clickCal(", true);
-    Array.from(els).forEach((el) => {
-      const [sign, gb, fulldate, opt] = el.attr(attr).split(";")[0].inparen();
-      if (opt != "OPEN") return;
-      dates.push([fulldate, sign, gb]);
+      const attr = "onclick";
+      const els = ifr.gba(attr, "clickCal(", true);
+      Array.from(els).forEach((el) => {
+        const [sign, gb, fulldate, opt] = el.attr(attr).split(";")[0].inparen();
+        if (opt != "OPEN") return;
+        dates.push([fulldate, sign, gb]);
+      });
+      callback();
     });
-    callback();
-  });
+  }
 }
 
 /* <============line_div==========> */
