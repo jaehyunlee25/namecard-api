@@ -9,7 +9,7 @@ function mneCall(date, callback) {
       dates.push([date.rm("-"), sign, str]);
     });
     callback();
-  }, 2000);
+  }, 1500);
 }
 
 /* <============line_div==========> */
