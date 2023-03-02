@@ -6,43 +6,18 @@ String.prototype.ct = function (num) {
   return this.substring(0, this.length - num);
 };
 
-const path = "./script/reserve_core/search/";
+const path = "./script/search_core/";
 const files = fs.readdirSync(path);
-let cnt = 0;
-files.forEach((file, i) => {
-  if (file.indexOf(".js") != -1) return;
-  if (file.indexOf(".") != -1) return;
-  cnt++;
-  const addr = path + file + "/funcs.json";
+const addrs = [];
+files.forEach((name) => {
+  const addr = path + name;
   const con = fs.readFileSync(addr, "utf-8");
-  const funcs = JSON.parse(con);
+  if (con.indexOf("setInterval") != -1) addrs.push(addr);
+});
 
-  const funcName = funcs.funcSearch ? "funcSearch" : "funcReserve";
-  const lines = funcs[funcName].split("\r\n");
-
-  let flg = false;
-  let chk = false;
-  const before = [];
-  const param = [];
-  const after = [];
-  lines.forEach((ln) => {
-    if (ln.indexOf("}):") != -1) {
-      log(cnt, file, funcName);
-      flg = true;
-      chk = true;
-    }
-    if (flg) {
-      param.push(ln);
-    } else {
-      if (chk) after.push(ln);
-      else before.push(ln);
-    }
-
-    if (flg && ln.indexOf("}):") != -1) flg = false;
-  });
-  param[0] = param[0].replace(":", ";");
-  funcs[funcName] = [...before, ...param, ...after].join("\r\n");
-  log(funcs[funcName]);
-
-  fs.writeFileSync(addr, JSON.stringify(funcs), "utf-8");
+addrs.forEach((addr, i) => {
+  log(addr);
+  if (i > 0) return;
+  const con = fs.readFileSync(addr, "utf-8");
+  log(con);
 });
