@@ -1,7 +1,7 @@
 function mneCall(date, callback) {
   EXTZLOG("search", "mneCall");
   let count = 0;
-  const mneT = setInterval(funcInterval, 2000);
+  const mneT = setInterval(funcInterval, 500);
   const intvEl = doc.gcn("month1").length == 2;
   const logPrm = { LOGID, step: "mneCall_interval" };
   function funcInterval() {
@@ -70,12 +70,13 @@ function mneCall(date, callback) {
 /* <============line_div==========> */
 const distinct = {};
 function mneCallDetail(arrDate) {
+  EXTZLOG("mneCall", "start");
   const fCall = { post, get };
   const [date, sign] = arrDate;
   const addr = "/global/reservation/ajax/ajax_real_timeinfo_list";
   const method = "post";
   const param = {
-    companyCd: "J07",
+    companyCd: "J08",
     bookgDate: date,
     bookgCourse: "0",
     courseId: "0",
@@ -118,9 +119,9 @@ function mneCallDetail(arrDate) {
     selfCyn: "",
   };
   const dictCourse = {
-    1: "Dream",
-    2: "Vision",
-    3: "Challenge",
+    1: "오동도",
+    2: "돌산도",
+    3: "금오도",
   };
 
   fCall[method](addr, param, {}, (data) => {
@@ -162,3 +163,4 @@ function mneCallDetail(arrDate) {
 
 /* <============line_div==========> */
 mneCall(thisdate, procDate);
+

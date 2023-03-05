@@ -1,6 +1,6 @@
 function mneCall(date, callback) {
   let count = 0;
-  const mneT = setInterval(funcInterval, 2000);
+  const mneT = setInterval(funcInterval, 500);
   const intvEl = window["golf_calendar"];
   const logPrm = { LOGID, step: "mneCall_interval" };
   function funcInterval() {
@@ -40,7 +40,7 @@ function mneCall(date, callback) {
 function mneCallDetail(arrDate) {
   const [date] = arrDate;
   const param = {
-    lgubun: "160",
+    lgubun: "109",
     date: date,
     changeDate: "",
     changeSeq: "",

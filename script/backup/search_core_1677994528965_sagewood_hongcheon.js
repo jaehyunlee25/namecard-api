@@ -1,7 +1,7 @@
 function mneCall(date, callback) {
   EXTZLOG("search", "mneCall");
   let count = 0;
-  const mneT = setInterval(funcInterval, 2000);
+  const mneT = setInterval(funcInterval, 500);
   const intvEl = doc.gcn("month1").length == 2;
   const logPrm = { LOGID, step: "mneCall_interval" };
   function funcInterval() {
