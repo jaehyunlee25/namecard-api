@@ -39,8 +39,8 @@ function mneCallDetail(arrDate) {
       if (i === 0) return;
 
       const course = tr.attr("data-coursekor");
-      const time = tr.children[0].innerHTML;
-      const fee_normal = tr.children[1].innerHTML.ct(1).replace(/\,/g, "") * 1;
+      const time = tr.children[1].innerHTML;
+      const fee_normal = tr.children[2].innerHTML.ct(1).replace(/\,/g, "") * 1;
       const fee_discount =
         tr.children[2].innerHTML.ct(1).replace(/\,/g, "") * 1;
       const slot = time.gh(2);
