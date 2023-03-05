@@ -15,6 +15,7 @@ const logParam = {
 };
 const INTV_TIME = 1000;
 const INTV_COUNT = 20;
+let intvEl = doc.body;
 let ac = false;
 const acParam = {
   LOGID,

@@ -42,7 +42,7 @@ String.prototype.gfjp = function () {
   return this.toString().gf().jp();
 };
 String.prototype.gfdp = function (param) {
-  log(this.toString().gf().dp(param));
+  // log(this.toString().gf().dp(param));
   return this.toString().gf().dp(param);
 };
 String.prototype.query = function (callback) {
@@ -1314,7 +1314,7 @@ function procPost(request, response, data) {
     };
   }
   if (objResp) {
-    console.log("obj", objResp);
+    // console.log("obj", objResp);
     response.write(JSON.stringify(objResp));
     response.end();
   }
@@ -2167,6 +2167,7 @@ function getSearchScriptAdmin(engName, command) {
 
   // step 2: 공통 변수 및 함수
   const path = "template/search/";
+  const mneCallCommon = (path + "mneCallCommon.js").gf();
   const a = (path + "search_common.js").gf();
   const b = (path + "search_common2.js").gf();
   const c = (path + "search_function.js").gf();
@@ -2174,7 +2175,8 @@ function getSearchScriptAdmin(engName, command) {
     .gf()
     .split("/* <============line_div==========> */");
   const core = cores.pop();
-  const d = cores.join("");
+  const d = cores.join("").dp({ mneCallCommon });
+
   // LOGOUT
   const loPath = "script/search_logout/" + engName + ".json";
   let { LOGOUT } = loPath.gfjp();

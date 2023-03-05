@@ -12,12 +12,12 @@ const addrs = [];
 files.forEach((name) => {
   const addr = path + name;
   const con = fs.readFileSync(addr, "utf-8");
-  if (con.indexOf("setInterval") != -1) addrs.push(addr);
+  if (con.indexOf("funcInterval, INTV_TIME") == -1) addrs.push(addr);
 });
 
 addrs.forEach((addr, i) => {
   log(addr);
-  if (i > 0) return;
+  /* if (i > 0) return;
   const con = fs.readFileSync(addr, "utf-8");
-  log(con);
+  log(con); */
 });

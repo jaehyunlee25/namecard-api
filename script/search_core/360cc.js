@@ -1,13 +1,17 @@
 function mneCall(strdate, callback) {
-  const param = {};
-  const els = document.getElementsByClassName("cal_live");
-  Array.from(els).forEach((el) => {
-    const href = el.getAttribute("href");
-    if (href === "#") return;
-    const date = strdate + el.innerText.addzero();
-    dates.push([date, ""]);
-  });
-  callback();
+  intvEl = doc.gcn("cm_calender_tbl").length > 0;
+  ${mneCallCommon}
+  function exec() {
+    const param = {};
+    const els = doc.gcn("cal_live");
+    Array.from(els).forEach((el) => {
+      const href = el.attr("href");
+      if (href === "#") return;
+      const date = strdate + el.str().addzero();
+      dates.push([date, ""]);
+    });
+    callback();
+  }
 }
 
 /* <============line_div==========> */
@@ -29,37 +33,40 @@ function mneCallDetail(arrDate) {
     OUT: "Out",
   };
 
-  post("/mobile/reservation/list/ajax_real_timeinfo_list.do", param, {}, (data) => {
-    const ifr = document.createElement("div");
-    ifr.innerHTML = data;
+  post(
+    "/mobile/reservation/list/ajax_real_timeinfo_list.do",
+    param,
+    {},
+    (data) => {
+      const ifr = doc.clm("div");
+      ifr.innerHTML = data;
 
-    const tbl = ifr
-      .getElementsByClassName("cm_time_list_tbl")[0]
-      .getElementsByTagName("tbody")[0];
-    const els = tbl.getElementsByTagName("tr");
+      const tbl = ifr.gcn("cm_time_list_tbl")[0].gtn("tbody")[0];
+      const els = tbl.gtn("tr");
 
-    const obTeams = {};
-    Array.from(els).forEach((el, i) => {
-      /*if (i === 0) return;*/
-      const course = courseDict[el.children[1].innerText];
-      const time = el.children[2].innerText;
-      const fee_discount = el.children[4].innerText.split(",").join("") * 1;
-      const fee_normal = el.children[4].innerText.split(",").join("") * 1;
+      const obTeams = {};
+      Array.from(els).forEach((el, i) => {
+        /*if (i === 0) return;*/
+        const course = courseDict[el.children[1].str()];
+        const time = el.children[2].str();
+        const fee_discount = el.children[4].str().split(",").join("") * 1;
+        const fee_normal = el.children[4].str().split(",").join("") * 1;
 
-      golf_schedule.push({
-        golf_club_id: clubId,
-        golf_course_id: course,
-        date,
-        time,
-        in_out: "",
-        persons: "",
-        fee_normal,
-        fee_discount,
-        others: "9홀",
+        golf_schedule.push({
+          golf_club_id: clubId,
+          golf_course_id: course,
+          date,
+          time,
+          in_out: "",
+          persons: "",
+          fee_normal,
+          fee_discount,
+          others: "9홀",
+        });
       });
-    });
-    procDate();
-  });
+      procDate();
+    }
+  );
 }
 
 /* <============line_div==========> */
@@ -67,7 +74,5 @@ function mneCallDetail(arrDate) {
 /* <============line_div==========> */
 mneCall(thisdate, () => {
   doc.gcn("right")[1].click();
-  setTimeout(() => {
-    mneCall(nextdate, procDate);
-  }, 1000);
+  mneCall(nextdate, procDate);
 });
