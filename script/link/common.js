@@ -13,6 +13,8 @@ const logParam = {
   message: "",
   parameter: JSON.stringify({ LOGID }),
 };
+const INTV_TIME = 1000;
+const INTV_COUNT = 20;
 let ac = false;
 const acParam = {
   LOGID,

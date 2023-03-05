@@ -1,14 +1,14 @@
 function mneCall(date, callback) {
   EXTZLOG("search", "mneCall");
   let count = 0;
-  const mneT = setInterval(funcInterval, 2000);
+  const mneT = setInterval(funcInterval, INTV_TIME);
   const intvEl = doc.gcn("month1").length == 2;
   const logPrm = { LOGID, step: "mneCall_interval" };
   function funcInterval() {
     if (!intvEl) {
       EXTZLOG("search", ["interval count", count].join(", "), logPrm);
       count++;
-      if (count > 10) {
+      if (count > INTV_COUNT) {
         EXTZLOG("search", ["interval count out", count].join(", "), logPrm);
         clearInterval(mneT);
         callback();
