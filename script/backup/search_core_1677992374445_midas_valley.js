@@ -1,38 +1,30 @@
 function mneCall(date, callback) {
   let count = 0;
-  const mneT = setInterval(funcInterval, 500);
-  const intvEl = window["golf_calendar"];
-  const logPrm = { LOGID, step: "mneCall_interval" };
-  function funcInterval() {
-    if (!intvEl) {
-      EXTZLOG("search", ["interval count", count].join(", "), logPrm);
+  const mneT = setInterval(() => {
+    if (!window["golf_calendar"]) {
       count++;
       if (count > 10) {
-        EXTZLOG("search", ["interval count out", count].join(", "), logPrm);
         clearInterval(mneT);
         callback();
       }
       return;
     }
     clearInterval(mneT);
-    exec();
-  }
-  function exec() {
-    const els = doc.gtn("td");
+    const atds = doc.gtn("td");
     const tds = [];
-    Array.from(els).forEach((el) => {
-      const tee = el.attr("data-cnt");
+    Array.from(atds).forEach((td) => {
+      const tee = td.getAttribute("data-cnt");
       if (!tee || tee == 0) return;
-      tds.push(el);
+      tds.push(td);
     });
 
     tds.forEach((td) => {
-      const strDate = td.attr("data-day");
+      const strDate = td.getAttribute("data-day");
       dates.push([strDate, 0]);
     });
 
     callback();
-  }
+  }, 500);
 }
 
 /* <============line_div==========> */
