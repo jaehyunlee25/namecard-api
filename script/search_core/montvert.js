@@ -1,11 +1,14 @@
 function mneCall(date, callback) {
-  const as = Array.from(document.getElementsByClassName("cal_live"));
-  as.forEach((a) => {
-    const obj = procStr(a.getAttribute("onclick"));
-    dates.push([obj.date, obj.param]);
-  });
+  ${mneCallCommon}
+  function exec() {
+    const as = doc.gcn("cal_live");
+    as.forEach((a) => {
+      const obj = procStr(a.attr("onclick"));
+      dates.push([obj.date, obj.param]);
+    });
 
-  callback();
+    callback();
+  }
 }
 
 /* <============line_div==========> */
@@ -71,7 +74,5 @@ function procStr(str) {
 /* <============line_div==========> */
 mneCall(thisdate, () => {
   workMonthNext();
-  setTimeout(() => {
-    mneCall(nextdate, procDate);
-  }, 3000);
+  mneCall(nextdate, procDate);
 });

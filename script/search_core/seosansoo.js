@@ -1,23 +1,28 @@
 function mneCall(date, callback) {
-  const dt = (date + "01").datify();
-  const param = {};
-  Array.from(aspnetForm.elements).forEach((el) => (param[el.name] = el.value));
-  param["__ASYNCPOST"] = "true";
-  param["ctl00$ContentPlaceHolder1$htbArgs"] = "NEXT|" + dt + "|";
-  param["ctl00$ContentPlaceHolder1$ScptManager"] =
-    "ctl00$ContentPlaceHolder1$ScptManager|ctl00$ContentPlaceHolder1$btnUp";
-  param["__EVENTTARGET"] = "ctl00$ContentPlaceHolder1$btnUp";
-  post("/Mobile/Reservation/Reservation.aspx", param, {}, (data) => {
-    const ifr = doc.clm("div");
-    ifr.innerHTML = data;
-    const els = ifr.gba("href", "javascript:Update", true);
-    Array.from(els).forEach((el) => {
-      const [str] = el.attr("href").inparen();
-      const [,date,,,sign] = str.split("|");
-      dates.push([date.rm("-"), sign]);
+  ${mneCallCommon}
+  function exec() {
+    const dt = (date + "01").datify();
+    const param = {};
+    Array.from(aspnetForm.elements).forEach(
+      (el) => (param[el.name] = el.value)
+    );
+    param["__ASYNCPOST"] = "true";
+    param["ctl00$ContentPlaceHolder1$htbArgs"] = "NEXT|" + dt + "|";
+    param["ctl00$ContentPlaceHolder1$ScptManager"] =
+      "ctl00$ContentPlaceHolder1$ScptManager|ctl00$ContentPlaceHolder1$btnUp";
+    param["__EVENTTARGET"] = "ctl00$ContentPlaceHolder1$btnUp";
+    post("/Mobile/Reservation/Reservation.aspx", param, {}, (data) => {
+      const ifr = doc.clm("div");
+      ifr.innerHTML = data;
+      const els = ifr.gba("href", "javascript:Update", true);
+      Array.from(els).forEach((el) => {
+        const [str] = el.attr("href").inparen();
+        const [, date, , , sign] = str.split("|");
+        dates.push([date.rm("-"), sign]);
+      });
+      callback();
     });
-    callback();
-  });
+  }
 }
 
 /* <============line_div==========> */
@@ -73,7 +78,5 @@ function mneCallDetail(arrDate) {
 /* <============line_div==========> */
 mneCall(thisdate, () => {
   doc.gcn("arrowNe")[0].click();
-  setTimeout(() => {
-    mneCall(nextdate, procDate);
-  }, 500);
+  mneCall(nextdate, procDate);
 });

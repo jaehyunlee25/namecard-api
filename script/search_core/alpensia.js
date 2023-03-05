@@ -1,11 +1,14 @@
 function mneCall(date, callback) {
-  const as = Array.from(document.getElementsByClassName("cal_lots"));
-  as.forEach((a) => {
-    const num = a.innerText.addzero();
-    const fulldate = date + num;
-    dates.push([fulldate, 0]);
-  });
-  callback();
+  ${mneCallCommon}
+  function exec() {
+    const as = Array.from(document.getElementsByClassName("cal_lots"));
+    as.forEach((a) => {
+      const num = a.innerText.addzero();
+      const fulldate = date + num;
+      dates.push([fulldate, 0]);
+    });
+    callback();
+  }
 }
 
 /* <============line_div==========> */

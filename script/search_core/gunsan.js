@@ -1,6 +1,6 @@
 function mneCall(date, callback) {
-  EXTZLOG("search", "mneCall");
-  setTimeout(() => {
+  ${mneCallCommon}
+  function exec() {
     const els = doc.gba("href", "javascript:Update('LIST", true);
     Array.from(els).forEach((el) => {
       if (el.nm(1).className.indexOf("possible") == -1) return;
@@ -9,7 +9,7 @@ function mneCall(date, callback) {
       dates.push([date.rm("-"), sign, str]);
     });
     callback();
-  }, 2000);
+  }
 }
 
 /* <============line_div==========> */
@@ -71,5 +71,5 @@ function mneCallDetail(arrDate) {
 /* <============line_div==========> */
 mneCall(thisdate, () => {
   doc.gcn("arw-next")[0].click();
-  mneCall(nextdate, procDate);  
+  mneCall(nextdate, procDate);
 });

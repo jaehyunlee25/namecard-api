@@ -1,23 +1,25 @@
 function mneCall(date, callback) {
-  const param = {
-    day: (date + "01").datify("/"),
-    type: "today",
-  };
-  log(param);
-  post("Booking/AjaxCalendar", param, {}, (data) => {
-    const ifr = document.createElement("div");
-    ifr.innerHTML = data;
-
-    const els = ifr.getElementsByTagName("td");
-    Array.from(els).forEach((el) => {
-      if (el.children[0].tagName !== "A") return;
-      if (el.children[0].className !== "reserved") return;
-
-      const [realdate] = el.attr("onclick").inparen();
-      dates.push([realdate, 0]);
-    });
-    callback();
-  });
+  ${mneCallCommon}
+  function exec() {
+    const param = {
+      day: (date + "01").datify("/"),
+      type: "today",
+    };
+    post("Booking/AjaxCalendar", param, {}, (data) => {
+      const ifr = document.createElement("div");
+      ifr.innerHTML = data;
+  
+      const els = ifr.getElementsByTagName("td");
+      Array.from(els).forEach((el) => {
+        if (el.children[0].tagName !== "A") return;
+        if (el.children[0].className !== "reserved") return;
+  
+        const [realdate] = el.attr("onclick").inparen();
+        dates.push([realdate, 0]);
+      });
+      callback();
+    });    
+  }
 }
 
 /* <============line_div==========> */

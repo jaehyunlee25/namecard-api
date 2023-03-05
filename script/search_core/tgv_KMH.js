@@ -1,5 +1,5 @@
 function mneCall(date, callback) {
-  setTimeout(exec, 1500);
+  ${mneCallCommon}
   function exec() {
     const compSign = "J55";
     const param = {

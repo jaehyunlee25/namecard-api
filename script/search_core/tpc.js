@@ -1,10 +1,14 @@
 function mneCall(date, callback) {
-  const els = doc.body.gba("onclick", "show_index_timeTable", true);
-  Array.from(els).forEach((el) => {
-    const [date, sign] = el.attr("onclick").inparen();
-    dates.push([date.rm("-"), sign]);
-  });
-  callback();
+  ${mneCallCommon}
+  function exec() {
+    const attr = "onclick";
+    const els = doc.body.gba(attr, "show_index_timeTable", true);
+    Array.from(els).forEach((el) => {
+      const [date, sign] = el.attr(attr).inparen();
+      dates.push([date.rm("-"), sign]);
+    });
+    callback();
+  }
 }
 
 /* <============line_div==========> */
@@ -55,7 +59,4 @@ function mneCallDetail(arrDate) {
 /* <============line_div==========> */
 
 /* <============line_div==========> */
-setTimeout(() => {
 mneCall(thisdate, procDate);
-}, 500);
-

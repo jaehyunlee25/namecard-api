@@ -1,10 +1,13 @@
 function mneCall(date, callback) {
-  const els = doc.gcn("reserved");
-  Array.from(els).forEach((el) => {
-    const date = el.attr("data-day");
-    dates.push([date, ""]);
-  });
-  callback();
+  ${mneCallCommon}
+  function exec() {
+    const els = doc.gcn("reserved");
+    Array.from(els).forEach((el) => {
+      const date = el.attr("data-day");
+      dates.push([date, ""]);
+    });
+    callback();
+  }
 }
 
 /* <============line_div==========> */
@@ -55,8 +58,6 @@ function mneCallDetail(arrDate) {
 /* <============line_div==========> */
 mneCall(thisdate, () => {
   const dt = [thisdate.gh(4), thisdate.gt(2), "01"].join("/");
-  change_calendar(dt,'next');
-  setTimeout(() => {
-    mneCall(nextdate, procDate);
-  }, 1000);
+  change_calendar(dt, "next");
+  mneCall(nextdate, procDate);
 });

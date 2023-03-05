@@ -1,24 +1,27 @@
 function mneCall(date, callback) {
-  const param = {
-    searchBizCd: "30",
-    searchStrStartDate: date + "01",
-    searchStrEndDate: date + "31",
-    searchCustomerClsCd: "9020",
-    searchRsvnTypeCd: "IH",
-    searchJoinTypeCd: "R",
-    searchPkgFeeCd: "",
-    searchPkgId: "",
-  };
-  get("/reservation/searchDate.json", param, {}, (data) => {
-    const json = data.jp();
-    const els = json.list;
-    Array.from(els).forEach((el) => {
-      if (el.inetRsvnYn != "Y") return;
-      if (el.remainCnt == "0") return;
-      dates.push([el.playDate, ""]);
+  ${mneCallCommon}
+  function exec() {
+    const param = {
+      searchBizCd: "30",
+      searchStrStartDate: date + "01",
+      searchStrEndDate: date + "31",
+      searchCustomerClsCd: "9020",
+      searchRsvnTypeCd: "IH",
+      searchJoinTypeCd: "R",
+      searchPkgFeeCd: "",
+      searchPkgId: "",
+    };
+    get("/reservation/searchDate.json", param, {}, (data) => {
+      const json = data.jp();
+      const els = json.list;
+      Array.from(els).forEach((el) => {
+        if (el.inetRsvnYn != "Y") return;
+        if (el.remainCnt == "0") return;
+        dates.push([el.playDate, ""]);
+      });
+      callback();
     });
-    callback();
-  });
+  }
 }
 
 /* <============line_div==========> */

@@ -1,5 +1,6 @@
 function mneCall(date, callback) {
-  timer(1000, () => {
+  ${mneCallCommon}
+  function exec() {
     Array.from(mabari.children).forEach((el) => {
       const date = el.children[0].getAttribute("data-date");
       const sign = el.children[3].innerText;
@@ -7,8 +8,8 @@ function mneCall(date, callback) {
       dates.push([date, ""]);
     });
   
-    callback();
-  });
+    callback();    
+  }
 }
 
 /* <============line_div==========> */
@@ -77,6 +78,4 @@ function funcLogin() {
 }
 /* <============line_div==========> */
 
-setTimeout(() => {
-  mneCall(thisdate, procDate);
-}, 1000);
+mneCall(thisdate, procDate);

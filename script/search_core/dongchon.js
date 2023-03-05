@@ -1,22 +1,25 @@
 function mneCall(date, callback) {
-  const param = {
-    day: date.gh(4) + "/" + date.gt(2) + "/01",
-    type: "today",
-    change_day: "",
-  };
-  post("Booking/AjaxCalendar", param, {}, (data) => {
-    const ifr = document.createElement("div");
-    ifr.innerHTML = data;
-
-    const els = ifr.getElementsByTagName("td");
-    Array.from(els).forEach((el) => {
-      if (el.className !== "wait ") return;
-
-      const date = el.getAttribute("data-day");
-      dates.push([date, 0]);
+  ${mneCallCommon}
+  function exec() {
+    const param = {
+      day: date.gh(4) + "/" + date.gt(2) + "/01",
+      type: "today",
+      change_day: "",
+    };
+    post("Booking/AjaxCalendar", param, {}, (data) => {
+      const ifr = document.createElement("div");
+      ifr.innerHTML = data;
+  
+      const els = ifr.getElementsByTagName("td");
+      Array.from(els).forEach((el) => {
+        if (el.className !== "wait ") return;
+  
+        const date = el.getAttribute("data-day");
+        dates.push([date, 0]);
+      });
+      callback();
     });
-    callback();
-  });
+  }
 }
 
 /* <============line_div==========> */
@@ -67,7 +70,5 @@ function addColon(str) {
 
 mneCall(thisdate, () => {
   change_calendar(thisdate, "next");
-  setTimeout(() => {
-    mneCall(nextdate, procDate);
-  }, 3000);
+  mneCall(nextdate, procDate);
 });

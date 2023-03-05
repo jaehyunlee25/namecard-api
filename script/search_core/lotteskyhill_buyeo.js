@@ -1,28 +1,31 @@
 function mneCall(date, callback) {
-  const dt = date + "01";
-  const param = {
-    searchBizCd: "33",
-    searchStrStartDate: date + "01",
-    searchStrEndDate: date + "31",
-    searchRsvnTypeCd: "IH",
-  };
-  get("/reservation/searchDateByStatus.json", param, {}, (data) => {
-    const json = data.jp().data;
-    Object.keys(json).forEach((date) => {
-      let cnt = 0;
-      const val = json[date];
-      Object.keys(val).forEach((general) => {
-        const va = val[general];
-        Object.keys(va).forEach((num) => {
-          const ob = va[num];
-          cnt += ob.remainCnt * 1;
+  ${mneCallCommon}
+  function exec() {
+    const dt = date + "01";
+    const param = {
+      searchBizCd: "33",
+      searchStrStartDate: date + "01",
+      searchStrEndDate: date + "31",
+      searchRsvnTypeCd: "IH",
+    };
+    get("/reservation/searchDateByStatus.json", param, {}, (data) => {
+      const json = data.jp().data;
+      Object.keys(json).forEach((date) => {
+        let cnt = 0;
+        const val = json[date];
+        Object.keys(val).forEach((general) => {
+          const va = val[general];
+          Object.keys(va).forEach((num) => {
+            const ob = va[num];
+            cnt += ob.remainCnt * 1;
+          });
         });
+        if (cnt == 0) return;
+        dates.push([date, ""]);
       });
-      if (cnt == 0) return;
-      dates.push([date, ""]);
+      callback();
     });
-    callback();
-  });
+  }
 }
 
 /* <============line_div==========> */

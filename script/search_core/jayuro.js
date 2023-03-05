@@ -1,19 +1,22 @@
 function mneCall(date, callback) {
-  const tbls = Array.from(document.getElementsByClassName("calendar"));
-  const as = [];
-  tbls.forEach((tbl) => {
-    const tmp = Array.from(tbl.getElementsByTagName("a"));
-    tmp.forEach((a) => {
-      if (!a.getAttribute("href")) return;
-      as.push(a);
+  ${mneCallCommon}
+  function exec() {
+    const tbls = doc.gcn("calendar");
+    const as = [];
+    tbls.forEach((tbl) => {
+      const tmp = tbl.gtn("a");
+      tmp.forEach((a) => {
+        if (!a.attr("href")) return;
+        as.push(a);
+      });
     });
-  });
-  as.forEach((a) => {
-    const obj = procHref(a.getAttribute("href"));
-    dates.push([obj.date, obj.param]);
-  });
-
-  callback();
+    as.forEach((a) => {
+      const obj = procHref(a.attr("href"));
+      dates.push([obj.date, obj.param]);
+    });
+  
+    callback();
+  }
 }
 
 /* <============line_div==========> */
@@ -73,7 +76,5 @@ mneCall(thisdate, () => {
   Update(
     "CALENDAR|" + nextdate.gh(4) + "-" + nextdate.ch(4).gh(2) + "-" + "01|"
   );
-  setTimeout(() => {
-    mneCall(nextdate, procDate);
-  }, 3000);
+  mneCall(nextdate, procDate);
 });

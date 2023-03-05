@@ -1,10 +1,14 @@
 function mneCall(date, callback) {
-  const els = doc.body.gba("onclick", "javascript:checkReserveRule", true);
-  Array.from(els).forEach((el) => {
-    const [date] = el.attr("onclick").inparen();
-    dates.push([date, ""]);
-  });
-  callback();
+  ${mneCallCommon}
+  function exec() {
+    const attr = "onclick";
+    const els = doc.body.gba(attr, "javascript:checkReserveRule", true);
+    Array.from(els).forEach((el) => {
+      const [date] = el.attr(attr).inparen();
+      dates.push([date, ""]);
+    });
+    callback();
+  }
 }
 
 /* <============line_div==========> */
@@ -64,11 +68,7 @@ function mneCallDetail(arrDate) {
 
 /* <============line_div==========> */
 branchBtn4.click();
-setTimeout(() => {
-  mneCall(thisdate, () => {
-    nextMonthBtn.click();
-    setTimeout(() => {
-      mneCall(nextdate, procDate);
-    }, 500);
-  });
-}, 500);
+mneCall(thisdate, () => {
+  nextMonthBtn.click();
+  mneCall(nextdate, procDate);
+});

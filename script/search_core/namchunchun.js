@@ -1,29 +1,32 @@
 function mneCall(date, callback) {
-  post(
-    "/html/reservation/reservation_01_01.asp",
-    { book_date_bd: date },
-    {},
-    (data) => {
-      const ifr = doc.clm("div");
-      ifr.innerHTML = data;
+  ${mneCallCommon}
+  function exec() {
+    post(
+      "/html/reservation/reservation_01_01.asp",
+      { book_date_bd: date },
+      {},
+      (data) => {
+        const ifr = doc.clm("div");
+        ifr.innerHTML = data;
 
-      const date = ifr.gcn("plan-month2")[0].gtn("span")[0];
-      const year = date.children[0].str();
-      const month = date.children[1].str();
+        const date = ifr.gcn("plan-month2")[0].gtn("span")[0];
+        const year = date.children[0].str();
+        const month = date.children[1].str();
 
-      const tables = ifr.gtn("table");
-      const tblOverView = tables[0];
-      const tblDetail = tables[2];
+        const tables = ifr.gtn("table");
+        const tblOverView = tables[0];
+        const tblDetail = tables[2];
 
-      const tdDays = tblOverView.gcn("gray");
-      Array.from(tdDays).forEach((td) => {
-        const text = td.str().trim().gh(2);
-        const team = td.str().trim().ch(2).ct(1);
-        dates.push([year + month + text, team]);
-      });
-      callback();
-    }
-  );
+        const tdDays = tblOverView.gcn("gray");
+        Array.from(tdDays).forEach((td) => {
+          const text = td.str().trim().gh(2);
+          const team = td.str().trim().ch(2).ct(1);
+          dates.push([year + month + text, team]);
+        });
+        callback();
+      }
+    );
+  }
 }
 
 /* <============line_div==========> */
@@ -86,7 +89,5 @@ function mneCallDetail(arrDate) {
 
 /* <============line_div==========> */
 mneCall(thisdate, () => {
-  setTimeout(() => {
-    mneCall(nextdate, procDate);
-  }, 1000);
+  mneCall(nextdate, procDate);
 });

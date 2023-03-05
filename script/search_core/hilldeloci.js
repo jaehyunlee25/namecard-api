@@ -1,41 +1,44 @@
 function mneCall(date, callback) {
-  const param = {
-    companyCd: "J36",
-    clickTdId: "",
-    clickTdClass: "",
-    workMonth: date,
-    workDate: date + "05",
-    bookgDate: "",
-    bookgTime: "",
-    bookgCourse: "",
-    searchTime: "",
-    temp001: "",
-    bookgComment: "",
-    agencyReservationYn: "N",
-    selfRYn: "N",
-    agreeYn: "Y",
-  };
-  post("/reservation/ajax/golfCalendar", param, {}, (data) => {
-    const ifr = document.createElement("div");
-    ifr.innerHTML = data;
+  ${mneCallCommon}
+  function exec() {
+    const param = {
+      companyCd: "J36",
+      clickTdId: "",
+      clickTdClass: "",
+      workMonth: date,
+      workDate: date + "05",
+      bookgDate: "",
+      bookgTime: "",
+      bookgCourse: "",
+      searchTime: "",
+      temp001: "",
+      bookgComment: "",
+      agencyReservationYn: "N",
+      selfRYn: "N",
+      agreeYn: "Y",
+    };
+    post("/reservation/ajax/golfCalendar", param, {}, (data) => {
+      const ifr = document.createElement("div");
+      ifr.innerHTML = data;
 
-    const tbls = ifr.getElementsByClassName("cm_calender_tbl");
-    let as = [];
-    Array.from(tbls).forEach((tbl) => {
-      const arr = Array.from(tbl.getElementsByTagName("a"));
-      as = as.concat(arr);
-    });
+      const tbls = ifr.getElementsByClassName("cm_calender_tbl");
+      let as = [];
+      Array.from(tbls).forEach((tbl) => {
+        const arr = Array.from(tbl.getElementsByTagName("a"));
+        as = as.concat(arr);
+      });
 
-    as.forEach((a) => {
-      if (a.className === "cal_end") return;
-      const str = a.getAttribute("onclick");
-      if (str.indexOf("CLOSE") !== -1) return;
-      if (str.indexOf("NOOPEN") !== -1) return;
-      const ob = procStr(str);
-      dates.push([ob.date, 0]);
+      as.forEach((a) => {
+        if (a.className === "cal_end") return;
+        const str = a.getAttribute("onclick");
+        if (str.indexOf("CLOSE") !== -1) return;
+        if (str.indexOf("NOOPEN") !== -1) return;
+        const ob = procStr(str);
+        dates.push([ob.date, 0]);
+      });
+      callback();
     });
-    callback();
-  });
+  }
 }
 
 /* <============line_div==========> */
@@ -67,7 +70,7 @@ function mneCallDetail(arrDate) {
       if (i === 0) return;
 
       const course = tr.children[1].innerHTML;
-log(course);
+      log(course);
       const time = tr.children[0].innerHTML;
       const fee_normal = tr.children[2].innerHTML.replace(/\,/g, "") * 1;
       const fee_discount = tr.children[4].innerHTML.replace(/\,/g, "") * 1;
@@ -99,7 +102,5 @@ function procStr(str) {
 /* <============line_div==========> */
 mneCall(thisdate, () => {
   workMonthNext();
-  setTimeout(() => {
-    mneCall(nextdate, procDate);
-  }, 3000);
+  mneCall(nextdate, procDate);
 });
