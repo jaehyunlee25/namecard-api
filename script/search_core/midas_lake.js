@@ -1,30 +1,38 @@
 function mneCall(date, callback) {
   let count = 0;
-  const mneT = setInterval(() => {
-    if (!window["golf_calendar"]) {
+  const mneT = setInterval(funcInterval, 500);
+  const intvEl = window["golf_calendar"];
+  const logPrm = { LOGID, step: "mneCall_interval" };
+  function funcInterval() {
+    if (!intvEl) {
+      EXTZLOG("search", ["interval count", count].join(", "), logPrm);
       count++;
       if (count > 10) {
+        EXTZLOG("search", ["interval count out", count].join(", "), logPrm);
         clearInterval(mneT);
         callback();
       }
       return;
     }
     clearInterval(mneT);
-    const atds = doc.gtn("td");
+    exec();
+  }
+  function exec() {
+    const els = doc.gtn("td");
     const tds = [];
-    Array.from(atds).forEach((td) => {
-      const tee = td.getAttribute("data-cnt");
+    Array.from(els).forEach((el) => {
+      const tee = el.attr("data-cnt");
       if (!tee || tee == 0) return;
-      tds.push(td);
+      tds.push(el);
     });
 
     tds.forEach((td) => {
-      const strDate = td.getAttribute("data-day");
+      const strDate = td.attr("data-day");
       dates.push([strDate, 0]);
     });
 
     callback();
-  }, 500);
+  }
 }
 
 /* <============line_div==========> */
@@ -72,5 +80,4 @@ function mneCallDetail(arrDate) {
 /* <============line_div==========> */
 
 /* <============line_div==========> */
-
 mneCall(thisdate, procDate);
