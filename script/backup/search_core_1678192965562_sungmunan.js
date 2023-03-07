@@ -50,8 +50,8 @@ function mneCallDetail(arrDate) {
       Array.from(els).forEach((el) => {
         const time = el.r_TIME.rm(":");
         const course = dictCourse[courseCode];
-        fee_discount = 270000;
-        fee_normal = 270000;
+        fee_discount = el.ACT_GREENFEE.getFee();
+        fee_normal = el.STD_GREENFEE.getFee();
   
         golf_schedule.push({
           golf_club_id: clubId,
