@@ -1,4 +1,5 @@
 function mneCall(date, callback) {
+  intvEl = window["mabari"];
   ${mneCallCommon}
   function exec() {
     Array.from(mabari.children).forEach((el) => {

@@ -1,4 +1,5 @@
 function mneCall(strdate, callback) {
+  intvEl = window["booking-index"];
   ${mneCallCommon}
   function exec() {
     const param = {};

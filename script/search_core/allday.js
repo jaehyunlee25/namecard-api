@@ -1,4 +1,5 @@
 function mneCall(date, callback) {
+  intvEl = window["calendar-body"];
   ${mneCallCommon}
   function exec() {
     const tds = Array.from(calendarBox1.getElementsByClassName("possible"));
