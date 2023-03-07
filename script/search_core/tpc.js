@@ -1,4 +1,5 @@
 function mneCall(date, callback) {
+  intvEl = doc.gcn("calendar").length > 0;
   ${mneCallCommon}
   function exec() {
     const attr = "onclick";

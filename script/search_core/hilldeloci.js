@@ -1,4 +1,5 @@
 function mneCall(date, callback) {
+  intvEl = window["calendar_view_ajax_1"];
   ${mneCallCommon}
   function exec() {
     const param = {

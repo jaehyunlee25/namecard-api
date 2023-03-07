@@ -1,4 +1,5 @@
 function mneCall(date, callback) {
+  intvEl = doc.gcn("reservTbl").length > 0;
   ${mneCallCommon}
   function exec() {
     const dt = (date + "01").datify();

@@ -1,4 +1,5 @@
 function mneCall(date, callback) {
+  intvEl = window["calBody"];
   ${mneCallCommon}
   function exec() {
     const els = doc.gba("href", "javascript:Update('LIST", true);

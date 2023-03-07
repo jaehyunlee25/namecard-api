@@ -1,4 +1,5 @@
 function mneCall(date, callback) {
+  intvEl = window["planStart"];
   ${mneCallCommon}
   function exec() {
     post(

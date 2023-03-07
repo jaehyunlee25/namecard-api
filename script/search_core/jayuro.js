@@ -1,4 +1,5 @@
 function mneCall(date, callback) {
+  intvEl = window["ViewReservationCalendar"];
   ${mneCallCommon}
   function exec() {
     const tbls = doc.gcn("calendar");
