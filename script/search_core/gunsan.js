@@ -14,7 +14,7 @@ function mneCall(date, callback) {
     param["ctl00$ContentPlaceHolder1$htbArgs"] =
       "CALENDAR|" + str + "|" + str + "|date";
     param["__ASYNCPOST"] = true;
-    post("/Mobile/", param, {}, (data) => {
+    post("/Mobile/Reservation/Reservation.aspx", param, {}, (data) => {
       const ifr = doc.clm("div");
       ifr.innerHTML = data;
 
