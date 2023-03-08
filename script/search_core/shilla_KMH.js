@@ -105,7 +105,9 @@ function mneCallDetail(arrDate) {
     certNoChk: "",
   };
   const dictCourse = {
-    2: "단일",
+    1: "서",
+    2: "남",
+    3: "동",
   };
 
   fCall[method](addr, param, {}, (data) => {
