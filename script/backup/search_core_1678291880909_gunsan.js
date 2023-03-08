@@ -20,7 +20,7 @@ function mneCall(date, callback) {
 
       const attr = "href";
       const els = ifr.gba(attr, "javascript:Update('LIST", true);
-      EXTZLOG("search", ["els", JSON.stringify(param)].join(", "), logPrm);
+      EXTZLOG("search", ["els", els.length].join(", "), logPrm);
       Array.from(els).forEach((el) => {
         if (el.nm(1).className.indexOf("possible") == -1) return;
         const [str] = el.attr(attr).inparen();
