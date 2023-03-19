@@ -1257,6 +1257,12 @@ function procPost(request, response, data) {
       url: loginUrl,
       script,
     }; */
+  } else if (reqUrl == "/login_link") {
+    const { link_eng_id } = data;
+    objResp = {
+      url: golfLinks[link_eng_id].login_url,
+      script: getLinkLoginScript(link_eng_id),
+    };
   } else if (reqUrl == "/login_admin") {
     const { club } = data;
     objResp = {
@@ -2233,6 +2239,22 @@ function getSearchScript(engName, command) {
   else script = template + common + core;
 
   return script.dp({ golfClubId });
+}
+function getLinkLoginScript(engName) {
+  const golfClubId = engName;
+  const path = "template/login/";
+  const cover = gf(path + "cover.template");
+  const template = gf(path + "login.template");
+  const common = "script/common/common.js".gfdp(ENV);
+  const chk = fs.existsSync("script/link/login/" + engName + ".js");
+  if (!chk) return "";
+
+  let loginScript = gf("script/link/login/" + engName + ".js");
+  loginScript = loginScript.split("\r\n").join("\r\n    ");
+  let loginContent = template.dp({ common, loginScript, golfClubId });
+  loginContent = cover.dp({ loginContent });
+
+  return loginContent;
 }
 function getPureLoginScript(engName) {
   const golfClubId = golfClubIds[engName];
