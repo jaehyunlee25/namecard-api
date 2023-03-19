@@ -3,7 +3,7 @@ log("tLoginCount", tLoginCount);
 const tLogin = setInterval(timeraction, 1000);
 timeraction();
 function timeraction() {
-  if (!window["login_id"]) {
+  if (doc.gbn("memberId").length == 0) {
     tLoginCount++;
     log("tLoginCount", tLoginCount);
     if (tLoginCount > 4) clearInterval(tLogin);
@@ -11,7 +11,7 @@ function timeraction() {
   }
   clearInterval(tLogin);
   if (precheck()) return;
-  window["login_id"].value = "${login_id}";
-  window["login_pw"].value = "${login_password}";
-  doc.gcn("btn_submit")[0].click();
+  doc.gbn("memberId")[0].value = "${login_id}";
+  doc.gbn("password")[0].value = "${login_password}";
+  doc.gcn("LoginButton_btnType6__EW7e+ LoginButton_btnRed__Ur+hD")[0].click();
 }

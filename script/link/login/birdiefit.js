@@ -13,5 +13,5 @@ function timeraction() {
   if (precheck()) return;
   window["login_id"].value = "${login_id}";
   window["login_pw"].value = "${login_password}";
-  doc.gcn("btn_submit")[0].click();
+  doc.gba("type", "submit")[0].click();
 }
