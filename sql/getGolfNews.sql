@@ -6,4 +6,5 @@ select
 from
     golf_news
 where
-    round = (select max(round) from golf_news);
+    round = (select max(round) from golf_news)
+ORDER BY number;
