@@ -164,7 +164,7 @@ function SENDMQTT(subtype, addr, e, data) {
   const socket = new WebSocket(WS_HEADER);
   logParam.sub_type = subtype;
   logParam.timestamp = new Date().getTime();
-  logParam.messasge = [addr, e.stack];
+  logParam.message = [addr, e.stack];
   logParam.responseText = data;
   socket.onopen = function () {
     socket.send(
