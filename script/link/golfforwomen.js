@@ -19,7 +19,7 @@ javascript: (() => {
   const els2 = nextDiv.gtn("h2");
   els2.forEach((el) => {
     res.push({
-      link_name: "[골프포위민]",
+      link_name: "${link_name}",
       link_content: el.children[0].str(),
       link_datetime: "",
     });
