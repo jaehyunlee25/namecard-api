@@ -9,6 +9,7 @@ javascript: (() => {
     const res = [];
     els.forEach((el) => {
       res.push({
+        link_round: "${round}",
         link_address: "${link}",
         link_name: "${link_name}",
         link_content: el.str(),

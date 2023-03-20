@@ -11,6 +11,7 @@ javascript: (() => {
   els.forEach((el) => {
     if (!el.children[0]) return;
     res.push({
+      link_round: "${round}",
       link_address: "${link}",
       link_name: "${link_name}",
       link_content: el.children[0].str(),
