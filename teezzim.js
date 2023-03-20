@@ -295,7 +295,7 @@ function procPost(request, response, data) {
               content: [],
             };
           ob.link_name = "[" + name + "]";
-          result.newsContents.push({ eng_id, name }.assign(ob));
+          result.newsContents.push(Object.assign({ eng_id, name }, ob));
           res[eng_id].content.push(ob);
         });
         Object.entries(res).forEach(([key, val]) => {
