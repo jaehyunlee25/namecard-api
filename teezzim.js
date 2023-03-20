@@ -282,6 +282,7 @@ function procPost(request, response, data) {
       objResp = stdSQLProc(err, rows);
       if (objResp.type == "okay") {
         const res = {};
+        const result = { news: [], newsContents: [] };
         objResp.data.forEach((ob) => {
           const eng_id = ob.link_name;
           const name = golfLinks[ob.link_name].name;
@@ -294,9 +295,9 @@ function procPost(request, response, data) {
               content: [],
             };
           ob.link_name = "[" + name + "]";
+          result.newsContents.push({ eng_id, name }.assign(ob));
           res[eng_id].content.push(ob);
         });
-        const result = { news: [] };
         Object.entries(res).forEach(([key, val]) => {
           result.news.push(val);
         });
@@ -1377,6 +1378,7 @@ function procPost(request, response, data) {
 function stdSQLProc(err, rows) {
   let objResp;
   if (err) {
+    log(err);
     objResp = {
       type: "error",
       data: err,
