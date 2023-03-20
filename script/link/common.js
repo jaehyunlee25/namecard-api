@@ -41,6 +41,15 @@ EXTZLOG("url", "raw addr :: " + location.href);
 EXTZLOG("url", "aDDr :: " + aDDr);
 EXTZLOG("url", "addr :: " + addr);
 
+function REGNEWS(res, callback) {
+  const addr = OUTER_ADDR_HEADER + "/api/crawler/newGolfNews";
+  const param = {
+    news: res,
+  };
+  post(addr, param, { "Content-Type": "application/json" }, (data) => {
+    if (callback) callback(data);
+  });
+}
 function LSCHK(str, sec) {
   const tag = lsg(str);
   log("time check", new Date().getTime() - tag, 1000 * sec);
