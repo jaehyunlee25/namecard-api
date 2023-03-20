@@ -311,12 +311,13 @@ function procPost(request, response, data) {
     news.forEach((ob) => {
       const {
         link_round: round,
+        link_number: number,
         link_address: address,
         link_name: eng_id,
         link_content: content,
         link_datetime: datetime,
       } = ob;
-      const tpl = `(uuid(), "${round}", "${address}", "${eng_id}", "${content}", "${datetime}", now(), now())`;
+      const tpl = `(uuid(), "${round}", "${number}", "${address}", "${eng_id}", "${content}", "${datetime}", now(), now())`;
       vls.push(tpl);
     });
     const strValues = vls.join(",");

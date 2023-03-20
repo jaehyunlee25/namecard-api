@@ -7,9 +7,10 @@ javascript: (() => {
     const attr = "class";
     const els = ifr.gba(attr, "list-titles", true);
     const res = [];
-    els.forEach((el) => {
+    els.forEach((el, i) => {
       res.push({
         link_round: "${round}",
+        link_number: i,
         link_address: "${link}",
         link_name: "${link_name}",
         link_content: el.nm(0, 1, 0).str(),

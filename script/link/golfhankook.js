@@ -8,10 +8,11 @@ javascript: (() => {
   const attr = "class";
   const els = doc.gba(attr, "titles", true);
   const res = [];
-  els.forEach((el) => {
+  els.forEach((el, i) => {
     if (!el.children[0]) return;
     res.push({
       link_round: "${round}",
+      link_number: i,
       link_address: "${link}",
       link_name: "${link_name}",
       link_content: el.children[0].str(),
