@@ -286,7 +286,8 @@ function procPost(request, response, data) {
         link_content: content,
         link_datetime: datetime,
       } = ob;
-      log(address, eng_id, content, datetime);
+      const tpl = `(uuid(), "${address}", "${eng_id}", "${content}", "${datetime}", now(), now())`;
+      log(tpl);
     });
     objResp = {
       result: "okay",
