@@ -277,6 +277,17 @@ function procPost(request, response, data) {
       response.end();
     });
     objResp = 0;
+  } else if (reqUrl == "/getGolfNews") {
+    "sql/getGolfNews.sql".gfdp({}).query((err, rows, fields) => {
+      objResp = stdSQLProc(err, rows);
+      if (objResp.type == "okay") {
+        objResp.data.forEach((ob) => {
+          ob.link_name = golfLinks[ob.link_name].name;
+        });
+      }
+      response.write(JSON.stringify(objResp));
+      response.end();
+    });
   } else if (reqUrl == "/newGolfNews") {
     const { news } = data;
     const vls = [];
