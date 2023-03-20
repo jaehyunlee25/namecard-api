@@ -19,6 +19,7 @@ javascript: (() => {
   const els2 = nextDiv.gtn("h2");
   els2.forEach((el) => {
     res.push({
+      link_address: "${link}",
       link_name: "${link_name}",
       link_content: el.children[0].str(),
       link_datetime: "",
