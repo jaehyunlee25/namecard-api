@@ -277,6 +277,10 @@ function procPost(request, response, data) {
       response.end();
     });
     objResp = 0;
+  } else if (reqUrl == "/newGolfNews") {
+    objResp = {
+      result: "okay",
+    };
   } else if (reqUrl == "/modGolfClubEvent") {
     "sql/modGolfClubEvent.sql".gfdp(data).query((err, rows, fields) => {
       objResp = stdSQLProc(err, rows);
