@@ -278,6 +278,16 @@ function procPost(request, response, data) {
     });
     objResp = 0;
   } else if (reqUrl == "/newGolfNews") {
+    const { news } = data;
+    news.forEach((ob) => {
+      const {
+        link_address: address,
+        link_name: eng_id,
+        link_content: content,
+        link_datetime: datetime,
+      } = ob;
+      log(address, eng_id, content, datetime);
+    });
     objResp = {
       result: "okay",
     };
