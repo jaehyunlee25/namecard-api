@@ -279,6 +279,7 @@ function procPost(request, response, data) {
     objResp = 0;
   } else if (reqUrl == "/newGolfNews") {
     const { news } = data;
+    const vls = [];
     news.forEach((ob) => {
       const {
         link_address: address,
@@ -287,11 +288,14 @@ function procPost(request, response, data) {
         link_datetime: datetime,
       } = ob;
       const tpl = `(uuid(), "${address}", "${eng_id}", "${content}", "${datetime}", now(), now())`;
-      log(tpl);
+      vls.push(tpl);
     });
-    objResp = {
-      result: "okay",
-    };
+    const strValues = vls.join(",");
+    "sql/newGolfNews.sql".gfdp({ strValues }).query((err, rows, fields) => {
+      objResp = stdSQLProc(err, rows);
+      response.write(JSON.stringify(objResp));
+      response.end();
+    });
   } else if (reqUrl == "/modGolfClubEvent") {
     "sql/modGolfClubEvent.sql".gfdp(data).query((err, rows, fields) => {
       objResp = stdSQLProc(err, rows);
