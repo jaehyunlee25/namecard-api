@@ -46,7 +46,6 @@ String.prototype.gfdp = function (param) {
   return this.toString().gf().dp(param);
 };
 String.prototype.query = function (callback) {
-  console.log(this);
   try {
     const sql = this.toString();
     const dbconf = "db.json";
@@ -316,7 +315,7 @@ function procPost(request, response, data) {
         link_number: number,
         link_address: address,
         link_name: eng_id,
-        link_content: content,
+        link_content: content.replace(/"/g, '\\"'),
         link_datetime: datetime,
       } = ob;
       const tpl = `(uuid(), "${round}", "${number}", "${address}", "${eng_id}", "${content}", "${datetime}", now(), now())`;
