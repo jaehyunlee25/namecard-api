@@ -333,8 +333,8 @@ function procPost(request, response, data) {
       response.write(JSON.stringify(objResp));
       response.end();
     });
-  } else if (reqUrl == "/regGolfClubEvent") {
-    "sql/regGolfClubEvent.sql".gfdp(data).query((err, rows, fields) => {
+  } else if (reqUrl == "/newGolfClubEvent") {
+    "sql/newGolfClubEvent.sql".gfdp(data).query((err, rows, fields) => {
       objResp = stdSQLProc(err, rows);
       response.write(JSON.stringify(objResp));
       response.end();

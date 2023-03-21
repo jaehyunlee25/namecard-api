@@ -4,6 +4,7 @@ values(
     "${golf_club_id}",
     "${title}",
     "${content}",
+    "${link}",
     now(),
     now()
 );    
