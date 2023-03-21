@@ -46,6 +46,7 @@ String.prototype.gfdp = function (param) {
   return this.toString().gf().dp(param);
 };
 String.prototype.query = function (callback) {
+  console.log(this);
   try {
     const sql = this.toString();
     const dbconf = "db.json";
@@ -319,6 +320,7 @@ function procPost(request, response, data) {
         link_datetime: datetime,
       } = ob;
       const tpl = `(uuid(), "${round}", "${number}", "${address}", "${eng_id}", "${content}", "${datetime}", now(), now())`;
+      log(tpl);
       vls.push(tpl);
     });
     const strValues = vls.join(",");
