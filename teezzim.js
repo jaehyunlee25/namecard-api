@@ -277,6 +277,12 @@ function procPost(request, response, data) {
       response.end();
     });
     objResp = 0;
+  } else if (reqUrl == "/getGolfLessonMenu") {
+    const menu = "template/golf_lesson/lesson.json".gfdp({});
+    objResp = {
+      result: "okay",
+      data: menu,
+    };
   } else if (reqUrl == "/getGolfNews") {
     "sql/getGolfNews.sql".gfdp({}).query((err, rows, fields) => {
       objResp = stdSQLProc(err, rows);
