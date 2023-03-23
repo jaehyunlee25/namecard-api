@@ -277,8 +277,14 @@ function procPost(request, response, data) {
       response.end();
     });
     objResp = 0;
+  } else if (reqUrl == "/getGolfYoutubeHotClip") {
+    const list = "template/golf/hotclip.json".gfdp({});
+    objResp = {
+      result: "okay",
+      data: list,
+    };
   } else if (reqUrl == "/getGolfLessonMenu") {
-    const menu = "template/golf_lesson/lesson.json".gfdp({});
+    const menu = "template/golf/lesson.json".gfdp({});
     objResp = {
       result: "okay",
       data: menu,
