@@ -280,7 +280,7 @@ function procPost(request, response, data) {
     });
     objResp = 0;
   } else if (reqUrl == "/getLeaderBoardInfo") {
-    const list = "template/golf/rank.json".gfdp({});
+    const list = "template/golf/rank.json".gfjp();
     objResp = {
       result: "okay",
       data: list,
