@@ -278,6 +278,12 @@ function procPost(request, response, data) {
       response.end();
     });
     objResp = 0;
+  } else if (reqUrl == "/getLeaderBoardInfo") {
+    const list = "template/golf/rank.json".gfdp({});
+    objResp = {
+      result: "okay",
+      data: list,
+    };
   } else if (reqUrl == "/getOpenGraphInfo") {
     ogs({ url: data.url }).then((data) => {
       if (data.error) objResp = { result: "error", data: data.error };

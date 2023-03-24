@@ -1,0 +1,38 @@
+[
+    {
+        "label": "PGA",
+        "link": "http://www.pga.com/leaderboard"
+    },
+    {
+        "label": "PGA TOUR",
+        "link": "http://www.pgatour.com/leaderboard.html"
+    },
+    {
+        "label": "LPGA",
+        "link": "http://www.lpga.com/"
+    },
+    {
+        "label": "KLPGA",
+        "link": "http://www.klpga.co.kr/web/leaderboard/leaderboard.do",
+    },
+    {
+        "label": "LPGA",
+        "link": "http://www.lpga.or.jp/en"
+    },
+    {
+        "label": "KPGA",
+        "link": "http://www.klpga.co.kr/web/leaderboard/leaderboard.do"
+    },
+    {
+        "label": "JGTO",
+        "link": "http://www.jgto.org/en"
+    },
+    {
+        "label": "OWGR",
+        "link": "http://www.owgr.com/current-world-ranking"
+    },
+    {
+        "label": "WWGR",
+        "link": "http://www.wwgr.net/ranking"
+    }
+]
