@@ -243,6 +243,7 @@ const server = http
   })
   .listen(8080);
 function procPost(request, response, data) {
+  log("request url", request.url);
   log("data", data);
   if (data.club && !golfClubAccounts[data.club]) {
     response.write(
