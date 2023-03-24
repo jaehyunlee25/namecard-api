@@ -1,6 +1,7 @@
 const http = require("http");
 const mysql = require("mysql");
 const fs = require("fs");
+const ogs = require("open-graph-scraper");
 /* const admin = require("firebase-admin");
 const serviceAccount = require("./teezzim-webview-test-firebase-adminsdk-i8hfk-ef88a22eeb.json");
 admin.initializeApp({
@@ -277,6 +278,13 @@ function procPost(request, response, data) {
       response.end();
     });
     objResp = 0;
+  } else if (reqUrl == "/getOpenGraphInfo") {
+    ogs({ url: data.url }).then((data) => {
+      if (data.error) objResp = { result: "error", data: data.error };
+      else objResp = { result: "okay", data: data.result };
+      response.write(JSON.stringify(objResp));
+      response.end();
+    });
   } else if (reqUrl == "/getGolfYoutubeHotClip") {
     const list = "template/golf/hotclip.json".gfdp({});
     objResp = {
