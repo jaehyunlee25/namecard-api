@@ -1,8 +1,9 @@
 javascript: (() => {
   ${commonScript}
-  console.log("puppeteer test");
+  log("puppeteer test");
+  log(get);
   get("${link}", {}, {}, (data) => {
-    console.log(data);
+    log(data);
     const ifr = doc.clm("div");
     ifr.innerHTML = data;
     const attr = "class";
