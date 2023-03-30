@@ -13,7 +13,7 @@ javascript: (() => {
         link_number: i,
         link_address: "${link}",
         link_name: "${link_name}",
-        link_content: el.nm(0, 0, 0).str(),
+        link_content: el.nm(0, 1, 0).str(),
         link_datetime: el.nm(1, 1, 1).str().split(" | ")[1],
       });
     });
