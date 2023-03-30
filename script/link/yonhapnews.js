@@ -2,6 +2,7 @@ javascript: (() => {
   ${commonScript}
   console.log("puppeteer test");
   get("${link}", {}, {}, (data) => {
+    console.log(data);
     const ifr = doc.clm("div");
     ifr.innerHTML = data;
     const attr = "class";
