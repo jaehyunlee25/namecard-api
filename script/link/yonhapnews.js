@@ -1,5 +1,5 @@
 javascript: (() => {
-  ${ commonScript }
+  ${commonScript}
   
   get("${link}", {}, {}, (data) => {
     const ifr = doc.clm("div");
