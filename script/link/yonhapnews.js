@@ -1,6 +1,6 @@
 javascript: (() => {
   ${commonScript}
-
+  console.log("puppeteer test");
   get("${link}", {}, {}, (data) => {
     const ifr = doc.clm("div");
     ifr.innerHTML = data;
