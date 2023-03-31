@@ -8,6 +8,7 @@ javascript: (() => {
     const els = ifr.gcn("section01")[0].gba(attr, "tit-news", true);
     const res = [];
     els.forEach((el, i) => {
+      if (i > 4) return;
       res.push({
         link_round: "${round}",
         link_number: i,

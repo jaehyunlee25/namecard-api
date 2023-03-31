@@ -9,6 +9,7 @@ javascript: (() => {
   const els = doc.gba(attr, "titles", true);
   const res = [];
   els.forEach((el, i) => {
+    if (i > 4) return;
     if (!el.children[0]) return;
     res.push({
       link_round: "${round}",
