@@ -1,7 +1,7 @@
 javascript: (() => {
   ${commonScript}
 
-  get("${link}", { mcode: "m11gy55" }, {}, (data) => {
+  get("${link}".split("?")[0], { mcode: "m11gy55" }, {}, (data) => {
     const ifr = doc.clm("div");
     ifr.innerHTML = data;
     const attr = "class";
