@@ -10,7 +10,7 @@ javascript: (() => {
   const res = [];
   let cnt = 0;
   els.forEach((el) => {
-    if (cnt > 4) return;
+    if (cnt > 2) return;
     res.push({
       link_round: "${round}",
       link_number: cnt++,
