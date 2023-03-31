@@ -8,6 +8,7 @@ javascript: (() => {
     const els = ifr.gba(attr, "title", true);
     const res = [];
     els.forEach((el, i) => {
+      if (i > 4) return;
       res.push({
         link_round: "${round}",
         link_number: i,
