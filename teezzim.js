@@ -41,11 +41,11 @@ child.stdout.on("data", (data) => {
 });
 
 child.stderr.on("data", (data) => {
-  error(data);
+  log(data);
 });
 
 child.on("error", (error) => {
-  error(data);
+  log(data);
 });
 
 child.on("close", (code) => {
