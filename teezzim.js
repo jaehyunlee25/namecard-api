@@ -1,13 +1,5 @@
 const fs = require("fs");
-const { exec } = require("child_process");
-const log = function () {
-  console.log("\n\n>> new log :: ", new Date());
-  console.log(Array.from(arguments).join(", "));
-};
-const dir = function (arg) {
-  console.log("\n\n>> new dir :: ", new Date());
-  console.dir(arg);
-};
+
 String.prototype.ct = function (num) {
   return this.substring(0, this.length - num);
 };
@@ -36,21 +28,3 @@ app.push(fs.readFileSync("jsmake/procUrl.js", "utf-8"));
 app.push(fs.readFileSync("jsmake/function.js", "utf-8"));
 app.push(fs.readFileSync("jsmake/server.js", "utf-8"));
 fs.writeFileSync("app.js", app.join("\r\n"), "utf-8");
-
-const child = exec("node app.js");
-
-child.stdout.on("data", (data) => {
-  log(data);
-});
-
-child.stderr.on("data", (data) => {
-  log(data);
-});
-
-child.on("error", (error) => {
-  log(data);
-});
-
-child.on("close", (code) => {
-  log(`child process exited with code ${code}`);
-});
