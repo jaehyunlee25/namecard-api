@@ -1,28 +1,28 @@
 function procPost(request, response, data) {
-  log("request url", request.url);
-  log("data", data);
-  if (data.club && !golfClubAccounts[data.club]) {
-    response.write(
-      JSON.stringify({
-        url: "",
-        script: "",
-      })
-    );
-    response.end();
-    return;
-  }
+log("request url", request.url);
+log("data", data);
+if (data.club && !golfClubAccounts[data.club]) {
+  response.write(
+    JSON.stringify({
+      url: "",
+      script: "",
+    })
+  );
+  response.end();
+  return;
+}
 
-  let url;
-  let script;
-  let objResp;
-  const reqUrl = "/" + request.url.split("/").lo();
+let url;
+let script;
+let objResp;
+const reqUrl = "/" + request.url.split("/").lo();
 
-  if ((reqUrl = "/dummy")) {
-  } else if (reqUrl == "/account.js") {
+if (reqUrl == "/dummy") {
+} else if (reqUrl == "/account.js" ) {
     objResp = {
       accounts: golfClubAccounts,
     };
-  } else if (reqUrl == "/clubGroup.js") {
+} else if (reqUrl == "/clubGroup.js" ) {
     const club = data.club_id;
     const groupName = groupClubs[club];
     let result = [];
@@ -32,7 +32,7 @@ function procPost(request, response, data) {
       message: "OK",
       data: result,
     };
-  } else if (reqUrl == "/clubs.js") {
+} else if (reqUrl == "/clubs.js" ) {
     const result = [];
     const clubIds = {};
     const clubStates = {};
@@ -51,7 +51,7 @@ function procPost(request, response, data) {
       response.end();
     });
     objResp = 0;
-  } else if (reqUrl == "/control.js") {
+} else if (reqUrl == "/control.js" ) {
     /*
       controlForUserDevice(engName, "");
       */
@@ -70,7 +70,7 @@ function procPost(request, response, data) {
     });
 
     objResp = {};
-  } else if (reqUrl == "/dbCheckGolfClubEngName.js") {
+} else if (reqUrl == "/dbCheckGolfClubEngName.js" ) {
     "sql/getDbCheckGolfClubEngName.sql"
       .gfdp(data)
       .query((err, rows, fields) => {
@@ -88,7 +88,7 @@ function procPost(request, response, data) {
         response.write(JSON.stringify(objResp));
         response.end();
       });
-  } else if (reqUrl == "/dbCheckGolfClubName.js") {
+} else if (reqUrl == "/dbCheckGolfClubName.js" ) {
     "sql/getDbCheckGolfClubName.sql".gfdp(data).query((err, rows, fields) => {
       if (err) {
         objResp = {
@@ -104,7 +104,7 @@ function procPost(request, response, data) {
       response.write(JSON.stringify(objResp));
       response.end();
     });
-  } else if (reqUrl == "/dbCheckServerfile.js") {
+} else if (reqUrl == "/dbCheckServerfile.js" ) {
     const eng = data.eng_id;
     objResp = {
       type: "okay",
@@ -112,7 +112,7 @@ function procPost(request, response, data) {
     };
     if (fs.existsSync("script/search_dict/" + eng + ".json"))
       objResp.data.check = true;
-  } else if (reqUrl == "/dbGetGolfClub.js") {
+} else if (reqUrl == "/dbGetGolfClub.js" ) {
     "sql/getGolfClub.sql".gf().query((err, rows, fields) => {
       golfClubs = {};
       rows.forEach((row) => {
@@ -129,12 +129,12 @@ function procPost(request, response, data) {
       response.write(JSON.stringify(objResp));
       response.end();
     });
-  } else if (reqUrl == "/dbGetGroup.js") {
+} else if (reqUrl == "/dbGetGroup.js" ) {
     objResp = {
       type: "okay",
       data: groupClubs,
     };
-  } else if (reqUrl == "/dbNewGolfClub.js") {
+} else if (reqUrl == "/dbNewGolfClub.js" ) {
     "sql/newDbGolfClub.sql".gfdp(data).query((err, rows, fields) => {
       if (err) {
         objResp = {
@@ -158,7 +158,7 @@ function procPost(request, response, data) {
         response.end();
       });
     });
-  } else if (reqUrl == "/dbNewGolfClubDetail.js") {
+} else if (reqUrl == "/dbNewGolfClubDetail.js" ) {
     "sql/newDbGolfClubDetail.sql".gfdp(data).query((err, rows, fields) => {
       if (err) {
         objResp = {
@@ -176,7 +176,7 @@ function procPost(request, response, data) {
       response.write(JSON.stringify(objResp));
       response.end();
     });
-  } else if (reqUrl == "/dbNewGolfClubEng.js") {
+} else if (reqUrl == "/dbNewGolfClubEng.js" ) {
     "sql/newDbGolfClubEng.sql".gfdp(data).query((err, rows, fields) => {
       if (err) {
         objResp = {
@@ -204,7 +204,7 @@ function procPost(request, response, data) {
         });
       });
     });
-  } else if (reqUrl == "/dbNewGolfClubOrder.js") {
+} else if (reqUrl == "/dbNewGolfClubOrder.js" ) {
     "sql/newDbGolfClubOrder.sql".gfdp(data).query((err, rows, fields) => {
       if (err) {
         objResp = {
@@ -222,7 +222,7 @@ function procPost(request, response, data) {
       response.write(JSON.stringify(objResp));
       response.end();
     });
-  } else if (reqUrl == "/dbNewGolfClubUsability.js") {
+} else if (reqUrl == "/dbNewGolfClubUsability.js" ) {
     "sql/newDbGolfClubUsability.sql".gfdp(data).query((err, rows, fields) => {
       if (err) {
         objResp = {
@@ -240,7 +240,7 @@ function procPost(request, response, data) {
       response.write(JSON.stringify(objResp));
       response.end();
     });
-  } else if (reqUrl == "/dbNewGolfCourse.js") {
+} else if (reqUrl == "/dbNewGolfCourse.js" ) {
     const { course_name, id } = data;
     const arCourse = course_name.replace(/\s/g, "").split(",");
     const res = [];
@@ -281,7 +281,7 @@ function procPost(request, response, data) {
           });
         });
       });
-  } else if (reqUrl == "/dbNewGroup.js") {
+} else if (reqUrl == "/dbNewGroup.js" ) {
     const { clubIds, engIds, groupName } = data;
     const res = [];
     clubIds.forEach((id, i) => {
@@ -317,7 +317,7 @@ function procPost(request, response, data) {
         });
       });
     });
-  } else if (reqUrl == "/dbNewServerfile.js") {
+} else if (reqUrl == "/dbNewServerfile.js" ) {
     const { eng_id: eng } = data;
     const arRes = [
       ["login_url", golfClubLoginUrl[eng], "funcLogin"],
@@ -340,7 +340,7 @@ function procPost(request, response, data) {
     objResp = {
       type: "okay",
     };
-  } else if (reqUrl == "/dbSetGolfClub.js") {
+} else if (reqUrl == "/dbSetGolfClub.js" ) {
     "sql/setDbGolfClubOuterInfo.sql".gfdp(data).query((err, rows, fields) => {
       if (err) {
         objResp = {
@@ -371,7 +371,7 @@ function procPost(request, response, data) {
         });
       });
     });
-  } else if (reqUrl == "/delDeviceRecord.js") {
+} else if (reqUrl == "/delDeviceRecord.js" ) {
     delDeviceDate(data, (res1) => {
       delDeviceTime(data, (res2) => {
         objResp = {
@@ -382,7 +382,7 @@ function procPost(request, response, data) {
         response.end();
       });
     });
-  } else if (reqUrl == "/delDeviceRecordTime.js") {
+} else if (reqUrl == "/delDeviceRecordTime.js" ) {
     delDeviceTime(data, (res2) => {
       objResp = {
         resultCode: 200,
@@ -391,11 +391,11 @@ function procPost(request, response, data) {
       response.write(JSON.stringify(objResp));
       response.end();
     });
-  } else if (reqUrl == "/getClubNames.js") {
+} else if (reqUrl == "/getClubNames.js" ) {
     objResp = {
       golfClubEngToKor,
     };
-  } else if (reqUrl == "/getDeviceRound.js") {
+} else if (reqUrl == "/getDeviceRound.js" ) {
     "sql/getDeviceRound.sql".gfdp(data).query((err, rows, fields) => {
       if (err) {
         objResp = {
@@ -411,7 +411,7 @@ function procPost(request, response, data) {
       response.write(JSON.stringify(objResp));
       response.end();
     });
-  } else if (reqUrl == "/getFeeLink.js") {
+} else if (reqUrl == "/getFeeLink.js" ) {
     "sql/getFeeLink.sql".gfdp(data).query((err, rows, fields) => {
       if (err) {
         objResp = {
@@ -427,26 +427,26 @@ function procPost(request, response, data) {
       response.write(JSON.stringify(objResp));
       response.end();
     });
-  } else if (reqUrl == "/getGolfClubEvent.js") {
+} else if (reqUrl == "/getGolfClubEvent.js" ) {
     "sql/getGolfClubEvent.sql".gfdp(data).query((err, rows, fields) => {
       objResp = stdSQLProc(err, rows);
       response.write(JSON.stringify(objResp));
       response.end();
     });
-  } else if (reqUrl == "/getGolfLessonMenu.js") {
+} else if (reqUrl == "/getGolfLessonMenu.js" ) {
     const menu = "template/golf/lesson.json".gfdp({});
     objResp = {
       result: "okay",
       data: menu,
     };
-  } else if (reqUrl == "/getGolfLink.js") {
+} else if (reqUrl == "/getGolfLink.js" ) {
     if (data.section == undefined) data.section = "";
     "sql/getGolfLink.sql".gfdp(data).query((err, rows, fields) => {
       objResp = stdSQLProc(err, rows);
       response.write(JSON.stringify(objResp));
       response.end();
     });
-  } else if (reqUrl == "/getGolfLinkScript.js") {
+} else if (reqUrl == "/getGolfLinkScript.js" ) {
     const commonScript = "script/link/common.js".gfdp(ENV);
     const { links, round } = data;
     const urls = [];
@@ -465,7 +465,7 @@ function procPost(request, response, data) {
       urls,
       scripts,
     };
-  } else if (reqUrl == "/getGolfNews.js") {
+} else if (reqUrl == "/getGolfNews.js" ) {
     "sql/getGolfNews.sql".gfdp({}).query((err, rows, fields) => {
       objResp = stdSQLProc(err, rows);
       if (objResp.type == "okay") {
@@ -494,19 +494,19 @@ function procPost(request, response, data) {
       response.write(JSON.stringify(objResp));
       response.end();
     });
-  } else if (reqUrl == "/getGolfYoutubeHotClip.js") {
+} else if (reqUrl == "/getGolfYoutubeHotClip.js" ) {
     const list = "template/golf/hotclip.json".gfdp({});
     objResp = {
       result: "okay",
       data: list,
     };
-  } else if (reqUrl == "/getLeaderBoardInfo.js") {
+} else if (reqUrl == "/getLeaderBoardInfo.js" ) {
     const list = "template/golf/rank.json".gfjp();
     objResp = {
       result: "okay",
       data: list,
     };
-  } else if (reqUrl == "/getLog.js") {
+} else if (reqUrl == "/getLog.js" ) {
     "sql/getLog.sql".gfdp(data).query((err, rows, fields) => {
       if (err) {
         objResp = {
@@ -527,7 +527,7 @@ function procPost(request, response, data) {
       response.write(JSON.stringify(objResp));
       response.end();
     });
-  } else if (reqUrl == "/getLogClubList.js") {
+} else if (reqUrl == "/getLogClubList.js" ) {
     "sql/getLogClubList.sql".gfdp(data).query((err, rows, fields) => {
       if (err) {
         objResp = {
@@ -543,7 +543,7 @@ function procPost(request, response, data) {
       response.write(JSON.stringify(objResp));
       response.end();
     });
-  } else if (reqUrl == "/getLogDeviceList.js") {
+} else if (reqUrl == "/getLogDeviceList.js" ) {
     "sql/getLogDeviceList.sql".gfdp(data).query((err, rows, fields) => {
       if (err) {
         objResp = {
@@ -559,33 +559,33 @@ function procPost(request, response, data) {
       response.write(JSON.stringify(objResp));
       response.end();
     });
-  } else if (reqUrl == "/getLogList.js") {
+} else if (reqUrl == "/getLogList.js" ) {
     const path = "/var/www/html/teelog";
     const files = fs.readdirSync(path);
     objResp = {
       result: "okay",
       data: files,
     };
-  } else if (reqUrl == "/getLogReport.js") {
+} else if (reqUrl == "/getLogReport.js" ) {
     "sql/getLogReport.sql".gfdp(data).query((err, rows, fields) => {
       objResp = stdSQLProc(err, rows);
       response.write(JSON.stringify(objResp));
       response.end();
     });
-  } else if (reqUrl == "/getMacroId.js") {
+} else if (reqUrl == "/getMacroId.js" ) {
     "sql/getMacroId.sql".gfdp(data).query((err, rows, fields) => {
       objResp = stdSQLProc(err, rows);
       response.write(JSON.stringify(objResp));
       response.end();
     });
-  } else if (reqUrl == "/getOpenGraphInfo.js") {
+} else if (reqUrl == "/getOpenGraphInfo.js" ) {
     ogs({ url: data.url }).then((data) => {
       if (data.error) objResp = { result: "error", data: data.error };
       else objResp = { result: "okay", data: data.result };
       response.write(JSON.stringify(objResp));
       response.end();
     });
-  } else if (reqUrl == "/getOuterInfo.js") {
+} else if (reqUrl == "/getOuterInfo.js" ) {
     const { club_id: clubId } = data;
     "sql/getOuterInfo.sql".gfdp({ clubId }).query((err, rows, fields) => {
       if (err) console.log(err);
@@ -595,7 +595,7 @@ function procPost(request, response, data) {
       response.write(JSON.stringify(objResp));
       response.end();
     });
-  } else if (reqUrl == "/getPenaltyLink.js") {
+} else if (reqUrl == "/getPenaltyLink.js" ) {
     "sql/getPenaltyLink.sql".gfdp(data).query((err, rows, fields) => {
       if (err) {
         objResp = {
@@ -611,7 +611,7 @@ function procPost(request, response, data) {
       response.write(JSON.stringify(objResp));
       response.end();
     });
-  } else if (reqUrl == "/getScheduleDetail.js") {
+} else if (reqUrl == "/getScheduleDetail.js" ) {
     log("test", data.result.length);
     const message = {
       GolfClub: golfClubs[data.golf_club_id],
@@ -628,13 +628,13 @@ function procPost(request, response, data) {
       type: "okay",
       message,
     };
-  } else if (reqUrl == "/getSettings.js") {
+} else if (reqUrl == "/getSettings.js" ) {
     const obj = "script/common/settings.json".gfjp();
     objResp = {
       type: "okay",
       settings: obj,
     };
-  } else if (reqUrl == "/getWarning.js") {
+} else if (reqUrl == "/getWarning.js" ) {
     "sql/getWarning.sql".gfdp(data).query((err, rows, fields) => {
       if (err) {
         objResp = {
@@ -650,7 +650,7 @@ function procPost(request, response, data) {
       response.write(JSON.stringify(objResp));
       response.end();
     });
-  } else if (reqUrl == "/get_pure_login.js") {
+} else if (reqUrl == "/get_pure_login.js" ) {
     const engName = data.club;
     let core = "";
     try {
@@ -661,7 +661,7 @@ function procPost(request, response, data) {
     response.write(JSON.stringify({ core }));
     response.end();
     return;
-  } else if (reqUrl == "/get_pure_search_core.js") {
+} else if (reqUrl == "/get_pure_search_core.js" ) {
     const engName = data.club;
     let core = "";
     const part = {
@@ -708,7 +708,7 @@ function procPost(request, response, data) {
     }
     response.write(JSON.stringify({ core, part }));
     response.end();
-  } else if (reqUrl == "/login.js") {
+} else if (reqUrl == "/login.js" ) {
     const uuid = data.clubId;
     const engName = golfClubIdToEng[uuid];
     url = golfClubLoginUrl[engName];
@@ -722,7 +722,7 @@ function procPost(request, response, data) {
       procMessage: proc ? proc.message : "",
       procLandingLink: proc ? proc.landingLink : "",
     };
-  } else if (reqUrl == "/loginScripts.js") {
+} else if (reqUrl == "/loginScripts.js" ) {
     const ids = data.clubIds;
     const urls = {};
     const scripts = {};
@@ -749,31 +749,31 @@ function procPost(request, response, data) {
       procMessages,
       procResults,
     };
-  } else if (reqUrl == "/login_admin.js") {
+} else if (reqUrl == "/login_admin.js" ) {
     const { club } = data;
     objResp = {
       url: golfClubLoginUrl[club],
       script: getLoginScriptAdmin(club),
     };
-  } else if (reqUrl == "/login_link.js") {
+} else if (reqUrl == "/login_link.js" ) {
     const { link_eng_id } = data;
     objResp = {
       url: golfLinks[link_eng_id].login_url,
       script: getLinkLoginScript(link_eng_id),
     };
-  } else if (reqUrl == "/modGolfClubEvent.js") {
+} else if (reqUrl == "/modGolfClubEvent.js" ) {
     "sql/modGolfClubEvent.sql".gfdp(data).query((err, rows, fields) => {
       objResp = stdSQLProc(err, rows);
       response.write(JSON.stringify(objResp));
       response.end();
     });
-  } else if (reqUrl == "/newGolfClubEvent.js") {
+} else if (reqUrl == "/newGolfClubEvent.js" ) {
     "sql/newGolfClubEvent.sql".gfdp(data).query((err, rows, fields) => {
       objResp = stdSQLProc(err, rows);
       response.write(JSON.stringify(objResp));
       response.end();
     });
-  } else if (reqUrl == "/newGolfNews.js") {
+} else if (reqUrl == "/newGolfNews.js" ) {
     const { news } = data;
     const vls = [];
     news.forEach((ob) => {
@@ -796,7 +796,7 @@ function procPost(request, response, data) {
       response.write(JSON.stringify(objResp));
       response.end();
     });
-  } else if (reqUrl == "/question.js") {
+} else if (reqUrl == "/question.js" ) {
     "sql/setQuestion.sql".gfdp(data).query((err, rows, fields) => {
       if (err) {
         console.log(err);
@@ -813,40 +813,7 @@ function procPost(request, response, data) {
       response.write(JSON.stringify(objResp));
       response.end();
     });
-  } else if (reqUrl == "/reservebot.js") {
-    objResp = reservebotAdmin(data);
-    /* const { club: engName, year, month, date, course, time } = data;
-      const commonScript = fs.readFileSync("script/common/common.js", "utf-8");
-      const loginUrl = golfClubLoginUrl[engName];
-      const searchUrl = golfClubSearchUrl[engName];
-      const reserveUrl = golfClubReserveUrl[engName];
-      const loginScript = getPureLoginScript(engName);
-      let templateScript;
-      if (fs.existsSync("script/reserve/reserve/" + engName + ".js"))
-        templateScript = fs.readFileSync(
-          "script/reserve/reserve/" + engName + ".js",
-          "utf-8"
-        );
-      else templateScript = fs.readFileSync("reserveTemplate.js", "utf-8");
-      const script = templateScript.dp({
-        year,
-        month,
-        date,
-        course,
-        time,
-        commonScript,
-        loginUrl,
-        searchUrl,
-        reserveUrl,
-        loginScript,
-      });
-      objResp = {
-        url: loginUrl,
-        script,
-      }; */
-  } else if (reqUrl == "/reservebot_admin.js") {
-    objResp = reservebotAdmin(data);
-  } else if (reqUrl == "/reserveCancelbot.js") {
+} else if (reqUrl == "/reserveCancelbot.js" ) {
     objResp = reserveCancelbotAdmin(data);
     /* const { club: engName, year, month, date, course, time } = data;
       const commonScript = fs.readFileSync("script/common/common.js", "utf-8");
@@ -881,7 +848,7 @@ function procPost(request, response, data) {
         url: loginUrl,
         script,
       }; */
-  } else if (reqUrl == "/reserveCancelbot_admin.js") {
+} else if (reqUrl == "/reserveCancelbot_admin.js" ) {
     objResp = reserveCancelbotAdmin(data);
     /* const { club: engName, year, month, date, course, time } = data;
       const commonScript = fs.readFileSync("script/common/common.js", "utf-8");
@@ -919,7 +886,7 @@ function procPost(request, response, data) {
         url: loginUrl,
         script,
       }; */
-  } else if (reqUrl == "/reserveSearchbot.js") {
+} else if (reqUrl == "/reserveSearchbot.js" ) {
     objResp = reserveSearchbotAdmin(data);
     /* const { club: engName, year, month, date, course, time } = data;
       const commonScript = fs.readFileSync("script/common/common.js", "utf-8");
@@ -949,7 +916,9 @@ function procPost(request, response, data) {
         url: loginUrl,
         script,
       }; */
-  } else if (reqUrl == "/reserveSearchbots_admin.js") {
+} else if (reqUrl == "/reserveSearchbot_admin.js" ) {
+    objResp = reserveSearchbotAdmin(data);
+} else if (reqUrl == "/reserveSearchbots_admin.js" ) {
     const { clubs } = data;
     const urls = {};
     const scripts = {};
@@ -961,9 +930,40 @@ function procPost(request, response, data) {
       ids[club] = golfClubIds[club];
     });
     objResp = { urls, scripts, ids };
-  } else if (reqUrl == "/reserveSearchbot_admin.js") {
-    objResp = reserveSearchbotAdmin(data);
-  } else if (reqUrl == "/search.js") {
+} else if (reqUrl == "/reservebot.js" ) {
+    objResp = reservebotAdmin(data);
+    /* const { club: engName, year, month, date, course, time } = data;
+      const commonScript = fs.readFileSync("script/common/common.js", "utf-8");
+      const loginUrl = golfClubLoginUrl[engName];
+      const searchUrl = golfClubSearchUrl[engName];
+      const reserveUrl = golfClubReserveUrl[engName];
+      const loginScript = getPureLoginScript(engName);
+      let templateScript;
+      if (fs.existsSync("script/reserve/reserve/" + engName + ".js"))
+        templateScript = fs.readFileSync(
+          "script/reserve/reserve/" + engName + ".js",
+          "utf-8"
+        );
+      else templateScript = fs.readFileSync("reserveTemplate.js", "utf-8");
+      const script = templateScript.dp({
+        year,
+        month,
+        date,
+        course,
+        time,
+        commonScript,
+        loginUrl,
+        searchUrl,
+        reserveUrl,
+        loginScript,
+      });
+      objResp = {
+        url: loginUrl,
+        script,
+      }; */
+} else if (reqUrl == "/reservebot_admin.js" ) {
+    objResp = reservebotAdmin(data);
+} else if (reqUrl == "/search.js" ) {
     console.log("url", reqUrl);
     const engName = data.club;
     const common = "script/common/common.js".gfdp(ENV);
@@ -982,9 +982,22 @@ function procPost(request, response, data) {
       response.write(JSON.stringify(objResp));
       response.end();
     });
-  } else if (reqUrl == "/searchbot.js") {
+} else if (reqUrl == "/search_core.js" ) {
+    const engName = data.club;
+    getSearchScript(engName, (script) => {
+      const url = golfClubSearchUrl[engName];
+      objResp = {
+        url,
+        script,
+      };
+      response.write(JSON.stringify(objResp));
+      response.end();
+    });
+} else if (reqUrl == "/searchbot.js" ) {
     objResp = searchbot(data);
-  } else if (reqUrl == "/searchbots_admin.js") {
+} else if (reqUrl == "/searchbot_admin.js" ) {
+    objResp = searchbot(data);
+} else if (reqUrl == "/searchbots_admin.js" ) {
     const { clubs } = data;
     const urls = {};
     const scripts = {};
@@ -996,7 +1009,7 @@ function procPost(request, response, data) {
       ids[club] = golfClubIds[club];
     });
     objResp = { urls, scripts, ids };
-  } else if (reqUrl == "/searchbots_date.js") {
+} else if (reqUrl == "/searchbots_date.js" ) {
     const { clubs } = data;
     const urls = {};
     const scripts = {};
@@ -1009,7 +1022,7 @@ function procPost(request, response, data) {
       ids[club] = golfClubIds[club];
     });
     objResp = { urls, scripts, ids };
-  } else if (reqUrl == "/searchbots_date_admin.js") {
+} else if (reqUrl == "/searchbots_date_admin.js" ) {
     const { clubs } = data;
     const urls = {};
     const scripts = {};
@@ -1022,7 +1035,7 @@ function procPost(request, response, data) {
       ids[club] = golfClubIds[club];
     });
     objResp = { urls, scripts, ids };
-  } else if (reqUrl == "/searchbots_time.js") {
+} else if (reqUrl == "/searchbots_time.js" ) {
     log("searchbots_time");
     const { clubs, date } = data;
     const urls = {};
@@ -1036,7 +1049,7 @@ function procPost(request, response, data) {
       ids[club] = golfClubIds[club];
     });
     objResp = { urls, scripts, ids };
-  } else if (reqUrl == "/searchbots_time_admin.js") {
+} else if (reqUrl == "/searchbots_time_admin.js" ) {
     const { clubs, date } = data;
     const urls = {};
     const scripts = {};
@@ -1049,20 +1062,7 @@ function procPost(request, response, data) {
       ids[club] = golfClubIds[club];
     });
     objResp = { urls, scripts, ids };
-  } else if (reqUrl == "/searchbot_admin.js") {
-    objResp = searchbot(data);
-  } else if (reqUrl == "/search_core.js") {
-    const engName = data.club;
-    getSearchScript(engName, (script) => {
-      const url = golfClubSearchUrl[engName];
-      objResp = {
-        url,
-        script,
-      };
-      response.write(JSON.stringify(objResp));
-      response.end();
-    });
-  } else if (reqUrl == "/setGolfClubState.js") {
+} else if (reqUrl == "/setGolfClubState.js" ) {
     setGolfClubState(data, (rows) => {
       objResp = {
         resultCode: 200,
@@ -1071,13 +1071,13 @@ function procPost(request, response, data) {
       response.write(JSON.stringify(objResp));
       response.end();
     });
-  } else if (reqUrl == "/setReserveCancel.js") {
+} else if (reqUrl == "/setReserveCancel.js" ) {
     objResp = setReserveCancel(data);
-  } else if (reqUrl == "/setReserveReserve.js") {
+} else if (reqUrl == "/setReserveReserve.js" ) {
     objResp = setReserveReserve(data);
-  } else if (reqUrl == "/setReserveSearch.js") {
+} else if (reqUrl == "/setReserveSearch.js" ) {
     objResp = setReserveSearch(data);
-  } else if (reqUrl == "/setSurvey.js") {
+} else if (reqUrl == "/setSurvey.js" ) {
     "sql/setSurvey.sql".gfdp(data).query((err, rows, fields) => {
       if (err) {
         objResp = {
@@ -1093,7 +1093,7 @@ function procPost(request, response, data) {
       response.write(JSON.stringify(objResp));
       response.end();
     });
-  } else if (reqUrl == "/set_pure_login.js") {
+} else if (reqUrl == "/set_pure_login.js" ) {
     const { engName, core } = data;
     // backup first
     fs.writeFileSync(
@@ -1104,7 +1104,7 @@ function procPost(request, response, data) {
     fs.writeFileSync("script/login/" + engName + ".js", core);
     response.write(JSON.stringify({ resultCode: 200, result: "okay" }));
     response.end();
-  } else if (reqUrl == "/set_pure_search_core.js") {
+} else if (reqUrl == "/set_pure_search_core.js" ) {
     const { club, part } = data;
     const engName = club;
     let core;
@@ -1153,18 +1153,19 @@ function procPost(request, response, data) {
 
     response.write(JSON.stringify({ resultCode: 200, result: "okay" }));
     response.end();
-  } else {
-    const engName = reqUrl.substring(1);
-    url = golfClubLoginUrl[engName];
-    script = getLoginScript(engName);
-    objResp = {
-      url,
-      script,
-    };
-  }
-  if (objResp) {
-    // console.log("obj", objResp);
-    response.write(JSON.stringify(objResp));
-    response.end();
-  }
+} else {
+  const engName = reqUrl.substring(1);
+  url = golfClubLoginUrl[engName];
+  script = getLoginScript(engName);
+  objResp = {
+    url,
+    script,
+  };
+}
+if (objResp) {
+  // console.log("obj", objResp);
+  response.write(JSON.stringify(objResp));
+  response.end();
+}
+
 }

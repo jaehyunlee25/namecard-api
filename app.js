@@ -198,7 +198,7 @@ let script;
 let objResp;
 const reqUrl = "/" + request.url.split("/").lo();
 
-if (reqUrl = "/dummy") {
+if (reqUrl == "/dummy") {
 } else if (reqUrl == "/account.js" ) {
     objResp = {
       accounts: golfClubAccounts,
@@ -994,39 +994,6 @@ if (reqUrl = "/dummy") {
       response.write(JSON.stringify(objResp));
       response.end();
     });
-} else if (reqUrl == "/reservebot.js" ) {
-    objResp = reservebotAdmin(data);
-    /* const { club: engName, year, month, date, course, time } = data;
-      const commonScript = fs.readFileSync("script/common/common.js", "utf-8");
-      const loginUrl = golfClubLoginUrl[engName];
-      const searchUrl = golfClubSearchUrl[engName];
-      const reserveUrl = golfClubReserveUrl[engName];
-      const loginScript = getPureLoginScript(engName);
-      let templateScript;
-      if (fs.existsSync("script/reserve/reserve/" + engName + ".js"))
-        templateScript = fs.readFileSync(
-          "script/reserve/reserve/" + engName + ".js",
-          "utf-8"
-        );
-      else templateScript = fs.readFileSync("reserveTemplate.js", "utf-8");
-      const script = templateScript.dp({
-        year,
-        month,
-        date,
-        course,
-        time,
-        commonScript,
-        loginUrl,
-        searchUrl,
-        reserveUrl,
-        loginScript,
-      });
-      objResp = {
-        url: loginUrl,
-        script,
-      }; */
-} else if (reqUrl == "/reservebot_admin.js" ) {
-    objResp = reservebotAdmin(data);
 } else if (reqUrl == "/reserveCancelbot.js" ) {
     objResp = reserveCancelbotAdmin(data);
     /* const { club: engName, year, month, date, course, time } = data;
@@ -1130,6 +1097,8 @@ if (reqUrl = "/dummy") {
         url: loginUrl,
         script,
       }; */
+} else if (reqUrl == "/reserveSearchbot_admin.js" ) {
+    objResp = reserveSearchbotAdmin(data);
 } else if (reqUrl == "/reserveSearchbots_admin.js" ) {
     const { clubs } = data;
     const urls = {};
@@ -1142,8 +1111,39 @@ if (reqUrl = "/dummy") {
       ids[club] = golfClubIds[club];
     });
     objResp = { urls, scripts, ids };
-} else if (reqUrl == "/reserveSearchbot_admin.js" ) {
-    objResp = reserveSearchbotAdmin(data);
+} else if (reqUrl == "/reservebot.js" ) {
+    objResp = reservebotAdmin(data);
+    /* const { club: engName, year, month, date, course, time } = data;
+      const commonScript = fs.readFileSync("script/common/common.js", "utf-8");
+      const loginUrl = golfClubLoginUrl[engName];
+      const searchUrl = golfClubSearchUrl[engName];
+      const reserveUrl = golfClubReserveUrl[engName];
+      const loginScript = getPureLoginScript(engName);
+      let templateScript;
+      if (fs.existsSync("script/reserve/reserve/" + engName + ".js"))
+        templateScript = fs.readFileSync(
+          "script/reserve/reserve/" + engName + ".js",
+          "utf-8"
+        );
+      else templateScript = fs.readFileSync("reserveTemplate.js", "utf-8");
+      const script = templateScript.dp({
+        year,
+        month,
+        date,
+        course,
+        time,
+        commonScript,
+        loginUrl,
+        searchUrl,
+        reserveUrl,
+        loginScript,
+      });
+      objResp = {
+        url: loginUrl,
+        script,
+      }; */
+} else if (reqUrl == "/reservebot_admin.js" ) {
+    objResp = reservebotAdmin(data);
 } else if (reqUrl == "/search.js" ) {
     console.log("url", reqUrl);
     const engName = data.club;
@@ -1163,7 +1163,20 @@ if (reqUrl = "/dummy") {
       response.write(JSON.stringify(objResp));
       response.end();
     });
+} else if (reqUrl == "/search_core.js" ) {
+    const engName = data.club;
+    getSearchScript(engName, (script) => {
+      const url = golfClubSearchUrl[engName];
+      objResp = {
+        url,
+        script,
+      };
+      response.write(JSON.stringify(objResp));
+      response.end();
+    });
 } else if (reqUrl == "/searchbot.js" ) {
+    objResp = searchbot(data);
+} else if (reqUrl == "/searchbot_admin.js" ) {
     objResp = searchbot(data);
 } else if (reqUrl == "/searchbots_admin.js" ) {
     const { clubs } = data;
@@ -1230,19 +1243,6 @@ if (reqUrl = "/dummy") {
       ids[club] = golfClubIds[club];
     });
     objResp = { urls, scripts, ids };
-} else if (reqUrl == "/searchbot_admin.js" ) {
-    objResp = searchbot(data);
-} else if (reqUrl == "/search_core.js" ) {
-    const engName = data.club;
-    getSearchScript(engName, (script) => {
-      const url = golfClubSearchUrl[engName];
-      objResp = {
-        url,
-        script,
-      };
-      response.write(JSON.stringify(objResp));
-      response.end();
-    });
 } else if (reqUrl == "/setGolfClubState.js" ) {
     setGolfClubState(data, (rows) => {
       objResp = {
