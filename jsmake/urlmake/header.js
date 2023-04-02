@@ -16,4 +16,4 @@ let script;
 let objResp;
 const reqUrl = "/" + request.url.split("/").lo();
 
-if (reqUrl = "/dummy") {
+if (reqUrl == "/dummy") {
