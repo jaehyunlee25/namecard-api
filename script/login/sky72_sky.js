@@ -3,7 +3,7 @@ log("tLoginCount", tLoginCount);
 const tLogin = setInterval(timeraction, 1000);
 timeraction();
 function timeraction() {
-  if (!window["userid"]) {
+  if (!window["usrId"]) {
     tLoginCount++;
     log("tLoginCount", tLoginCount);
     if (tLoginCount > 4) clearInterval(tLogin);
@@ -11,7 +11,7 @@ function timeraction() {
   }
   clearInterval(tLogin);
   if (precheck()) return;
-  userid.value = "${login_id}";
-  password.value = "${login_password}";
-  Login();
+  usrId.value = "${login_id}";
+  usrPwd.value = "${login_password}";
+  fnLogin.click();
 }
