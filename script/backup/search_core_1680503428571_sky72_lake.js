@@ -120,7 +120,7 @@ function mneCallDetail(arrDate) {
         .attr(attr)
         .replace(/\s/g, "")
         .inparen(true);
-      if (type != "J58") return;
+      if (type != "J57") return;
       if (course != 1 && course != 2) return;
       course = dictCourse[course];
       hole = hole.ct(1);
@@ -146,6 +146,4 @@ function mneCallDetail(arrDate) {
 /* <============line_div==========> */
 
 /* <============line_div==========> */
-mneCall(thisdate, () => {
-  mneCall(nextdate, procDate);
-});
+mneCall(procDate);
