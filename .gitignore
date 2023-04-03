@@ -7,3 +7,4 @@ exec.bat
 exec.sh
 gitpush.sh
 pull.sh
+make.bat
