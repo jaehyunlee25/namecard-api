@@ -206,6 +206,7 @@ function procPost(request, response, data) {
   const reqUrl = "/" + request.url.split("/").lo();
 
   if (reqUrl == "/dummy") {
+    console.log("dummy");
   } else if (reqUrl == "/account") {
     objResp = {
       accounts: golfClubAccounts,
