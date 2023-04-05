@@ -587,6 +587,14 @@ if (reqUrl == "/dummy") {
       response.write(JSON.stringify(objResp));
       response.end();
     });
+} else if (reqUrl == "/delGolfClubEvent" ) {
+const { eventId } = data;
+"sql/delGolfClubEvent.sql".gfdp(data).query((err, rows, fields) => {
+  objResp = stdSQLProc(err, rows);
+  response.write(JSON.stringify(objResp));
+  response.end();
+});
+
 } else if (reqUrl == "/getClubNames" ) {
     objResp = {
       golfClubEngToKor,

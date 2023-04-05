@@ -5,6 +5,7 @@ values(
     "${title}",
     "${content}",
     "${link}",
+    false,
     now(),
     now()
 );    
