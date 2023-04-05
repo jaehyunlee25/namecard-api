@@ -43,6 +43,14 @@ String.prototype.howmany = function (str) {
   else num = num.length;
   return num;
 };
+String.prototype.has = function (str) {
+  let chk = true;
+  if (this.indexOf(str) == -1) chk = false;
+  return chk;
+};
+String.prototype.rm = function (sign) {
+  return this.split(sign).join("");
+};
 Array.prototype.lo = function () {
   const idx = this.length - 1;
   return this[idx];

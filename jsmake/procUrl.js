@@ -396,21 +396,42 @@ if (reqUrl == "/dummy") {
       golfClubEngToKor,
     };
 } else if (reqUrl == "/getDeviceRound" ) {
-    "sql/getDeviceRound.sql".gfdp(data).query((err, rows, fields) => {
-      if (err) {
-        objResp = {
-          type: "error",
-          data: err,
-        };
-      } else {
-        objResp = {
-          type: "okay",
-          data: rows,
-        };
-      }
-      response.write(JSON.stringify(objResp));
-      response.end();
-    });
+const archivePath = "/var/www/html/teelog/";
+const logArchiveList = fs.readdirSync(archivePath);
+const dt = data.date.rm("-");
+let chk;
+logArchiveList.forEach((file) => {
+  if (file.has(dt)) chk = file;
+});
+if (chk) {
+  const con = fs.readFileSync(archivePath.add(chk), "utf-8").jp();
+  const res = [];
+  con.forEach((ob) => {
+    if (ob.device_id == data.device_id && ob.golf_club_id.has("_log"))
+      res.push(ob);
+  });
+  objResp = {
+    type: "okay",
+    data: res,
+  };
+} else {
+  "sql/getDeviceRound.sql".gfdp(data).query((err, rows, fields) => {
+    if (err) {
+      objResp = {
+        type: "error",
+        data: err,
+      };
+    } else {
+      objResp = {
+        type: "okay",
+        data: rows,
+      };
+    }
+    response.write(JSON.stringify(objResp));
+    response.end();
+  });
+}
+
 } else if (reqUrl == "/getFeeLink" ) {
     "sql/getFeeLink.sql".gfdp(data).query((err, rows, fields) => {
       if (err) {
@@ -507,59 +528,119 @@ if (reqUrl == "/dummy") {
       data: list,
     };
 } else if (reqUrl == "/getLog" ) {
-"sql/getLog.sql".gfdp(data).query((err, rows, fields) => {
-  if (err) {
-    objResp = {
-      type: "error",
-      data: err,
-    };
-  } else {
-    objResp = {
-      type: "okay",
-      data: rows,
-    };
-  }
-  response.write(JSON.stringify(objResp));
-  response.end();
+const archivePath = "/var/www/html/teelog/";
+const logArchiveList = fs.readdirSync(archivePath);
+const dt = data.date.rm("-");
+let chk;
+logArchiveList.forEach((file) => {
+  if (file.has(dt)) chk = file;
 });
-/* getLog((err, rows, fields) => {
-      objResp = { resultCode: 200, message: "okay", data: rows };
-      response.write(JSON.stringify(objResp));
-      response.end();
-    }); */
+if (chk) {
+  const con = fs.readFileSync(archivePath.add(chk), "utf-8").jp();
+  const res = [];
+  con.forEach((ob) => {
+    if (ob.device_id == data.device_id && ob.golf_club_id == data.golf_club_id)
+      res.push(ob);
+  });
+  res.sort((a, b) => a.timestamp - b.timestamp);
+  objResp = {
+    type: "okay",
+    data: res,
+  };
+} else {
+  "sql/getLog.sql".gfdp(data).query((err, rows, fields) => {
+    if (err) {
+      objResp = {
+        type: "error",
+        data: err,
+      };
+    } else {
+      objResp = {
+        type: "okay",
+        data: rows,
+      };
+    }
+    response.write(JSON.stringify(objResp));
+    response.end();
+  });
+}
 
 } else if (reqUrl == "/getLogClubList" ) {
-    "sql/getLogClubList.sql".gfdp(data).query((err, rows, fields) => {
-      if (err) {
-        objResp = {
-          type: "error",
-          data: err,
-        };
-      } else {
-        objResp = {
-          type: "okay",
-          data: rows,
-        };
-      }
-      response.write(JSON.stringify(objResp));
-      response.end();
-    });
+const archivePath = "/var/www/html/teelog/";
+const logArchiveList = fs.readdirSync(archivePath);
+const dt = data.date.rm("-");
+let chk;
+logArchiveList.forEach((file) => {
+  if (file.has(dt)) chk = file;
+});
+if (chk) {
+  const con = fs.readFileSync(archivePath.add(chk), "utf-8").jp();
+  const dids = con.map((ob) => ob.golf_club_id);
+  const arr = dids.filter((id, i) => dids.indexOf(id) === i);
+  const res = [];
+  arr.forEach((golf_club_id) => {
+    res.push({ golf_club_id });
+  });
+  objResp = {
+    type: "okay",
+    data: res,
+  };
+} else {
+  "sql/getLogClubList.sql".gfdp(data).query((err, rows, fields) => {
+    if (err) {
+      objResp = {
+        type: "error",
+        data: err,
+      };
+    } else {
+      objResp = {
+        type: "okay",
+        data: rows,
+      };
+    }
+    response.write(JSON.stringify(objResp));
+    response.end();
+  });
+}
+
 } else if (reqUrl == "/getLogDeviceList" ) {
-    "sql/getLogDeviceList.sql".gfdp(data).query((err, rows, fields) => {
-      if (err) {
-        objResp = {
-          type: "error",
-          data: err,
-        };
-      } else {
-        objResp = {
-          type: "okay",
-          data: rows,
-        };
-      }
-      response.write(JSON.stringify(objResp));
-      response.end();
-    });
+const archivePath = "/var/www/html/teelog/";
+const logArchiveList = fs.readdirSync(archivePath);
+const dt = data.date.rm("-");
+let chk;
+logArchiveList.forEach((file) => {
+  if (file.has(dt)) chk = file;
+});
+if (chk) {
+  const con = fs.readFileSync(archivePath.add(chk), "utf-8").jp();
+  const dids = con.map((ob) => ob.device_id);
+  const arr = dids.filter((id, i) => dids.indexOf(id) === i);
+  const res = [];
+  arr.forEach((device_id) => {
+    res.push({ device_id });
+  });
+  objResp = {
+    type: "okay",
+    data: res,
+  };
+} else {
+  "sql/getLogDeviceList.sql".gfdp(data).query((err, rows, fields) => {
+    if (err) {
+      objResp = {
+        type: "error",
+        data: err,
+      };
+    } else {
+      objResp = {
+        type: "okay",
+        data: rows,
+      };
+    }
+    response.write(JSON.stringify(objResp));
+    response.end();
+  });
+}
+
 } else if (reqUrl == "/getLogList" ) {
     const path = "/var/www/html/teelog";
     const files = fs.readdirSync(path);
