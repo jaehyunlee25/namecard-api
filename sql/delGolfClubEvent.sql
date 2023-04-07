@@ -1,3 +1,3 @@
-update golf_club_evnet
+update golf_club_event
 set isDel = true
 where id = "${eventId}";
