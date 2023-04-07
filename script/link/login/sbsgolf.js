@@ -1,6 +1,9 @@
+log("check", doc.gcn("gmembers_link_login").length);
 if (doc.gcn("gmembers_link_login").length > 0) {
-  if (doc.gcn("gmembers_link_login")[0].str() == "로그인")
+  if (doc.gcn("gmembers_link_login")[0].str() == "로그인") {
     doc.gcn("gmembers_link_login")[0].click();
+    return;
+  }
 }
 
 var tLoginCount = 0;
