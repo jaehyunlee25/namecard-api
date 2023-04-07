@@ -1,6 +1,8 @@
 log("check", doc.gcn("gmembers_link_login").length);
 if (doc.gcn("gmembers_link_login").length > 0) {
+  log("check", doc.gcn("gmembers_link_login")[0].str());
   if (doc.gcn("gmembers_link_login")[0].str() == "로그인") {
+    log("check", "enter");
     doc.gcn("gmembers_link_login")[0].click();
     return;
   }
