@@ -1,3 +1,8 @@
+if (doc.gcn("gmembers_link_login").length > 0) {
+  if (doc.gcn("gmembers_link_login")[0].str() == "로그인")
+    doc.gcn("gmembers_link_login")[0].click();
+}
+
 var tLoginCount = 0;
 log("tLoginCount", tLoginCount);
 const tLogin = setInterval(timeraction, 1000);
