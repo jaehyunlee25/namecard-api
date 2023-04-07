@@ -1,4 +1,5 @@
 const raw = location.href;
+log("check", raw);
 if (raw.indexOf("login") != -1) {
   setTimeout(() => {
     log("check", doc.gcn("gmembers_link_login").length);
