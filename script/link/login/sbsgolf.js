@@ -1,7 +1,7 @@
 const raw = location.href;
-log("check", raw);
-if (raw.indexOf("login") != -1) {
-  setTimeout(() => {
+setTimeout(() => {
+  log("check", raw);
+  if (raw.indexOf("login") != -1) {
     log("check", doc.gcn("gmembers_link_login").length);
     if (doc.gcn("gmembers_link_login").length > 0) {
       log("check", doc.gcn("gmembers_link_login")[0].str());
@@ -11,23 +11,23 @@ if (raw.indexOf("login") != -1) {
         return;
       }
     }
-  }, 2000);
-} else {
-  var tLoginCount = 0;
-  log("tLoginCount", tLoginCount);
-  const tLogin = setInterval(timeraction, 1000);
-  timeraction();
-  function timeraction() {
-    if (!window["loginId"]) {
-      tLoginCount++;
-      log("tLoginCount", tLoginCount);
-      if (tLoginCount > 4) clearInterval(tLogin);
-      return;
+  } else {
+    var tLoginCount = 0;
+    log("tLoginCount", tLoginCount);
+    const tLogin = setInterval(timeraction, 1000);
+    timeraction();
+    function timeraction() {
+      if (!window["loginId"]) {
+        tLoginCount++;
+        log("tLoginCount", tLoginCount);
+        if (tLoginCount > 4) clearInterval(tLogin);
+        return;
+      }
+      clearInterval(tLogin);
+      if (precheck()) return;
+      window["loginId"].value = "${login_id}";
+      window["loginPw"].value = "${login_password}";
+      window["loginBtn"].click();
     }
-    clearInterval(tLogin);
-    if (precheck()) return;
-    window["loginId"].value = "${login_id}";
-    window["loginPw"].value = "${login_password}";
-    window["loginBtn"].click();
   }
-}
+}, 2000);
