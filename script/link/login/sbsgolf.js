@@ -1,7 +1,7 @@
 const raw = location.href;
 setTimeout(() => {
   log("check", raw);
-  if (raw.indexOf("login") != -1) {
+  if (raw.indexOf("login") == -1) {
     log("check", doc.gcn("gmembers_link_login").length);
     if (doc.gcn("gmembers_link_login").length > 0) {
       log("check", doc.gcn("gmembers_link_login")[0].str());
