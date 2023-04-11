@@ -669,7 +669,7 @@ if (chk) {
 "sql/getGolfGameScore.sql".gfdp(data).query((err, rows, fields) => {
   const res = {};
   rows.forEach((obj) => {
-    res[obj.game_id] ??= [];
+    if (!res[obj.game_id]) res[obj.game_id] = [];
     res[obj.game_id].push(obj);
   });
   objResp = stdSQLProc(err, res);
