@@ -462,6 +462,13 @@ if (chk) {
       response.write(JSON.stringify(objResp));
       response.end();
     });
+} else if (reqUrl == "/getGolfGame" ) {
+"sql/getGolfGame.sql".gfdp(data).query((err, rows, fields) => {
+  objResp = stdSQLProc(err, rows);
+  response.write(JSON.stringify(objResp));
+  response.end();
+});
+
 } else if (reqUrl == "/getGolfLessonMenu" ) {
     const menu = "template/golf/lesson.json".gfdp({});
     objResp = {
@@ -863,6 +870,21 @@ if (chk) {
       response.write(JSON.stringify(objResp));
       response.end();
     });
+} else if (reqUrl == "/newGolfGame" ) {
+"sql/newGolfGame.sql".gfdp(data).query((err, rows, fields) => {
+  if (err) {
+    objResp = stdSQLProc(err, rows);
+    response.write(JSON.stringify(objResp));
+    response.end();
+    return;
+  }
+  "sql/getGolfGameID.sql".gfdp(data).query((err, rows, fields) => {
+    objResp = stdSQLProc(err, rows[0]);
+    response.write(JSON.stringify(objResp));
+    response.end();
+  });
+});
+
 } else if (reqUrl == "/newGolfNews" ) {
     const { news } = data;
     const vls = [];

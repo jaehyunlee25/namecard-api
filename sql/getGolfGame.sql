@@ -1,4 +1,3 @@
-//sqlname: getGolfGame
 select *
 from golf_game
 where device_id = '${device_id}'
