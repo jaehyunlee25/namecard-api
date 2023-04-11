@@ -1202,6 +1202,13 @@ if (chk) {
       response.write(JSON.stringify(objResp));
       response.end();
     });
+} else if (reqUrl == "/setGolfGameScore" ) {
+"sql/setGolfGameScore.sql".gfdp(data).query((err, rows, fields) => {
+  objResp = stdSQLProc(err, rows);
+  response.write(JSON.stringify(objResp));
+  response.end();
+});
+
 } else if (reqUrl == "/setReserveCancel" ) {
     objResp = setReserveCancel(data);
 } else if (reqUrl == "/setReserveReserve" ) {

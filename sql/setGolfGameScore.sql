@@ -1,4 +1,3 @@
-//sqlname: setGolfGameScore
 update golf_score
 set
     golf_club_name = '${golf_club_name}',
