@@ -665,6 +665,18 @@ if (chk) {
   response.end();
 });
 
+} else if (reqUrl == "/getGolfGameScore" ) {
+"sql/getGolfGameScore.sql".gfdp(data).query((err, rows, fields) => {
+  const res = {};
+  rows.forEach((obj) => {
+    res[obj.game_id] ??= [];
+    res[obj.game_id].push(obj);
+  });
+  objResp = stdSQLProc(err, res);
+  response.write(JSON.stringify(objResp));
+  response.end();
+});
+
 } else if (reqUrl == "/getGolfLessonMenu" ) {
     const menu = "template/golf/lesson.json".gfdp({});
     objResp = {
@@ -1079,6 +1091,13 @@ if (chk) {
     response.write(JSON.stringify(objResp));
     response.end();
   });
+});
+
+} else if (reqUrl == "/newGolfGameScore" ) {
+"sql/newGolfGameScore.sql".gfdp(data).query((err, rows, fields) => {
+  objResp = stdSQLProc(err, rows);
+  response.write(JSON.stringify(objResp));
+  response.end();
 });
 
 } else if (reqUrl == "/newGolfNews" ) {
