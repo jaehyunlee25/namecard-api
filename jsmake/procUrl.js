@@ -462,6 +462,13 @@ if (chk) {
       response.write(JSON.stringify(objResp));
       response.end();
     });
+} else if (reqUrl == "/getGolfFashion" ) {
+"sql/getGolfFashion.sql".gfdp(data).query((err, rows, fields) => {
+  objResp = stdSQLProc(err, rows);
+  response.write(JSON.stringify(objResp));
+  response.end();
+});
+
 } else if (reqUrl == "/getGolfGame" ) {
 "sql/getGolfGame.sql".gfdp(data).query((err, rows, fields) => {
   objResp = stdSQLProc(err, rows);
@@ -882,6 +889,13 @@ if (chk) {
       response.write(JSON.stringify(objResp));
       response.end();
     });
+} else if (reqUrl == "/newGolfFashion" ) {
+"sql/newGolfFashion.sql".gfdp(data).query((err, rows, fields) => {
+  objResp = stdSQLProc(err, rows);
+  response.write(JSON.stringify(objResp));
+  response.end();
+});
+
 } else if (reqUrl == "/newGolfGame" ) {
 "sql/newGolfGame.sql".gfdp(data).query((err, rows, fields) => {
   if (err) {

@@ -1,4 +1,3 @@
-//sqlname: newGolfFashion
 insert into golf_fashion
 values(
     uuid(),
