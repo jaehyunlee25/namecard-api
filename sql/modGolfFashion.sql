@@ -1,4 +1,3 @@
-//sqlname: modGolfFashion
 update golf_fashion
 set
     title = '${title}',
