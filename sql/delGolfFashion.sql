@@ -1,4 +1,3 @@
-//sqlname: delGolfFashion
 update golf_fashion
 set
     isDel = true,
