@@ -22,6 +22,6 @@ function timeraction() {
   EXTZLOG("login", "timeraction_5");
   EXTZLOG("login", usrPwd.value);
   EXTZLOG("login", "fnLogin" + fnLogin);
-  fnLogin.click();
+  /*fnLogin.click();*/
   EXTZLOG("login", "timeraction_6");
 }
