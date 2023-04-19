@@ -1,11 +1,11 @@
 var tLoginCount = 0;
-log("tLoginCount", tLoginCount);
+EXTZLOG("login", "tLoginCount: " + tLoginCount);
 const tLogin = setInterval(timeraction, 1000);
 timeraction();
 function timeraction() {
   if (!window["usrId"]) {
     tLoginCount++;
-    log("tLoginCount", tLoginCount);
+    EXTZLOG("login", "tLoginCount: " + tLoginCount);
     if (tLoginCount > 4) clearInterval(tLogin);
     return;
   }
