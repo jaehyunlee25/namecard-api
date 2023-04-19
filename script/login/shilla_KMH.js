@@ -17,8 +17,11 @@ function timeraction() {
   EXTZLOG("login", "timeraction_3");
   usrId.value = "${login_id}";
   EXTZLOG("login", "timeraction_4");
+  EXTZLOG("login", usrId.value);
   usrPwd.value = "${login_password}";
   EXTZLOG("login", "timeraction_5");
+  EXTZLOG("login", usrPwd.value);
+  EXTZLOG("login", "fnLogin" + fnLogin);
   fnLogin.click();
   EXTZLOG("login", "timeraction_6");
 }
