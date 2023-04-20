@@ -2,6 +2,7 @@ const http = require("http");
 const mysql = require("mysql");
 const fs = require("fs");
 const ogs = require("open-graph-scraper");
+const formidable = require("formidable");
 const log = function () {
   console.log("\n\n>> new log :: ", new Date());
   console.log(Array.from(arguments).join(", "));
@@ -194,7 +195,7 @@ function getReserveUrl(err, rows, fields) {
   });
 }
 
-function procPost(request, response, data) {
+function procPost(request, response, data, files) {
 log("request url", request.url);
 log("data", data);
 if (data.club && !golfClubAccounts[data.club]) {
@@ -601,6 +602,12 @@ const { eventId } = data;
   response.write(JSON.stringify(objResp));
   response.end();
 });
+
+} else if (reqUrl == "/fileUploadTest" ) {
+objResp = {
+  data,
+  files,
+};
 
 } else if (reqUrl == "/getClubNames" ) {
     objResp = {
@@ -2540,40 +2547,55 @@ const server = http
       response.end(JSON.stringify({}));
       return;
     }
-    let body = [];
-    try {
-      request
-        .on("data", (chunk) => {
-          console.log("test", chunk.toString());
-          body.push(chunk.toString());
-        })
-        .on("end", () => {
-          let data;
-          data = body.join("");
-          try {
-            log(data);
-            data = JSON.parse(data);
-          } catch (e) {
-            console.log(e);
-            console.log(data);
-            return;
-          }
-
-          if (request.method === "GET") {
-            response.write("hello, world!");
-            response.end();
-          }
-
-          if (request.method === "POST") {
-            try {
-              procPost(request, response, data);
-            } catch (e) {
-              log(e);
-            }
-          }
-        });
-    } catch (e) {
-      console.log(e);
+    if (request.method === "GET") {
+      response.write("hello, world!");
+      response.end();
+      return;
     }
+    if (request.method != "POST") return;
+
+    if (request.headers["content-type"].indexOf("multipart/form-data") != -1) {
+      // 파일처리이므로 formidable을 이용한다.
+      var form = new formidable.IncomingForm({
+        uploadDir: "temp",
+      });
+      form.parse(request, (err, fields, files) => {
+        if (err) {
+          log(err);
+          response.write(JSON.stringify({ data: err }));
+          response.end();
+          return;
+        }
+        try {
+          procPost(request, response, fields, files);
+        } catch (e) {
+          log(e);
+        }
+      });
+      return;
+    }
+    let body = [];
+    request
+      .on("data", (chunk) => {
+        console.log("test", chunk.toString());
+        body.push(chunk.toString());
+      })
+      .on("end", () => {
+        let data;
+        data = body.join("");
+        try {
+          log(data);
+          data = JSON.parse(data);
+        } catch (e) {
+          console.log(e);
+          console.log(data);
+          return;
+        }
+        try {
+          procPost(request, response, data);
+        } catch (e) {
+          log(e);
+        }
+      });
   })
   .listen(8080);

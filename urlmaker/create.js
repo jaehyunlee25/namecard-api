@@ -3,7 +3,7 @@ String.prototype.add = function (str) {
   return this + str;
 };
 const log = console.log;
-const url = "delGolfFashion";
+const url = "fileUploadTest";
 
 main();
 

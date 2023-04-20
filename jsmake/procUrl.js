@@ -1,4 +1,4 @@
-function procPost(request, response, data) {
+function procPost(request, response, data, files) {
 log("request url", request.url);
 log("data", data);
 if (data.club && !golfClubAccounts[data.club]) {
@@ -405,6 +405,12 @@ const { eventId } = data;
   response.write(JSON.stringify(objResp));
   response.end();
 });
+
+} else if (reqUrl == "/fileUploadTest" ) {
+objResp = {
+  data,
+  files,
+};
 
 } else if (reqUrl == "/getClubNames" ) {
     objResp = {

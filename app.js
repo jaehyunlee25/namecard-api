@@ -9,7 +9,7 @@ app.push(fs.readFileSync("jsmake/header.js", "utf-8"));
 app.push(fs.readFileSync("jsmake/prototype.js", "utf-8"));
 app.push(fs.readFileSync("jsmake/prolog.js", "utf-8"));
 
-const procurl = ["function procPost(request, response, data) {"];
+const procurl = ["function procPost(request, response, data, files) {"];
 procurl.push(fs.readFileSync("jsmake/urlmake/header.js", "utf-8"));
 
 const urls = fs.readdirSync("jsmake/urlmake/url");
