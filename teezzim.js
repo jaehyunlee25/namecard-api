@@ -2542,18 +2542,8 @@ const server = http
     if (request.method != "POST") return;
 
     if (request.headers["content-type"].indexOf("multipart/form-data") != -1) {
-      let body = [];
-      request
-        .on("data", (chunk) => {
-          body.push(chunk.toString());
-        })
-        .on("end", () => {
-          let data;
-          data = body.join("");
-          log(data);
-        });
       // 파일처리이므로 formidable을 이용한다.
-      /* var form = new formidable.IncomingForm({
+      var form = new formidable.IncomingForm({
         uploadDir: "temp",
       });
       form.parse(request, (err, fields, files) => {
@@ -2568,7 +2558,7 @@ const server = http
         } catch (e) {
           log(e);
         }
-      }); */
+      });
       return;
     }
     let body = [];
