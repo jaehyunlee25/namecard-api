@@ -51,9 +51,48 @@ getChecksum(currentFile, (checksum) => {
     });
 
     const detectedCells = LINEDETECTOR(letters);
+    const dc = detectedCells;
+    let detectedResult;
+    if (dc && dc[0] && dc[0][0]) {
+      const title_top = dc[0][0].children[0][0].text;
+      const title_bottom = dc[0][0].children[1][0].text;
+      if (title_top == "SMART" && title_bottom == "SCORE") {
+        const {
+          1: { text: date },
+          2: { text: time },
+          3: { text: userName },
+        } = dc[0];
+        const golf_club_name = dc[1][0].children[0][0].text;
+        const golf_course = dc[1][0].children[1][0].text.split(",");
+        const all_sum = dc[1][1].text;
+        const golf_score = (() => {
+          const res = [];
+          Object.entries(dc).forEach(([key, val]) => {
+            if (key < 2) return;
+            if (Object.entries(val).length < 10) return;
+            const tmp = [];
+            Object.entries(val).forEach(([k, score]) => {
+              const hole = k * 1 + 1;
+              tmp.push(score.text);
+            });
+            res.push(tmp);
+          });
+          return res;
+        })();
+        detectedResult = {
+          date,
+          time,
+          userName,
+          golf_club_name,
+          all_sum,
+          golf_course,
+          golf_score,
+        };
+      }
+    }
 
     objResp = {
-      detectedCells,
+      detectedResult,
       data,
       files,
     };
