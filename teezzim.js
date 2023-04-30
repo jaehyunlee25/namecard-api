@@ -74,6 +74,12 @@ Array.prototype.lo = function () {
   const idx = this.length - 1;
   return this[idx];
 };
+global.around = function (lmt, fnc) {
+  for (var i = 0; i < lmt; i++) {
+    var a = fnc(i);
+    if (a) break;
+  }
+};
 
 let golfClubEngNames = [];
 let golfClubIdToEng = {};
@@ -199,32 +205,550 @@ function getReserveUrl(err, rows, fields) {
       row.golf_club_search_url_mobile;
   });
 }
+function LINEDETECTOR(letters) {
+  //const log = logOpt ? console.log : () => {};
 
-function procPost(request, response, data, files) {
-log("request url", request.url);
-log("data", data);
-if (data.club && !golfClubAccounts[data.club]) {
-  response.write(
-    JSON.stringify({
-      url: "",
-      script: "",
-    })
-  );
-  response.end();
-  return;
+  // 횡분석이 끝나면
+  // guessVertical 함수에 hLines 배열이 전달된다.
+  // hLines는 empty horizontal line(EHL) 배열이다.
+
+  Array.prototype.getAverageSizeWH = function () {
+    let sumW = 0;
+    let sumH = 0;
+    this.forEach((vertices) => {
+      const w = vertices[1].x - vertices[0].x + 1;
+      const h = vertices[2].y - vertices[0].y + 1;
+      sumW += w;
+      sumH += h;
+    });
+    return { avgW: sumW / this.length, avgH: sumH / this.length };
+  };
+  Array.prototype.yCatch = function (min, max) {
+    const res = [];
+    this.forEach((vertices) => {
+      const minmax = vertices.vnx();
+      if (max == -1) {
+        if (minmax.min.y >= min) res.push(vertices);
+      } else {
+        if (minmax.min.y >= min && minmax.min.y <= max) res.push(vertices);
+      }
+    });
+    res.sort((a, b) => a[0].x - b[0].x);
+    return res;
+  };
+  Array.prototype.hCatch = function (y) {
+    const res = [];
+    this.forEach((vertices) => {
+      const minmax = vertices.vnx();
+      if (y >= minmax.min.y && y <= minmax.max.y) res.push(vertices);
+    });
+    res.sort((a, b) => a[0].x - b[0].x);
+    return res;
+  };
+  Array.prototype.vCatch = function (x, yMin, yMax) {
+    //log(yMin, yMax);
+    const res = [];
+    this.forEach((vertices) => {
+      const minmax = vertices.vnx();
+      //우선 라인의 y 조건에 맞지 않는 객체들은 제외한다.
+      if (minmax.min.y <= yMin || minmax.min.y >= yMax) return;
+      if (x >= minmax.min.x && x <= minmax.max.x) res.push(vertices);
+    });
+    res.sort((a, b) => a[0].y - b[0].y);
+    return res;
+  };
+  Array.prototype.vnx = function () {
+    let res = {
+      max: { x: null, y: null },
+      min: { x: null, y: null },
+    };
+    this.forEach(({ x, y }, j) => {
+      if (j == 0) {
+        res = {
+          max: { x, y },
+          min: { x, y },
+        };
+        return;
+      }
+      if (x > res.max.x) res.max.x = x;
+      if (x < res.min.x) res.min.x = x;
+
+      if (y > res.max.y) res.max.y = y;
+      if (y < res.min.y) res.min.y = y;
+    });
+
+    // minmax 정보를 바탕으로 한, 전체 박스 영역 정보를 파악한다.
+    res.x = res.min.x;
+    res.y = res.min.y;
+    res.w = res.max.x - res.min.x + 1;
+    res.h = res.max.y - res.min.y + 1;
+    return res;
+  };
+  Array.prototype.minmax = function () {
+    let res = {
+      max: { x: null, y: null },
+      min: { x: null, y: null },
+    };
+    this.forEach((vertices, i) => {
+      vertices.forEach(({ x, y }, j) => {
+        if (i == 0 && j == 0) {
+          res = {
+            max: { x, y },
+            min: { x, y },
+          };
+          return;
+        }
+        if (x > res.max.x) res.max.x = x;
+        if (x < res.min.x) res.min.x = x;
+
+        if (y > res.max.y) res.max.y = y;
+        if (y < res.min.y) res.min.y = y;
+      });
+    });
+    // minmax 정보를 바탕으로 한, 전체 박스 영역 정보를 파악한다.
+    res.x = res.min.x;
+    res.y = res.min.y;
+    res.w = res.max.x - res.min.x + 1;
+    res.h = res.max.y - res.min.y + 1;
+    return res;
+  };
+  Array.prototype.getVerticesArray = function () {
+    const res = [];
+    this.forEach(({ vertices }) => res.push(vertices));
+    return res;
+  };
+
+  const arVertices = letters.getVerticesArray();
+  const texts = (() => {
+    const res = {};
+    letters.forEach((letter) => {
+      const key = JSON.stringify(letter.vertices);
+      res[key] = letter.text;
+    });
+    return res;
+  })();
+
+  let LIMIT = 0;
+  const root = {};
+  mkString(arVertices, root);
+
+  return root;
+
+  function getAverageSize(hLines) {
+    const res = {};
+    let prev;
+    hLines.forEach((obj, idxLine) => {
+      const { middle } = obj;
+      if (prev == undefined)
+        res[idxLine] = arVertices.yCatch(0, middle).getAverageSizeWH();
+      else
+        res[idxLine] = arVertices
+          .yCatch(prev.middle, middle)
+          .getAverageSizeWH();
+      prev = obj;
+    });
+    res[hLines.length] = arVertices.yCatch(prev.middle, -1).getAverageSizeWH();
+    return res;
+  }
+  function guessVertical(hLines) {
+    //첫번째부터 끝라인까지의 분석
+    const vLines = {};
+    let prev;
+    hLines.forEach((obj, idxLine) => {
+      guessLine(obj, idxLine);
+      prev = obj;
+    });
+    // 끝라인 이후의 공간에 대한 분석
+    guessLine(undefined, hLines.length);
+    return vLines;
+
+    function guessLine(obj, idxLine) {
+      const param = arVertices.minmax();
+      const originX = param.x;
+      const num = param.w;
+      around(num, (i) => {
+        param.x = originX + i;
+        //라인과 라인 사이의 영역이 글자가 위치한 영역이다.
+        let minY; //라인의 시작점
+        let maxY; //라인의 끝점
+        if (prev == undefined) {
+          // 첫번째 라인
+          minY = arVertices.minmax().y - 1; // 컨텐츠 area y이므로 반드시 1을 빼준다.
+          maxY = obj.middle;
+        } else if (obj == undefined) {
+          //끝라인(마지막 라인 이후의 공간)
+          minY = prev.middle;
+          maxY = param.y + param.h;
+        } else {
+          //첫번째와 끝라인 중간의 모든 라인들
+          minY = prev.middle;
+          maxY = obj.middle;
+        }
+        if (arVertices.vCatch(param.x, minY, maxY).length == 0) {
+          param.y = minY;
+          param.h = maxY - minY;
+
+          guessVLine(param, idxLine);
+        }
+      });
+
+      vLines[idxLine] ??= [];
+      vLines[idxLine].push({
+        type: "vLine",
+        min: param.x + param.h - 1,
+        max: param.x + param.h - 1,
+        weight: 100,
+        middle: param.x + param.h - 1,
+        startY: param.y,
+        endY: param.h,
+      });
+    }
+    function guessVLine(param, line) {
+      //백지영역의 범위를 넓히는 함수
+      const i = param.x;
+      const obj = {
+        type: "vLine",
+        min: i,
+        max: i,
+        weight: 1, // 사실 weight는 max - min +1 이다.
+        middle: i,
+        startY: param.y,
+        endY: param.h, // 라인의 높이를 나타내기 때문에 좌표를 지정하면 안 된다(길이만 지정한다).
+      };
+      vLines[line] ??= [];
+      const startY = param.y;
+      const endY = param.h;
+
+      let flg = true;
+      vLines[line].forEach((ob) => {
+        if (i == ob.min - 1) {
+          ob.min = i;
+          ob.weight++; // 사실 weight는 max - min +1 이다.
+          ob.middle = parseInt(ob.min + (ob.max - ob.min) / 2);
+          flg = false;
+        } else if (i == ob.max + 1) {
+          ob.max = i;
+          ob.weight++; // 사실 weight는 max - min +1 이다.
+          ob.middle = parseInt(ob.min + (ob.max - ob.min) / 2);
+          flg = false;
+        }
+      });
+      if (flg) {
+        vLines[line].push(obj);
+      }
+    }
+  }
+  function guessHorizontal(arVertices) {
+    // object들의 vertices 정보를 바탕으로 모든 object들을 포괄하는
+    // 전체영역 박스 좌표를 생성한다.
+    const param = arVertices.minmax();
+    const hLines = [];
+
+    //let probe = reprod.hline(param, "red");
+    const originY = param.y;
+    const num = param.h;
+    around(num, (i) => {
+      param.y = originY + i;
+      //probe = reprod.hline(param, "red", probe);
+
+      // 조건문은 object가 존재하지 않는 empty horizontal line(EHL)을 발견한 것이고,
+      // guessHLine은 그게 이전의 EHL과 연속인지 파악하고, 연속이면 하나의 객체로 통합하는 과정이다.
+      if (arVertices.hCatch(param.y).length == 0) guessHLine(param);
+    });
+    return hLines;
+
+    function guessHLine(param) {
+      //empty horizontal line(EHL)의 범위를 넓히는 함수
+      const i = param.y;
+      // EHL의 자료구조
+      const hLine = {
+        type: "hLine",
+        min: i,
+        max: i,
+        weight: 1,
+        middle: i,
+        startX: param.x,
+        endX: param.w,
+      };
+      let flg = true;
+
+      hLines.forEach((ob) => {
+        if (i == ob.min - 1) {
+          ob.min = i;
+          ob.weight++; // 사실 weight는 max - min +1 이다.
+          ob.middle = parseInt(ob.min + (ob.max - ob.min) / 2);
+          flg = false;
+        } else if (i == ob.max + 1) {
+          ob.max = i;
+          ob.weight++; // 사실 weight는 max - min +1 이다.
+          ob.middle = parseInt(ob.min + (ob.max - ob.min) / 2);
+          flg = false;
+        }
+      });
+      if (flg) hLines.push(hLine);
+    }
+  }
+  function getColsByLine(hLines, vLines, avgLines) {
+    // 라인과 라인 사이, 즉 row의 영역을 구한다.
+    const rows = {};
+    let prev;
+    hLines.forEach((line, i) => {
+      if (i == 0) {
+        rows[i] = {
+          type: "row",
+          id: i,
+          min: 0,
+          max: line.middle - 1,
+        };
+        prev = line;
+        return;
+      }
+
+      rows[i] = {
+        type: "row",
+        id: i,
+        min: prev.middle + 1,
+        max: line.middle - 1,
+      };
+
+      prev = line;
+    });
+    rows[hLines.length] = {
+      type: "row",
+      id: hLines.length,
+      min: prev.middle + 1,
+      max: -1,
+    };
+    //컬럼 area를 뽑아본다.
+    const obCols = {};
+    Object.entries(vLines).forEach(([key, val], i) => {
+      const space = avgLines[key].avgW;
+      let cPrev;
+      val.forEach((ob) => {
+        if (ob.weight < space) return;
+        obCols[key] ??= [];
+        if (cPrev == undefined) {
+          obCols[key].push({
+            type: "col",
+            min: 0,
+            max: ob.middle - 1,
+          });
+          cPrev = ob;
+          return;
+        }
+        obCols[key].push({
+          type: "col",
+          min: cPrev.middle + 1,
+          max: ob.middle - 1,
+        });
+        cPrev = ob;
+      });
+
+      // column line 이 하나도 없을 때는
+      // 전체를 하나의 column으로 해서 리턴한다.
+      if (cPrev == undefined) return;
+
+      obCols[key] ??= [];
+      obCols[key].push({
+        type: "col",
+        min: cPrev.middle + 1,
+        max: -1,
+      });
+    });
+
+    // row / col 정보를 본다.
+    const colsByLine = {};
+    Object.entries(obCols).forEach(([key, cols], i) => {
+      const { min: min_y, max: max_y } = rows[key];
+      cols.forEach((col, j) => {
+        const { min: min_x, max: max_x } = col;
+        colsByLine[key] ??= [];
+        colsByLine[key].push({
+          min_x,
+          min_y,
+          max_x,
+          max_y,
+        });
+      });
+    });
+
+    return { rows, colsByLine };
+  }
+  function getObjectsByLine(arVertices) {
+    const hLines = guessHorizontal(arVertices);
+    if (hLines.length == 0) return { hLines };
+    const avgLines = getAverageSize(hLines);
+    const vLines = guessVertical(hLines);
+    const { rows, colsByLine } = getColsByLine(hLines, vLines, avgLines);
+    // 라인들을 횡분석, 종분석 방법으로 찾는다.
+    // 라인을 먼저 찾고,
+    // 라인별로 횡분석을 실시한다.
+    //const { hLines, vLines, rows, colsByLine, avgLines } = guess(arVertices);
+    // 횡라인과 종라인을 표시한다.
+    /* dpHLines(hLines);
+    Object.entries(vLines).forEach(([key, val]) => {
+      dpVLines(vLines, key, avgLines[key].avgW);
+    }); */
+
+    // 특정 row에 해당하는 object들을 구한다.
+    const objectsByLine = {};
+    Object.entries(rows).forEach(([, row]) => {
+      arVertices.forEach((vertices) => {
+        const [{ x, y }] = vertices;
+        if (y >= row.min) {
+          if (row.max == -1) {
+            // 맨 끝행일때,
+            objectsByLine[row.id] ??= [];
+            objectsByLine[row.id].push(vertices);
+            return;
+          }
+          if (y <= row.max) {
+            objectsByLine[row.id] ??= [];
+            objectsByLine[row.id].push(vertices);
+          }
+        }
+      });
+    });
+
+    // 특정 col에 있는 object들을 모은다.
+    const columns = [];
+    Object.entries(colsByLine).forEach(([key, cols], i) => {
+      cols.forEach((col, j) => {
+        arVertices.forEach((vertices) => {
+          const [lt, , rb] = vertices;
+          if (lt.x >= col.min_x && lt.y >= col.min_y) {
+            if (col.max_x == -1) {
+              if (rb.y <= col.max_y) {
+                columns.push({
+                  row: key,
+                  col: j,
+                  vertices,
+                });
+              }
+            } else {
+              if (rb.x <= col.max_x) {
+                if (col.max_y == -1) {
+                  columns.push({
+                    row: key,
+                    col: j,
+                    vertices,
+                  });
+                } else if (rb.y <= col.max_y) {
+                  columns.push({
+                    row: key,
+                    col: j,
+                    vertices,
+                  });
+                }
+              }
+            }
+          }
+        });
+      });
+    });
+
+    const objectsByColumn = {};
+    Object.entries(colsByLine).forEach(([key, cols], i) => {
+      objectsByColumn[key] ??= {};
+      cols.forEach((col, j) => {
+        objectsByColumn[key][j] ??= [];
+        arVertices.forEach((vertices) => {
+          const [lt, , rb] = vertices;
+          if (lt.x >= col.min_x && lt.y >= col.min_y) {
+            if (col.max_x == -1) {
+              if (rb.y <= col.max_y) {
+                objectsByColumn[key][j].push(vertices);
+              }
+            } else {
+              if (rb.x <= col.max_x) {
+                if (col.max_y == -1) {
+                  objectsByColumn[key][j].push(vertices);
+                } else if (rb.y <= col.max_y) {
+                  objectsByColumn[key][j].push(vertices);
+                }
+              }
+            }
+          }
+        });
+      });
+    });
+    return { objectsByLine, columns, objectsByColumn };
+  }
+  function recursiveGuess(param, parent) {
+    const { objectsByColumn } = getObjectsByLine(param);
+    Object.entries(objectsByColumn).forEach(([key, val]) => {
+      parent[key] ??= {};
+      Object.entries(val).forEach(([colkey, col]) => {
+        parent[key][colkey] ??= { vertices: col };
+        const res = getObjectsByLine(col);
+        if (res.hLines) return;
+        if (res.columns.length == 0) return;
+
+        parent[key][colkey].children = {};
+        recursiveGuess(col, parent[key][colkey].children);
+      });
+    });
+  }
+  function mkString(arVertices, root) {
+    const guessRoot = {};
+    recursiveGuess(arVertices, guessRoot);
+    Object.entries(guessRoot).forEach(([key, cols]) => {
+      root[key] ??= {};
+      Object.entries(cols).forEach(([colkey, col]) => {
+        if (col.vertices.length == 0) return;
+        root[key][colkey] ??= {};
+        if (col.children) {
+          root[key][colkey].children = {};
+          let tmp = [];
+          Object.entries(col.children).forEach(([key, line]) => {
+            Object.entries(line).forEach(([linekey, col]) => {
+              const { vertices } = col;
+              if (vertices.length == 0) return;
+              tmp = tmp.concat(vertices);
+            });
+          });
+          mkString(tmp, root[key][colkey].children);
+          return;
+        }
+        root[key][colkey].text = verticesToText(col.vertices);
+      });
+    });
+  }
+  function verticesToText(ar) {
+    const str = [];
+    ar.forEach((vertices) => {
+      const key = JSON.stringify(vertices);
+      str.push(texts[key]);
+    });
+    return str.join("");
+  }
 }
 
-let url;
-let script;
-let objResp;
-const reqUrl = "/" + request.url.split("/").lo();
+function procPost(request, response, data, files) {
+  log("request url", request.url);
+  log("data", data);
+  if (data.club && !golfClubAccounts[data.club]) {
+    response.write(
+      JSON.stringify({
+        url: "",
+        script: "",
+      })
+    );
+    response.end();
+    return;
+  }
 
-if (reqUrl == "/dummy") {
-} else if (reqUrl == "/account" ) {
+  let url;
+  let script;
+  let objResp;
+  const reqUrl = "/" + request.url.split("/").lo();
+
+  if (reqUrl == "/dummy") {
+  } else if (reqUrl == "/account") {
     objResp = {
       accounts: golfClubAccounts,
     };
-} else if (reqUrl == "/clubGroup" ) {
+  } else if (reqUrl == "/clubGroup") {
     const club = data.club_id;
     const groupName = groupClubs[club];
     let result = [];
@@ -234,7 +758,7 @@ if (reqUrl == "/dummy") {
       message: "OK",
       data: result,
     };
-} else if (reqUrl == "/clubs" ) {
+  } else if (reqUrl == "/clubs") {
     const result = [];
     const clubIds = {};
     const clubStates = {};
@@ -253,7 +777,7 @@ if (reqUrl == "/dummy") {
       response.end();
     });
     objResp = 0;
-} else if (reqUrl == "/control" ) {
+  } else if (reqUrl == "/control") {
     /*
       controlForUserDevice(engName, "");
       */
@@ -272,7 +796,7 @@ if (reqUrl == "/dummy") {
     });
 
     objResp = {};
-} else if (reqUrl == "/dbCheckGolfClubEngName" ) {
+  } else if (reqUrl == "/dbCheckGolfClubEngName") {
     "sql/getDbCheckGolfClubEngName.sql"
       .gfdp(data)
       .query((err, rows, fields) => {
@@ -290,7 +814,7 @@ if (reqUrl == "/dummy") {
         response.write(JSON.stringify(objResp));
         response.end();
       });
-} else if (reqUrl == "/dbCheckGolfClubName" ) {
+  } else if (reqUrl == "/dbCheckGolfClubName") {
     "sql/getDbCheckGolfClubName.sql".gfdp(data).query((err, rows, fields) => {
       if (err) {
         objResp = {
@@ -306,7 +830,7 @@ if (reqUrl == "/dummy") {
       response.write(JSON.stringify(objResp));
       response.end();
     });
-} else if (reqUrl == "/dbCheckServerfile" ) {
+  } else if (reqUrl == "/dbCheckServerfile") {
     const eng = data.eng_id;
     objResp = {
       type: "okay",
@@ -314,7 +838,7 @@ if (reqUrl == "/dummy") {
     };
     if (fs.existsSync("script/search_dict/" + eng + ".json"))
       objResp.data.check = true;
-} else if (reqUrl == "/dbGetGolfClub" ) {
+  } else if (reqUrl == "/dbGetGolfClub") {
     "sql/getGolfClub.sql".gf().query((err, rows, fields) => {
       golfClubs = {};
       rows.forEach((row) => {
@@ -331,12 +855,12 @@ if (reqUrl == "/dummy") {
       response.write(JSON.stringify(objResp));
       response.end();
     });
-} else if (reqUrl == "/dbGetGroup" ) {
+  } else if (reqUrl == "/dbGetGroup") {
     objResp = {
       type: "okay",
       data: groupClubs,
     };
-} else if (reqUrl == "/dbNewGolfClub" ) {
+  } else if (reqUrl == "/dbNewGolfClub") {
     "sql/newDbGolfClub.sql".gfdp(data).query((err, rows, fields) => {
       if (err) {
         objResp = {
@@ -360,7 +884,7 @@ if (reqUrl == "/dummy") {
         response.end();
       });
     });
-} else if (reqUrl == "/dbNewGolfClubDetail" ) {
+  } else if (reqUrl == "/dbNewGolfClubDetail") {
     "sql/newDbGolfClubDetail.sql".gfdp(data).query((err, rows, fields) => {
       if (err) {
         objResp = {
@@ -378,7 +902,7 @@ if (reqUrl == "/dummy") {
       response.write(JSON.stringify(objResp));
       response.end();
     });
-} else if (reqUrl == "/dbNewGolfClubEng" ) {
+  } else if (reqUrl == "/dbNewGolfClubEng") {
     "sql/newDbGolfClubEng.sql".gfdp(data).query((err, rows, fields) => {
       if (err) {
         objResp = {
@@ -406,7 +930,7 @@ if (reqUrl == "/dummy") {
         });
       });
     });
-} else if (reqUrl == "/dbNewGolfClubOrder" ) {
+  } else if (reqUrl == "/dbNewGolfClubOrder") {
     "sql/newDbGolfClubOrder.sql".gfdp(data).query((err, rows, fields) => {
       if (err) {
         objResp = {
@@ -424,7 +948,7 @@ if (reqUrl == "/dummy") {
       response.write(JSON.stringify(objResp));
       response.end();
     });
-} else if (reqUrl == "/dbNewGolfClubUsability" ) {
+  } else if (reqUrl == "/dbNewGolfClubUsability") {
     "sql/newDbGolfClubUsability.sql".gfdp(data).query((err, rows, fields) => {
       if (err) {
         objResp = {
@@ -442,7 +966,7 @@ if (reqUrl == "/dummy") {
       response.write(JSON.stringify(objResp));
       response.end();
     });
-} else if (reqUrl == "/dbNewGolfCourse" ) {
+  } else if (reqUrl == "/dbNewGolfCourse") {
     const { course_name, id } = data;
     const arCourse = course_name.replace(/\s/g, "").split(",");
     const res = [];
@@ -483,7 +1007,7 @@ if (reqUrl == "/dummy") {
           });
         });
       });
-} else if (reqUrl == "/dbNewGroup" ) {
+  } else if (reqUrl == "/dbNewGroup") {
     const { clubIds, engIds, groupName } = data;
     const res = [];
     clubIds.forEach((id, i) => {
@@ -519,7 +1043,7 @@ if (reqUrl == "/dummy") {
         });
       });
     });
-} else if (reqUrl == "/dbNewServerfile" ) {
+  } else if (reqUrl == "/dbNewServerfile") {
     const { eng_id: eng } = data;
     const arRes = [
       ["login_url", golfClubLoginUrl[eng], "funcLogin"],
@@ -542,7 +1066,7 @@ if (reqUrl == "/dummy") {
     objResp = {
       type: "okay",
     };
-} else if (reqUrl == "/dbSetGolfClub" ) {
+  } else if (reqUrl == "/dbSetGolfClub") {
     "sql/setDbGolfClubOuterInfo.sql".gfdp(data).query((err, rows, fields) => {
       if (err) {
         objResp = {
@@ -573,7 +1097,7 @@ if (reqUrl == "/dummy") {
         });
       });
     });
-} else if (reqUrl == "/delDeviceRecord" ) {
+  } else if (reqUrl == "/delDeviceRecord") {
     delDeviceDate(data, (res1) => {
       delDeviceTime(data, (res2) => {
         objResp = {
@@ -584,7 +1108,7 @@ if (reqUrl == "/dummy") {
         response.end();
       });
     });
-} else if (reqUrl == "/delDeviceRecordTime" ) {
+  } else if (reqUrl == "/delDeviceRecordTime") {
     delDeviceTime(data, (res2) => {
       objResp = {
         resultCode: 200,
@@ -593,122 +1117,157 @@ if (reqUrl == "/dummy") {
       response.write(JSON.stringify(objResp));
       response.end();
     });
-} else if (reqUrl == "/delGolfClubEvent" ) {
-const { eventId } = data;
-"sql/delGolfClubEvent.sql".gfdp(data).query((err, rows, fields) => {
-  objResp = stdSQLProc(err, rows);
-  response.write(JSON.stringify(objResp));
-  response.end();
-});
+  } else if (reqUrl == "/delGolfClubEvent") {
+    const { eventId } = data;
+    "sql/delGolfClubEvent.sql".gfdp(data).query((err, rows, fields) => {
+      objResp = stdSQLProc(err, rows);
+      response.write(JSON.stringify(objResp));
+      response.end();
+    });
+  } else if (reqUrl == "/delGolfFashion") {
+    "sql/delGolfFashion.sql".gfdp(data).query((err, rows, fields) => {
+      objResp = stdSQLProc(err, rows);
+      response.write(JSON.stringify(objResp));
+      response.end();
+    });
+  } else if (reqUrl == "/fileUploadTest") {
+    const { file } = files;
+    const { size, filepath, newFilename, mimetype, mtime, originalFilename } =
+      file;
+    const currentFile = "temp/" + newFilename;
+    getChecksum(currentFile, (checksum) => {
+      const addr = "temp/" + checksum + ".json";
+      const chk = fs.existsSync(addr);
+      if (chk) {
+        fs.unlinkSync(currentFile);
+        objResp = fs.readFileSync(addr, "utf-8").jp();
+        response.write(JSON.stringify(objResp));
+        response.end();
+        return;
+      }
+      getTextDetection(currentFile, (results) => {
+        fs.unlinkSync(currentFile);
+        const [result] = results;
+        const { fullTextAnnotation: fta } = result;
 
-} else if (reqUrl == "/delGolfFashion" ) {
-"sql/delGolfFashion.sql".gfdp(data).query((err, rows, fields) => {
-  objResp = stdSQLProc(err, rows);
-  response.write(JSON.stringify(objResp));
-  response.end();
-});
+        let letters = [];
+        const { text, pages } = fta;
+        const [page] = pages;
+        const { blocks, confidence, height, width, property } = page;
+        const { detectedBreak, detectedLanguages } = property;
+        //log(confidence, height, width);
+        detectedLanguages.forEach(({ languageCode, confidence }) => {
+          //log(languageCode, confidence);
+        });
+        blocks.forEach((ob) => {
+          const { blockType, confidence, property, boundingBox, paragraphs } =
+            ob;
+          const { vertices } = boundingBox;
+          /* log(blockType, confidence, property);
+      log(boundingBox);
+      mkBox(vertices);
+      log(paragraphs); */
 
-} else if (reqUrl == "/fileUploadTest" ) {
-const { file } = files;
-const { size, filepath, newFilename, mimetype, mtime, originalFilename } = file;
-const currentFile = "temp/" + newFilename;
-getChecksum(currentFile, (checksum) => {
-  const addr = "temp/" + checksum + ".json";
-  const chk = fs.existsSync(addr);
-  if (chk) {
-    fs.unlinkSync(currentFile);
-    objResp = fs.readFileSync(addr, "utf-8").jp();
-    response.write(JSON.stringify(objResp));
-    response.end();
-    return;
-  }
-  getTextDetection(currentFile, (results) => {
-    fs.unlinkSync(currentFile);
-    const [result] = results;
-    const { fullTextAnnotation } = result;
-    objResp = {
-      fullTextAnnotation,
-      data,
-      files,
-    };
-    fs.writeFileSync(addr, JSON.stringify(objResp), "utf-8");
-    response.write(JSON.stringify(objResp));
-    response.end();
-  });
-});
-function getTextDetection(file, callback) {
-  client
-    //.labelDetection("letters.jfif")
-    .documentTextDetection(file)
-    .then((results) => {
-      callback(results);
-      /* const labels = results[0].labelAnnotations;
+          paragraphs.forEach(({ words, boundingBox, confidence, property }) => {
+            const { vertices } = boundingBox;
+            //mkBox(vertices, "blue");
+            words.forEach((ob) => {
+              const { boundingBox, confidence, property, symbols } = ob;
+              const { vertices } = boundingBox;
+              //mkBox(vertices, "green");
+              symbols.forEach((ob) => {
+                const { boundingBox, confidence, property, text } = ob;
+                const { vertices } = boundingBox;
+                letters.push({ text, vertices });
+                //mkBox(vertices, "blue");
+              });
+            });
+          });
+        });
+
+        const detectedCells = LINEDETECTOR(letters);
+
+        objResp = {
+          detectedCells,
+          data,
+          files,
+        };
+        fs.writeFileSync(addr, JSON.stringify(objResp), "utf-8");
+        response.write(JSON.stringify(objResp));
+        response.end();
+      });
+    });
+    function getTextDetection(file, callback) {
+      client
+        //.labelDetection("letters.jfif")
+        .documentTextDetection(file)
+        .then((results) => {
+          callback(results);
+          /* const labels = results[0].labelAnnotations;
             labels.forEach((label) => log(label.description));
             Object.entries(fullTextAnnotation).forEach(([key, val]) => {
             if (key == "pages") {
               console.log(JSON.stringify(val[0]));
             }
           }); */
-    })
-    .catch((err) => {
-      console.error("ERROR:", err);
-      objResp = { error: err };
-      response.write(JSON.stringify(objResp));
-      response.end();
-    });
-}
-function getChecksum(path, callback) {
-  const fileStream = fs.createReadStream(path);
-  const hash = crypto.createHash("sha256");
-  fileStream.pipe(hash);
-  hash.on("finish", () => {
-    const checksum = hash.digest("hex");
-    callback(checksum);
-  });
-}
-
-} else if (reqUrl == "/getClubNames" ) {
+        })
+        .catch((err) => {
+          console.error("ERROR:", err);
+          objResp = { error: err };
+          response.write(JSON.stringify(objResp));
+          response.end();
+        });
+    }
+    function getChecksum(path, callback) {
+      const fileStream = fs.createReadStream(path);
+      const hash = crypto.createHash("sha256");
+      fileStream.pipe(hash);
+      hash.on("finish", () => {
+        const checksum = hash.digest("hex");
+        callback(checksum);
+      });
+    }
+  } else if (reqUrl == "/getClubNames") {
     objResp = {
       golfClubEngToKor,
     };
-} else if (reqUrl == "/getDeviceRound" ) {
-const archivePath = "/var/www/html/teelog/";
-const logArchiveList = fs.readdirSync(archivePath);
-const dt = data.date.rm("-");
-let chk;
-logArchiveList.forEach((file) => {
-  if (file.has(dt)) chk = file;
-});
-if (chk) {
-  const con = fs.readFileSync(archivePath.add(chk), "utf-8").jp();
-  const res = [];
-  con.forEach((ob) => {
-    if (ob.device_id == data.device_id && ob.golf_club_id.has("_log"))
-      res.push(ob);
-  });
-  objResp = {
-    type: "okay",
-    data: res,
-  };
-} else {
-  "sql/getDeviceRound.sql".gfdp(data).query((err, rows, fields) => {
-    if (err) {
-      objResp = {
-        type: "error",
-        data: err,
-      };
-    } else {
+  } else if (reqUrl == "/getDeviceRound") {
+    const archivePath = "/var/www/html/teelog/";
+    const logArchiveList = fs.readdirSync(archivePath);
+    const dt = data.date.rm("-");
+    let chk;
+    logArchiveList.forEach((file) => {
+      if (file.has(dt)) chk = file;
+    });
+    if (chk) {
+      const con = fs.readFileSync(archivePath.add(chk), "utf-8").jp();
+      const res = [];
+      con.forEach((ob) => {
+        if (ob.device_id == data.device_id && ob.golf_club_id.has("_log"))
+          res.push(ob);
+      });
       objResp = {
         type: "okay",
-        data: rows,
+        data: res,
       };
+    } else {
+      "sql/getDeviceRound.sql".gfdp(data).query((err, rows, fields) => {
+        if (err) {
+          objResp = {
+            type: "error",
+            data: err,
+          };
+        } else {
+          objResp = {
+            type: "okay",
+            data: rows,
+          };
+        }
+        response.write(JSON.stringify(objResp));
+        response.end();
+      });
     }
-    response.write(JSON.stringify(objResp));
-    response.end();
-  });
-}
-
-} else if (reqUrl == "/getFeeLink" ) {
+  } else if (reqUrl == "/getFeeLink") {
     "sql/getFeeLink.sql".gfdp(data).query((err, rows, fields) => {
       if (err) {
         objResp = {
@@ -724,57 +1283,54 @@ if (chk) {
       response.write(JSON.stringify(objResp));
       response.end();
     });
-} else if (reqUrl == "/getGolfClubEvent" ) {
+  } else if (reqUrl == "/getGolfClubEvent") {
     "sql/getGolfClubEvent.sql".gfdp(data).query((err, rows, fields) => {
       objResp = stdSQLProc(err, rows);
       response.write(JSON.stringify(objResp));
       response.end();
     });
-} else if (reqUrl == "/getGolfFashion" ) {
-"sql/getGolfFashion.sql".gfdp(data).query((err, rows, fields) => {
-  const addr =
-    "https://mnemosynesolutions.co.kr/app/project/editor_source_golf/img/upload/";
-  rows.forEach((row) => {
-    row.thumbnail = addr + row.thumbnail;
-  });
-  objResp = stdSQLProc(err, rows);
-  response.write(JSON.stringify(objResp));
-  response.end();
-});
-
-} else if (reqUrl == "/getGolfGame" ) {
-"sql/getGolfGame.sql".gfdp(data).query((err, rows, fields) => {
-  objResp = stdSQLProc(err, rows);
-  response.write(JSON.stringify(objResp));
-  response.end();
-});
-
-} else if (reqUrl == "/getGolfGameScore" ) {
-"sql/getGolfGameScore.sql".gfdp(data).query((err, rows, fields) => {
-  const res = {};
-  rows.forEach((obj) => {
-    if (!res[obj.game_id]) res[obj.game_id] = [];
-    res[obj.game_id].push(obj);
-  });
-  objResp = stdSQLProc(err, res);
-  response.write(JSON.stringify(objResp));
-  response.end();
-});
-
-} else if (reqUrl == "/getGolfLessonMenu" ) {
+  } else if (reqUrl == "/getGolfFashion") {
+    "sql/getGolfFashion.sql".gfdp(data).query((err, rows, fields) => {
+      const addr =
+        "https://mnemosynesolutions.co.kr/app/project/editor_source_golf/img/upload/";
+      rows.forEach((row) => {
+        row.thumbnail = addr + row.thumbnail;
+      });
+      objResp = stdSQLProc(err, rows);
+      response.write(JSON.stringify(objResp));
+      response.end();
+    });
+  } else if (reqUrl == "/getGolfGame") {
+    "sql/getGolfGame.sql".gfdp(data).query((err, rows, fields) => {
+      objResp = stdSQLProc(err, rows);
+      response.write(JSON.stringify(objResp));
+      response.end();
+    });
+  } else if (reqUrl == "/getGolfGameScore") {
+    "sql/getGolfGameScore.sql".gfdp(data).query((err, rows, fields) => {
+      const res = {};
+      rows.forEach((obj) => {
+        if (!res[obj.game_id]) res[obj.game_id] = [];
+        res[obj.game_id].push(obj);
+      });
+      objResp = stdSQLProc(err, res);
+      response.write(JSON.stringify(objResp));
+      response.end();
+    });
+  } else if (reqUrl == "/getGolfLessonMenu") {
     const menu = "template/golf/lesson.json".gfdp({});
     objResp = {
       result: "okay",
       data: menu,
     };
-} else if (reqUrl == "/getGolfLink" ) {
+  } else if (reqUrl == "/getGolfLink") {
     if (data.section == undefined) data.section = "";
     "sql/getGolfLink.sql".gfdp(data).query((err, rows, fields) => {
       objResp = stdSQLProc(err, rows);
       response.write(JSON.stringify(objResp));
       response.end();
     });
-} else if (reqUrl == "/getGolfLinkScript" ) {
+  } else if (reqUrl == "/getGolfLinkScript") {
     const commonScript = "script/link/common.js".gfdp(ENV);
     const { links, round } = data;
     const urls = [];
@@ -793,7 +1349,7 @@ if (chk) {
       urls,
       scripts,
     };
-} else if (reqUrl == "/getGolfNews" ) {
+  } else if (reqUrl == "/getGolfNews") {
     "sql/getGolfNews.sql".gfdp({}).query((err, rows, fields) => {
       objResp = stdSQLProc(err, rows);
       if (objResp.type == "okay") {
@@ -822,159 +1378,159 @@ if (chk) {
       response.write(JSON.stringify(objResp));
       response.end();
     });
-} else if (reqUrl == "/getGolfYoutubeHotClip" ) {
+  } else if (reqUrl == "/getGolfYoutubeHotClip") {
     const list = "template/golf/hotclip.json".gfdp({});
     objResp = {
       result: "okay",
       data: list,
     };
-} else if (reqUrl == "/getLeaderBoardInfo" ) {
+  } else if (reqUrl == "/getLeaderBoardInfo") {
     const list = "template/golf/rank.json".gfjp();
     objResp = {
       result: "okay",
       data: list,
     };
-} else if (reqUrl == "/getLog" ) {
-const archivePath = "/var/www/html/teelog/";
-const logArchiveList = fs.readdirSync(archivePath);
-const dt = data.date.rm("-");
-let chk;
-logArchiveList.forEach((file) => {
-  if (file.has(dt)) chk = file;
-});
-if (chk) {
-  const con = fs.readFileSync(archivePath.add(chk), "utf-8").jp();
-  const res = [];
-  con.forEach((ob) => {
-    if (ob.device_id == data.device_id && ob.golf_club_id == data.golf_club_id)
-      res.push(ob);
-  });
-  res.sort((a, b) => a.timestamp - b.timestamp);
-  objResp = {
-    type: "okay",
-    data: res,
-  };
-} else {
-  "sql/getLog.sql".gfdp(data).query((err, rows, fields) => {
-    if (err) {
-      objResp = {
-        type: "error",
-        data: err,
-      };
-    } else {
+  } else if (reqUrl == "/getLog") {
+    const archivePath = "/var/www/html/teelog/";
+    const logArchiveList = fs.readdirSync(archivePath);
+    const dt = data.date.rm("-");
+    let chk;
+    logArchiveList.forEach((file) => {
+      if (file.has(dt)) chk = file;
+    });
+    if (chk) {
+      const con = fs.readFileSync(archivePath.add(chk), "utf-8").jp();
+      const res = [];
+      con.forEach((ob) => {
+        if (
+          ob.device_id == data.device_id &&
+          ob.golf_club_id == data.golf_club_id
+        )
+          res.push(ob);
+      });
+      res.sort((a, b) => a.timestamp - b.timestamp);
       objResp = {
         type: "okay",
-        data: rows,
-      };
-    }
-    response.write(JSON.stringify(objResp));
-    response.end();
-  });
-}
-
-} else if (reqUrl == "/getLogClubList" ) {
-const archivePath = "/var/www/html/teelog/";
-const logArchiveList = fs.readdirSync(archivePath);
-const dt = data.date.rm("-");
-let chk;
-logArchiveList.forEach((file) => {
-  if (file.has(dt)) chk = file;
-});
-if (chk) {
-  const con = fs.readFileSync(archivePath.add(chk), "utf-8").jp();
-  const dids = con.map((ob) => ob.golf_club_id);
-  const arr = dids.filter((id, i) => dids.indexOf(id) === i);
-  const res = [];
-  arr.forEach((golf_club_id) => {
-    res.push({ golf_club_id });
-  });
-  objResp = {
-    type: "okay",
-    data: res,
-  };
-} else {
-  "sql/getLogClubList.sql".gfdp(data).query((err, rows, fields) => {
-    if (err) {
-      objResp = {
-        type: "error",
-        data: err,
+        data: res,
       };
     } else {
+      "sql/getLog.sql".gfdp(data).query((err, rows, fields) => {
+        if (err) {
+          objResp = {
+            type: "error",
+            data: err,
+          };
+        } else {
+          objResp = {
+            type: "okay",
+            data: rows,
+          };
+        }
+        response.write(JSON.stringify(objResp));
+        response.end();
+      });
+    }
+  } else if (reqUrl == "/getLogClubList") {
+    const archivePath = "/var/www/html/teelog/";
+    const logArchiveList = fs.readdirSync(archivePath);
+    const dt = data.date.rm("-");
+    let chk;
+    logArchiveList.forEach((file) => {
+      if (file.has(dt)) chk = file;
+    });
+    if (chk) {
+      const con = fs.readFileSync(archivePath.add(chk), "utf-8").jp();
+      const dids = con.map((ob) => ob.golf_club_id);
+      const arr = dids.filter((id, i) => dids.indexOf(id) === i);
+      const res = [];
+      arr.forEach((golf_club_id) => {
+        res.push({ golf_club_id });
+      });
       objResp = {
         type: "okay",
-        data: rows,
-      };
-    }
-    response.write(JSON.stringify(objResp));
-    response.end();
-  });
-}
-
-} else if (reqUrl == "/getLogDeviceList" ) {
-const archivePath = "/var/www/html/teelog/";
-const logArchiveList = fs.readdirSync(archivePath);
-const dt = data.date.rm("-");
-let chk;
-logArchiveList.forEach((file) => {
-  if (file.has(dt)) chk = file;
-});
-if (chk) {
-  const con = fs.readFileSync(archivePath.add(chk), "utf-8").jp();
-  const dids = con.map((ob) => ob.device_id);
-  const arr = dids.filter((id, i) => dids.indexOf(id) === i);
-  const res = [];
-  arr.forEach((device_id) => {
-    res.push({ device_id });
-  });
-  objResp = {
-    type: "okay",
-    data: res,
-  };
-} else {
-  "sql/getLogDeviceList.sql".gfdp(data).query((err, rows, fields) => {
-    if (err) {
-      objResp = {
-        type: "error",
-        data: err,
+        data: res,
       };
     } else {
+      "sql/getLogClubList.sql".gfdp(data).query((err, rows, fields) => {
+        if (err) {
+          objResp = {
+            type: "error",
+            data: err,
+          };
+        } else {
+          objResp = {
+            type: "okay",
+            data: rows,
+          };
+        }
+        response.write(JSON.stringify(objResp));
+        response.end();
+      });
+    }
+  } else if (reqUrl == "/getLogDeviceList") {
+    const archivePath = "/var/www/html/teelog/";
+    const logArchiveList = fs.readdirSync(archivePath);
+    const dt = data.date.rm("-");
+    let chk;
+    logArchiveList.forEach((file) => {
+      if (file.has(dt)) chk = file;
+    });
+    if (chk) {
+      const con = fs.readFileSync(archivePath.add(chk), "utf-8").jp();
+      const dids = con.map((ob) => ob.device_id);
+      const arr = dids.filter((id, i) => dids.indexOf(id) === i);
+      const res = [];
+      arr.forEach((device_id) => {
+        res.push({ device_id });
+      });
       objResp = {
         type: "okay",
-        data: rows,
+        data: res,
       };
+    } else {
+      "sql/getLogDeviceList.sql".gfdp(data).query((err, rows, fields) => {
+        if (err) {
+          objResp = {
+            type: "error",
+            data: err,
+          };
+        } else {
+          objResp = {
+            type: "okay",
+            data: rows,
+          };
+        }
+        response.write(JSON.stringify(objResp));
+        response.end();
+      });
     }
-    response.write(JSON.stringify(objResp));
-    response.end();
-  });
-}
-
-} else if (reqUrl == "/getLogList" ) {
+  } else if (reqUrl == "/getLogList") {
     const path = "/var/www/html/teelog";
     const files = fs.readdirSync(path);
     objResp = {
       result: "okay",
       data: files,
     };
-} else if (reqUrl == "/getLogReport" ) {
+  } else if (reqUrl == "/getLogReport") {
     "sql/getLogReport.sql".gfdp(data).query((err, rows, fields) => {
       objResp = stdSQLProc(err, rows);
       response.write(JSON.stringify(objResp));
       response.end();
     });
-} else if (reqUrl == "/getMacroId" ) {
+  } else if (reqUrl == "/getMacroId") {
     "sql/getMacroId.sql".gfdp(data).query((err, rows, fields) => {
       objResp = stdSQLProc(err, rows);
       response.write(JSON.stringify(objResp));
       response.end();
     });
-} else if (reqUrl == "/getOpenGraphInfo" ) {
+  } else if (reqUrl == "/getOpenGraphInfo") {
     ogs({ url: data.url }).then((data) => {
       if (data.error) objResp = { result: "error", data: data.error };
       else objResp = { result: "okay", data: data.result };
       response.write(JSON.stringify(objResp));
       response.end();
     });
-} else if (reqUrl == "/getOuterInfo" ) {
+  } else if (reqUrl == "/getOuterInfo") {
     const { club_id: clubId } = data;
     "sql/getOuterInfo.sql".gfdp({ clubId }).query((err, rows, fields) => {
       if (err) console.log(err);
@@ -984,7 +1540,7 @@ if (chk) {
       response.write(JSON.stringify(objResp));
       response.end();
     });
-} else if (reqUrl == "/getPenaltyLink" ) {
+  } else if (reqUrl == "/getPenaltyLink") {
     "sql/getPenaltyLink.sql".gfdp(data).query((err, rows, fields) => {
       if (err) {
         objResp = {
@@ -1000,7 +1556,7 @@ if (chk) {
       response.write(JSON.stringify(objResp));
       response.end();
     });
-} else if (reqUrl == "/getScheduleDetail" ) {
+  } else if (reqUrl == "/getScheduleDetail") {
     log("test", data.result.length);
     const message = {
       GolfClub: golfClubs[data.golf_club_id],
@@ -1017,13 +1573,13 @@ if (chk) {
       type: "okay",
       message,
     };
-} else if (reqUrl == "/getSettings" ) {
+  } else if (reqUrl == "/getSettings") {
     const obj = "script/common/settings.json".gfjp();
     objResp = {
       type: "okay",
       settings: obj,
     };
-} else if (reqUrl == "/getWarning" ) {
+  } else if (reqUrl == "/getWarning") {
     "sql/getWarning.sql".gfdp(data).query((err, rows, fields) => {
       if (err) {
         objResp = {
@@ -1039,7 +1595,7 @@ if (chk) {
       response.write(JSON.stringify(objResp));
       response.end();
     });
-} else if (reqUrl == "/get_pure_login" ) {
+  } else if (reqUrl == "/get_pure_login") {
     const engName = data.club;
     let core = "";
     try {
@@ -1050,7 +1606,7 @@ if (chk) {
     response.write(JSON.stringify({ core }));
     response.end();
     return;
-} else if (reqUrl == "/get_pure_search_core" ) {
+  } else if (reqUrl == "/get_pure_search_core") {
     const engName = data.club;
     let core = "";
     const part = {
@@ -1097,7 +1653,7 @@ if (chk) {
     }
     response.write(JSON.stringify({ core, part }));
     response.end();
-} else if (reqUrl == "/login" ) {
+  } else if (reqUrl == "/login") {
     const uuid = data.clubId;
     const engName = golfClubIdToEng[uuid];
     url = golfClubLoginUrl[engName];
@@ -1111,7 +1667,7 @@ if (chk) {
       procMessage: proc ? proc.message : "",
       procLandingLink: proc ? proc.landingLink : "",
     };
-} else if (reqUrl == "/loginScripts" ) {
+  } else if (reqUrl == "/loginScripts") {
     const ids = data.clubIds;
     const urls = {};
     const scripts = {};
@@ -1138,67 +1694,63 @@ if (chk) {
       procMessages,
       procResults,
     };
-} else if (reqUrl == "/login_admin" ) {
+  } else if (reqUrl == "/login_admin") {
     const { club } = data;
     objResp = {
       url: golfClubLoginUrl[club],
       script: getLoginScriptAdmin(club),
     };
-} else if (reqUrl == "/login_link" ) {
+  } else if (reqUrl == "/login_link") {
     const { link_eng_id } = data;
     objResp = {
       url: golfLinks[link_eng_id].login_url,
       script: getLinkLoginScript(link_eng_id),
     };
-} else if (reqUrl == "/modGolfClubEvent" ) {
+  } else if (reqUrl == "/modGolfClubEvent") {
     "sql/modGolfClubEvent.sql".gfdp(data).query((err, rows, fields) => {
       objResp = stdSQLProc(err, rows);
       response.write(JSON.stringify(objResp));
       response.end();
     });
-} else if (reqUrl == "/modGolfFashion" ) {
-"sql/modGolfFashion.sql".gfdp(data).query((err, rows, fields) => {
-  objResp = stdSQLProc(err, rows);
-  response.write(JSON.stringify(objResp));
-  response.end();
-});
-
-} else if (reqUrl == "/newGolfClubEvent" ) {
+  } else if (reqUrl == "/modGolfFashion") {
+    "sql/modGolfFashion.sql".gfdp(data).query((err, rows, fields) => {
+      objResp = stdSQLProc(err, rows);
+      response.write(JSON.stringify(objResp));
+      response.end();
+    });
+  } else if (reqUrl == "/newGolfClubEvent") {
     "sql/newGolfClubEvent.sql".gfdp(data).query((err, rows, fields) => {
       objResp = stdSQLProc(err, rows);
       response.write(JSON.stringify(objResp));
       response.end();
     });
-} else if (reqUrl == "/newGolfFashion" ) {
-"sql/newGolfFashion.sql".gfdp(data).query((err, rows, fields) => {
-  objResp = stdSQLProc(err, rows);
-  response.write(JSON.stringify(objResp));
-  response.end();
-});
-
-} else if (reqUrl == "/newGolfGame" ) {
-"sql/newGolfGame.sql".gfdp(data).query((err, rows, fields) => {
-  if (err) {
-    objResp = stdSQLProc(err, rows);
-    response.write(JSON.stringify(objResp));
-    response.end();
-    return;
-  }
-  "sql/getGolfGameID.sql".gfdp(data).query((err, rows, fields) => {
-    objResp = stdSQLProc(err, rows[0]);
-    response.write(JSON.stringify(objResp));
-    response.end();
-  });
-});
-
-} else if (reqUrl == "/newGolfGameScore" ) {
-"sql/newGolfGameScore.sql".gfdp(data).query((err, rows, fields) => {
-  objResp = stdSQLProc(err, rows);
-  response.write(JSON.stringify(objResp));
-  response.end();
-});
-
-} else if (reqUrl == "/newGolfNews" ) {
+  } else if (reqUrl == "/newGolfFashion") {
+    "sql/newGolfFashion.sql".gfdp(data).query((err, rows, fields) => {
+      objResp = stdSQLProc(err, rows);
+      response.write(JSON.stringify(objResp));
+      response.end();
+    });
+  } else if (reqUrl == "/newGolfGame") {
+    "sql/newGolfGame.sql".gfdp(data).query((err, rows, fields) => {
+      if (err) {
+        objResp = stdSQLProc(err, rows);
+        response.write(JSON.stringify(objResp));
+        response.end();
+        return;
+      }
+      "sql/getGolfGameID.sql".gfdp(data).query((err, rows, fields) => {
+        objResp = stdSQLProc(err, rows[0]);
+        response.write(JSON.stringify(objResp));
+        response.end();
+      });
+    });
+  } else if (reqUrl == "/newGolfGameScore") {
+    "sql/newGolfGameScore.sql".gfdp(data).query((err, rows, fields) => {
+      objResp = stdSQLProc(err, rows);
+      response.write(JSON.stringify(objResp));
+      response.end();
+    });
+  } else if (reqUrl == "/newGolfNews") {
     const { news } = data;
     const vls = [];
     news.forEach((ob) => {
@@ -1221,7 +1773,7 @@ if (chk) {
       response.write(JSON.stringify(objResp));
       response.end();
     });
-} else if (reqUrl == "/question" ) {
+  } else if (reqUrl == "/question") {
     "sql/setQuestion.sql".gfdp(data).query((err, rows, fields) => {
       if (err) {
         console.log(err);
@@ -1238,7 +1790,7 @@ if (chk) {
       response.write(JSON.stringify(objResp));
       response.end();
     });
-} else if (reqUrl == "/reservebot" ) {
+  } else if (reqUrl == "/reservebot") {
     objResp = reservebotAdmin(data);
     /* const { club: engName, year, month, date, course, time } = data;
       const commonScript = fs.readFileSync("script/common/common.js", "utf-8");
@@ -1269,9 +1821,9 @@ if (chk) {
         url: loginUrl,
         script,
       }; */
-} else if (reqUrl == "/reservebot_admin" ) {
+  } else if (reqUrl == "/reservebot_admin") {
     objResp = reservebotAdmin(data);
-} else if (reqUrl == "/reserveCancelbot" ) {
+  } else if (reqUrl == "/reserveCancelbot") {
     objResp = reserveCancelbotAdmin(data);
     /* const { club: engName, year, month, date, course, time } = data;
       const commonScript = fs.readFileSync("script/common/common.js", "utf-8");
@@ -1306,7 +1858,7 @@ if (chk) {
         url: loginUrl,
         script,
       }; */
-} else if (reqUrl == "/reserveCancelbot_admin" ) {
+  } else if (reqUrl == "/reserveCancelbot_admin") {
     objResp = reserveCancelbotAdmin(data);
     /* const { club: engName, year, month, date, course, time } = data;
       const commonScript = fs.readFileSync("script/common/common.js", "utf-8");
@@ -1344,7 +1896,7 @@ if (chk) {
         url: loginUrl,
         script,
       }; */
-} else if (reqUrl == "/reserveSearchbot" ) {
+  } else if (reqUrl == "/reserveSearchbot") {
     objResp = reserveSearchbotAdmin(data);
     /* const { club: engName, year, month, date, course, time } = data;
       const commonScript = fs.readFileSync("script/common/common.js", "utf-8");
@@ -1374,7 +1926,7 @@ if (chk) {
         url: loginUrl,
         script,
       }; */
-} else if (reqUrl == "/reserveSearchbots_admin" ) {
+  } else if (reqUrl == "/reserveSearchbots_admin") {
     const { clubs } = data;
     const urls = {};
     const scripts = {};
@@ -1386,9 +1938,9 @@ if (chk) {
       ids[club] = golfClubIds[club];
     });
     objResp = { urls, scripts, ids };
-} else if (reqUrl == "/reserveSearchbot_admin" ) {
+  } else if (reqUrl == "/reserveSearchbot_admin") {
     objResp = reserveSearchbotAdmin(data);
-} else if (reqUrl == "/search" ) {
+  } else if (reqUrl == "/search") {
     console.log("url", reqUrl);
     const engName = data.club;
     const common = "script/common/common.js".gfdp(ENV);
@@ -1407,9 +1959,9 @@ if (chk) {
       response.write(JSON.stringify(objResp));
       response.end();
     });
-} else if (reqUrl == "/searchbot" ) {
+  } else if (reqUrl == "/searchbot") {
     objResp = searchbot(data);
-} else if (reqUrl == "/searchbots_admin" ) {
+  } else if (reqUrl == "/searchbots_admin") {
     const { clubs } = data;
     const urls = {};
     const scripts = {};
@@ -1421,7 +1973,7 @@ if (chk) {
       ids[club] = golfClubIds[club];
     });
     objResp = { urls, scripts, ids };
-} else if (reqUrl == "/searchbots_date" ) {
+  } else if (reqUrl == "/searchbots_date") {
     const { clubs } = data;
     const urls = {};
     const scripts = {};
@@ -1434,7 +1986,7 @@ if (chk) {
       ids[club] = golfClubIds[club];
     });
     objResp = { urls, scripts, ids };
-} else if (reqUrl == "/searchbots_date_admin" ) {
+  } else if (reqUrl == "/searchbots_date_admin") {
     const { clubs } = data;
     const urls = {};
     const scripts = {};
@@ -1447,7 +1999,7 @@ if (chk) {
       ids[club] = golfClubIds[club];
     });
     objResp = { urls, scripts, ids };
-} else if (reqUrl == "/searchbots_time" ) {
+  } else if (reqUrl == "/searchbots_time") {
     log("searchbots_time");
     const { clubs, date } = data;
     const urls = {};
@@ -1461,7 +2013,7 @@ if (chk) {
       ids[club] = golfClubIds[club];
     });
     objResp = { urls, scripts, ids };
-} else if (reqUrl == "/searchbots_time_admin" ) {
+  } else if (reqUrl == "/searchbots_time_admin") {
     const { clubs, date } = data;
     const urls = {};
     const scripts = {};
@@ -1474,9 +2026,9 @@ if (chk) {
       ids[club] = golfClubIds[club];
     });
     objResp = { urls, scripts, ids };
-} else if (reqUrl == "/searchbot_admin" ) {
+  } else if (reqUrl == "/searchbot_admin") {
     objResp = searchbot(data);
-} else if (reqUrl == "/search_core" ) {
+  } else if (reqUrl == "/search_core") {
     const engName = data.club;
     getSearchScript(engName, (script) => {
       const url = golfClubSearchUrl[engName];
@@ -1487,7 +2039,7 @@ if (chk) {
       response.write(JSON.stringify(objResp));
       response.end();
     });
-} else if (reqUrl == "/setGolfClubState" ) {
+  } else if (reqUrl == "/setGolfClubState") {
     setGolfClubState(data, (rows) => {
       objResp = {
         resultCode: 200,
@@ -1496,20 +2048,19 @@ if (chk) {
       response.write(JSON.stringify(objResp));
       response.end();
     });
-} else if (reqUrl == "/setGolfGameScore" ) {
-"sql/setGolfGameScore.sql".gfdp(data).query((err, rows, fields) => {
-  objResp = stdSQLProc(err, rows);
-  response.write(JSON.stringify(objResp));
-  response.end();
-});
-
-} else if (reqUrl == "/setReserveCancel" ) {
+  } else if (reqUrl == "/setGolfGameScore") {
+    "sql/setGolfGameScore.sql".gfdp(data).query((err, rows, fields) => {
+      objResp = stdSQLProc(err, rows);
+      response.write(JSON.stringify(objResp));
+      response.end();
+    });
+  } else if (reqUrl == "/setReserveCancel") {
     objResp = setReserveCancel(data);
-} else if (reqUrl == "/setReserveReserve" ) {
+  } else if (reqUrl == "/setReserveReserve") {
     objResp = setReserveReserve(data);
-} else if (reqUrl == "/setReserveSearch" ) {
+  } else if (reqUrl == "/setReserveSearch") {
     objResp = setReserveSearch(data);
-} else if (reqUrl == "/setSurvey" ) {
+  } else if (reqUrl == "/setSurvey") {
     "sql/setSurvey.sql".gfdp(data).query((err, rows, fields) => {
       if (err) {
         objResp = {
@@ -1525,7 +2076,7 @@ if (chk) {
       response.write(JSON.stringify(objResp));
       response.end();
     });
-} else if (reqUrl == "/set_pure_login" ) {
+  } else if (reqUrl == "/set_pure_login") {
     const { engName, core } = data;
     // backup first
     fs.writeFileSync(
@@ -1536,7 +2087,7 @@ if (chk) {
     fs.writeFileSync("script/login/" + engName + ".js", core);
     response.write(JSON.stringify({ resultCode: 200, result: "okay" }));
     response.end();
-} else if (reqUrl == "/set_pure_search_core" ) {
+  } else if (reqUrl == "/set_pure_search_core") {
     const { club, part } = data;
     const engName = club;
     let core;
@@ -1585,21 +2136,20 @@ if (chk) {
 
     response.write(JSON.stringify({ resultCode: 200, result: "okay" }));
     response.end();
-} else {
-  const engName = reqUrl.substring(1);
-  url = golfClubLoginUrl[engName];
-  script = getLoginScript(engName);
-  objResp = {
-    url,
-    script,
-  };
-}
-if (objResp) {
-  // console.log("obj", objResp);
-  response.write(JSON.stringify(objResp));
-  response.end();
-}
-
+  } else {
+    const engName = reqUrl.substring(1);
+    url = golfClubLoginUrl[engName];
+    script = getLoginScript(engName);
+    objResp = {
+      url,
+      script,
+    };
+  }
+  if (objResp) {
+    // console.log("obj", objResp);
+    response.write(JSON.stringify(objResp));
+    response.end();
+  }
 }
 function stdSQLProc(err, rows) {
   let objResp;

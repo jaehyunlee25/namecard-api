@@ -14,9 +14,46 @@ getChecksum(currentFile, (checksum) => {
   getTextDetection(currentFile, (results) => {
     fs.unlinkSync(currentFile);
     const [result] = results;
-    const { fullTextAnnotation } = result;
+    const { fullTextAnnotation: fta } = result;
+
+    let letters = [];
+    const { text, pages } = fta;
+    const [page] = pages;
+    const { blocks, confidence, height, width, property } = page;
+    const { detectedBreak, detectedLanguages } = property;
+    //log(confidence, height, width);
+    detectedLanguages.forEach(({ languageCode, confidence }) => {
+      //log(languageCode, confidence);
+    });
+    blocks.forEach((ob) => {
+      const { blockType, confidence, property, boundingBox, paragraphs } = ob;
+      const { vertices } = boundingBox;
+      /* log(blockType, confidence, property);
+      log(boundingBox);
+      mkBox(vertices);
+      log(paragraphs); */
+
+      paragraphs.forEach(({ words, boundingBox, confidence, property }) => {
+        const { vertices } = boundingBox;
+        //mkBox(vertices, "blue");
+        words.forEach((ob) => {
+          const { boundingBox, confidence, property, symbols } = ob;
+          const { vertices } = boundingBox;
+          //mkBox(vertices, "green");
+          symbols.forEach((ob) => {
+            const { boundingBox, confidence, property, text } = ob;
+            const { vertices } = boundingBox;
+            letters.push({ text, vertices });
+            //mkBox(vertices, "blue");
+          });
+        });
+      });
+    });
+
+    const detectedCells = LINEDETECTOR(letters);
+
     objResp = {
-      fullTextAnnotation,
+      detectedCells,
       data,
       files,
     };

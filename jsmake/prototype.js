@@ -55,3 +55,9 @@ Array.prototype.lo = function () {
   const idx = this.length - 1;
   return this[idx];
 };
+global.around = function (lmt, fnc) {
+  for (var i = 0; i < lmt; i++) {
+    var a = fnc(i);
+    if (a) break;
+  }
+};
