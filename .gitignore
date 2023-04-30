@@ -8,3 +8,4 @@ exec.sh
 gitpush.sh
 pull.sh
 make.bat
+temp/
