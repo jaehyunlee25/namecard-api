@@ -13,6 +13,7 @@ values(
     '${hole_07}',
     '${hole_08}',
     '${hole_09}',
+    '${hole_sum}',
     now(),
     now()
 );
