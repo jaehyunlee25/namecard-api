@@ -8,5 +8,10 @@
         "search_url",
         "https://kxleisure.com/reservation/golf",
         "funcReserve"
+    ],
+    [
+        "search_url_2",
+        "https://onetheclub.com/reservation/golf",
+        "funcReserve"
     ]
 ]
