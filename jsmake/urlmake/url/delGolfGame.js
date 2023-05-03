@@ -7,7 +7,7 @@
     response.write(JSON.stringify(objResp));
     response.end();
   }
-  "sql/delGolfScore.sql".gf(data).query((err, rows, fields) => {
+  "sql/delGolfScore.sql".gfdp(data).query((err, rows, fields) => {
     if (err) {
       objResp = {
         type: "error: while removing golf score",

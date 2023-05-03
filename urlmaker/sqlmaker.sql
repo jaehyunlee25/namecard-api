@@ -1,6 +1,9 @@
-//sqlname: delGolfFashion
-update golf_fashion
-set
-    isDel = true,
-    updated_at = now()
-where id = '${fashion_id}';
+//sqlname: delGolfGame
+delete from 
+golf_game
+where id = '${golf_game_id}';
+
+//sqlname: delGolfScore
+delete from 
+golf_score
+where game_id = '${golf_game_id}';

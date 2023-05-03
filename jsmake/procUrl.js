@@ -406,6 +406,33 @@ const { eventId } = data;
   response.end();
 });
 
+} else if (reqUrl == "/delGolfGame" ) {
+"sql/delGolfGame.sql".gfdp(data).query((err, rows, fields) => {
+  if (err) {
+    objResp = {
+      type: "error: while removing golf game",
+      data: err,
+    };
+    response.write(JSON.stringify(objResp));
+    response.end();
+  }
+  "sql/delGolfScore.sql".gfdp(data).query((err, rows, fields) => {
+    if (err) {
+      objResp = {
+        type: "error: while removing golf score",
+        data: err,
+      };
+    } else {
+      objResp = {
+        type: "okay",
+        data: rows,
+      };
+    }
+    response.write(JSON.stringify(objResp));
+    response.end();
+  });
+});
+
 } else if (reqUrl == "/fileUploadTest" ) {
 const { file } = files;
 const { size, filepath, newFilename, mimetype, mtime, originalFilename } = file;
