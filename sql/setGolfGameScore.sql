@@ -11,6 +11,7 @@ set
     hole_07 = '${hole_07}',
     hole_08 = '${hole_08}',
     hole_09 = '${hole_09}',
+    hole_sum = '${hole_sum}',
     updated_at = now()
 where
     id = '${id}';
