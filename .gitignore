@@ -9,3 +9,4 @@ gitpush.sh
 pull.sh
 make.bat
 temp/
+keyfile.json
