@@ -616,7 +616,7 @@ function procPost(request, response, data, files) {
     const objResp = { type: "okay" };
     response.write(JSON.stringify(objResp));
     response.end();
-  } else if (reqUrl == "/fileUploadTest") {
+  } else if (reqUrl == "/detect") {
     const { file } = files;
     const { size, filepath, newFilename, mimetype, mtime, originalFilename } =
       file;
@@ -674,7 +674,7 @@ function procPost(request, response, data, files) {
         const detectedCells = LINEDETECTOR(letters);
         const dc = detectedCells;
         let detectedResult;
-        if (dc && dc[0] && dc[0][0]) {
+        /* if (dc && dc[0] && dc[0][0]) {
           const title_top = dc[0][0].children[0][0].text;
           const title_bottom = dc[0][0].children[1][0].text;
           if (title_top == "SMART" && title_bottom == "SCORE") {
@@ -710,10 +710,10 @@ function procPost(request, response, data, files) {
               golf_score,
             };
           }
-        }
+        } */
 
         const objResp = {
-          detectedResult,
+          detectedCells,
           data,
           files,
         };
