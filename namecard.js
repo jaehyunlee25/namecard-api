@@ -20,6 +20,7 @@ const around = function (lmt, fnc) {
     if (a) break;
   }
 };
+const fileUploadDir = "temp";
 
 String.prototype.dp = function (param) {
   let self = this;
@@ -608,7 +609,11 @@ function procPost(request, response, data, files) {
   const reqUrl = "/" + request.url.split("/").lo();
 
   if (reqUrl == "/dummy") {
-    const objResp = data;
+    const { file } = files;
+    const { size, filepath, newFilename, mimetype, mtime, originalFilename } =
+      file;
+    const currentFile = "temp/" + newFilename;
+    const objResp = { type: "okay" };
     response.write(JSON.stringify(objResp));
     response.end();
   } else if (reqUrl == "/fileUploadTest") {
@@ -773,7 +778,7 @@ const server = http
     if (request.headers["content-type"].indexOf("multipart/form-data") != -1) {
       // 파일처리이므로 formidable을 이용한다.
       var form = new formidable.IncomingForm({
-        uploadDir: "temp",
+        uploadDir: fileUploadDir,
       });
       form.parse(request, (err, fields, files) => {
         if (err) {
