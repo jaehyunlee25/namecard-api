@@ -1,1 +1,0 @@
-select eng_id from golf_club_eng where eng_id like '%${eng_id}%';

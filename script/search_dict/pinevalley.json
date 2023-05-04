@@ -1,4 +1,0 @@
-[
-    ["login_url","http://www.tyleisure.co.kr/mobile/member/m_login.jsp?hid_BlocNo=02","funcLogin"],
-    ["search_url","http://www.tyleisure.co.kr/mobile/reservation/m_reserve_pv.jsp","funcReserve"]
-]

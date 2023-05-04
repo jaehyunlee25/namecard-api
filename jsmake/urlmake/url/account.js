@@ -1,3 +1,0 @@
-    objResp = {
-      accounts: golfClubAccounts,
-    };

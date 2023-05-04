@@ -1,1 +1,0 @@
-select name from golf_club where name like '%${name}%';

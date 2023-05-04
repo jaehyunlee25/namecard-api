@@ -1,1 +1,0 @@
-    objResp = reservebotAdmin(data);

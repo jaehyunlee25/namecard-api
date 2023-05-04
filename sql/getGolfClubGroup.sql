@@ -1,1 +1,0 @@
-select * from group_golf_club;
