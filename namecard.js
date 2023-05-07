@@ -226,9 +226,10 @@ function LINEDETECTOR(letters) {
 
   let LIMIT = 0;
   const root = {};
-  mkString(arVertices, root);
+  const stack = [];
+  mkString(arVertices, root, stack);
 
-  return root;
+  return { root, stack };
 
   function getAverageSize(hLines) {
     const res = {};
@@ -587,7 +588,7 @@ function LINEDETECTOR(letters) {
       });
     });
   }
-  function mkString(arVertices, root) {
+  function mkString(arVertices, root, stack) {
     const guessRoot = {};
     recursiveGuess(arVertices, guessRoot);
     Object.entries(guessRoot).forEach(([rowkey, cols]) => {
@@ -606,12 +607,14 @@ function LINEDETECTOR(letters) {
           // step 2. 탐색을 위한 arVertices 자료를 생성한다.
           let arChildrenVertices = col.children.getVerticesArray();
           // step 3. 두개의 파라미터 생성(arVertices & root object)이 완료되었으므로, 재귀호출한다.
-          mkString(arChildrenVertices, root[rowkey][colkey].children);
+          mkString(arChildrenVertices, root[rowkey][colkey].children, stack);
           return;
         }
 
         // normal cell인 경우는 text를 출력한다.
-        root[rowkey][colkey] = verticesToText(col.vertices);
+        const vtt = verticesToText(col.vertices);
+        root[rowkey][colkey] = vtt;
+        stack.push(vtt);
       });
     });
   }
@@ -643,6 +646,14 @@ function procPost(request, response, data, files) {
       file;
     const currentFile = "temp/" + newFilename;
     const objResp = { type: "okay" };
+    response.write(JSON.stringify(objResp));
+    response.end();
+  } else if (reqUrl == "/feedback") {
+    const { checksum } = data;
+    const objResp = {
+      checksum,
+      type: "feedback",
+    };
     response.write(JSON.stringify(objResp));
     response.end();
   } else if (reqUrl == "/detect") {
@@ -700,7 +711,7 @@ function procPost(request, response, data, files) {
           });
         });
 
-        const detectedCells = LINEDETECTOR(letters);
+        const { root, stack: detectedCells } = LINEDETECTOR(letters);
         const dc = detectedCells;
         let detectedResult;
         /* if (dc && dc[0] && dc[0][0]) {
@@ -743,6 +754,8 @@ function procPost(request, response, data, files) {
 
         const objResp = {
           detectedCells,
+          letters,
+          checksum,
           data,
           files,
         };
@@ -827,7 +840,7 @@ const server = http
     let body = [];
     request
       .on("data", (chunk) => {
-        log("test", chunk.toString());
+        // log("test", chunk.toString());
         body.push(chunk.toString());
       })
       .on("end", () => {
