@@ -4,7 +4,7 @@ const formidable = require("formidable");
 const crypto = require("crypto");
 const vision = require("@google-cloud/vision");
 const client = new vision.ImageAnnotatorClient({
-  keyFilename: "keyfile.json",
+  keyFilename: "tzocr_keyfile.json",
 });
 const log = function () {
   console.log("\n\n>> new log :: ", new Date());

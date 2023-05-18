@@ -10,3 +10,4 @@ pull.sh
 make.bat
 temp/
 keyfile.json
+tzocr_keyfile.json
