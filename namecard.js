@@ -811,12 +811,8 @@ function procPost(req, response, data, files) {
     log("options>", options);
 
     request(options, (error, resp, body) => {
-      log(error, typeof error);
-      log(body, typeof body);
-      log(typeof resp.body);
       let objResp;
-      if (error) objResp = error;
-      else objResp = body;
+      objResp = { body };
       response.write(JSON.stringify(objResp));
       response.end();
     });
