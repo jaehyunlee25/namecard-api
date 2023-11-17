@@ -811,8 +811,9 @@ function procPost(req, response, data, files) {
     log("options>", options);
 
     request(options, (error, resp, body) => {
-      log("resp>", resp.body);
-      const objResp = { body };
+      let objResp;
+      if (error) objResp = error;
+      else objResp = body;
       response.write(JSON.stringify(objResp));
       response.end();
     });
