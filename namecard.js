@@ -3,8 +3,10 @@ const fs = require("fs");
 const formidable = require("formidable");
 const crypto = require("crypto");
 const vision = require("@google-cloud/vision");
+const request = require("request");
+
 const client = new vision.ImageAnnotatorClient({
-  keyFilename: "keyfile.json",
+  keyFilename: "tzocr_keyfile.json",
 });
 const log = function () {
   console.log("\n\n>> new log :: ", new Date());
@@ -133,6 +135,7 @@ function LINEDETECTOR(letters) {
     return res;
   };
   Array.prototype.vnx = function () {
+    // vertices의 최대최소
     let res = {
       max: { x: null, y: null },
       min: { x: null, y: null },
@@ -160,6 +163,7 @@ function LINEDETECTOR(letters) {
     return res;
   };
   Array.prototype.minmax = function () {
+    // arVertices의 최대최소
     let res = {
       max: { x: null, y: null },
       min: { x: null, y: null },
@@ -192,8 +196,27 @@ function LINEDETECTOR(letters) {
     this.forEach(({ vertices }) => res.push(vertices));
     return res;
   };
+  Object.prototype.getVerticesArray = function () {
+    let res = [];
+    Object.entries(this).forEach(([, row]) => {
+      Object.entries(row).forEach(([, col]) => {
+        const { vertices } = col;
+        if (vertices.length == 0) return;
+        res = res.concat(vertices);
+      });
+    });
+    return res;
+  };
 
   const arVertices = letters.getVerticesArray();
+
+  /* 
+  인식한 글자의 좌표가 그 글자의 key가 되도록 해서 texts에 저장한다.
+  vertice 배열에는 [{x:, y:},{x:, y:},{x:, y:},{x:, y:}] 와 같이 꼭지점의 좌표가 들어있다.
+  좌표는 left top, right top, right bottom, left bottom 순이다.
+  모든 글자들은 다른 좌표를 가질 것이므로(같은 좌표를 공유하는 것들은 같은 객체일 것이므로),
+  좌표정보가 곧 key가 될 수 있다. 
+  */
   const texts = (() => {
     const res = {};
     letters.forEach((letter) => {
@@ -205,9 +228,10 @@ function LINEDETECTOR(letters) {
 
   let LIMIT = 0;
   const root = {};
-  mkString(arVertices, root);
+  const stack = [];
+  mkString(arVertices, root, stack);
 
-  return root;
+  return { root, stack };
 
   function getAverageSize(hLines) {
     const res = {};
@@ -550,6 +574,8 @@ function LINEDETECTOR(letters) {
     return { objectsByLine, columns, objectsByColumn };
   }
   function recursiveGuess(param, parent) {
+    // param은 arVertices, 즉 vertices를 담은 배열이다.
+    // (vertices가 배열이므로, 2차원 배열이다)
     const { objectsByColumn } = getObjectsByLine(param);
     Object.entries(objectsByColumn).forEach(([key, val]) => {
       parent[key] ??= {};
@@ -564,49 +590,57 @@ function LINEDETECTOR(letters) {
       });
     });
   }
-  function mkString(arVertices, root) {
+  function mkString(arVertices, root, stack) {
     const guessRoot = {};
     recursiveGuess(arVertices, guessRoot);
-    Object.entries(guessRoot).forEach(([key, cols]) => {
-      root[key] ??= {};
+    Object.entries(guessRoot).forEach(([rowkey, cols]) => {
+      root[rowkey] ??= {};
       Object.entries(cols).forEach(([colkey, col]) => {
         if (col.vertices.length == 0) return;
-        root[key][colkey] ??= {};
+
         if (col.children) {
-          root[key][colkey].children = {};
-          let tmp = [];
-          Object.entries(col.children).forEach(([key, line]) => {
-            Object.entries(line).forEach(([linekey, col]) => {
-              const { vertices } = col;
-              if (vertices.length == 0) return;
-              tmp = tmp.concat(vertices);
-            });
-          });
-          mkString(tmp, root[key][colkey].children);
+          // cell(즉, col)에 children이 있다는 말은
+          // 그 자체로 또 하나의 테이블 형태를 이루고 있다는 말이다.
+          // 내부에 row(= line) / col(= cell) 이 다시 존재한다.
+          // 따라서 문자열을 만들기 위해서는 이 함수를 재귀적으로 호출해야 한다.
+
+          // step 1. 결과를 담기 위한 root object를 정의한다.
+          root[rowkey][colkey] ??= { children: {} };
+          // step 2. 탐색을 위한 arVertices 자료를 생성한다.
+          let arChildrenVertices = col.children.getVerticesArray();
+          // step 3. 두개의 파라미터 생성(arVertices & root object)이 완료되었으므로, 재귀호출한다.
+          mkString(arChildrenVertices, root[rowkey][colkey].children, stack);
           return;
         }
-        root[key][colkey].text = verticesToText(col.vertices);
+
+        // normal cell인 경우는 text를 출력한다.
+        const vtt = verticesToText(col.vertices);
+        root[rowkey][colkey] = vtt;
+        stack.push(vtt);
       });
     });
   }
-  function verticesToText(ar) {
+  function verticesToText(arVertices) {
+    // ar에는 vertices 배열이 들어 있다.
+    // vertice 배열에는 [{x:0, y:0},{x:0, y:0},{x:0, y:0},{x:0, y:0}] 와 같이 꼭지점의 좌표가 들어있다.
+    // 좌표는 left top, right top, right bottom, left bottom 순이다.
     const str = [];
-    ar.forEach((vertices) => {
+    arVertices.forEach((vertices) => {
       const key = JSON.stringify(vertices);
       str.push(texts[key]);
     });
-    return str.join("");
+    return { text: str.join(""), xywh: arVertices.minmax() };
   }
 }
 
-function procPost(request, response, data, files) {
-  log("request url", request.url);
+function procPost(req, response, data, files) {
+  log("request url", req.url);
   log("data");
   dir(data);
   
   let url;
   let script;
-  const reqUrl = "/" + request.url.split("/").lo();
+  const reqUrl = "/" + req.url.split("/").lo();
 
   if (reqUrl == "/dummy") {
     const { file } = files;
@@ -614,6 +648,14 @@ function procPost(request, response, data, files) {
       file;
     const currentFile = "temp/" + newFilename;
     const objResp = { type: "okay" };
+    response.write(JSON.stringify(objResp));
+    response.end();
+  } else if (reqUrl == "/feedback") {
+    const { checksum } = data;
+    const objResp = {
+      checksum,
+      type: "feedback",
+    };
     response.write(JSON.stringify(objResp));
     response.end();
   } else if (reqUrl == "/detect") {
@@ -671,7 +713,7 @@ function procPost(request, response, data, files) {
           });
         });
 
-        const detectedCells = LINEDETECTOR(letters);
+        const { root, stack: detectedCells } = LINEDETECTOR(letters);
         const dc = detectedCells;
         let detectedResult;
         /* if (dc && dc[0] && dc[0][0]) {
@@ -714,6 +756,8 @@ function procPost(request, response, data, files) {
 
         const objResp = {
           detectedCells,
+          letters,
+          checksum,
           data,
           files,
         };
@@ -752,6 +796,25 @@ function procPost(request, response, data, files) {
         callback(checksum);
       });
     }
+  } else if (reqUrl == "/getKakaoToken") {
+    const { code } = data;
+
+    const options = {
+      url: "https://kauth.kakao.com/oauth/token",
+      method: "POST",
+      form: {
+        grant_type: "authorization_code",
+        client_id: "3bf6acdeeb89174cd24537e4f0aaaedb",
+        code,
+      },
+    };
+
+    request(options, (error, response, body) => {
+      log(response.body);
+      /* const objResp = { type: response.body };
+      response.write(JSON.stringify(objResp));
+      response.end(); */
+    });
   }
 }
 
@@ -775,7 +838,10 @@ const server = http
     }
     if (request.method != "POST") return;
 
-    if (request.headers["content-type"].indexOf("multipart/form-data") != -1) {
+    if (
+      request.headers["content-type"] &&
+      request.headers["content-type"].indexOf("multipart/form-data") != -1
+    ) {
       // 파일처리이므로 formidable을 이용한다.
       var form = new formidable.IncomingForm({
         uploadDir: fileUploadDir,
@@ -798,7 +864,7 @@ const server = http
     let body = [];
     request
       .on("data", (chunk) => {
-        log("test", chunk.toString());
+        // log("test", chunk.toString());
         body.push(chunk.toString());
       })
       .on("end", () => {
