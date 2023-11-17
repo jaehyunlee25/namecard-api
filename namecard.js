@@ -810,9 +810,8 @@ function procPost(req, response, data, files) {
     };
 
     request(options, (error, resp, body) => {
-      log(resp.body);
-      /* const objResp = { type: response.body }; */
-      response.write(response.body);
+      const objResp = { body };
+      response.write(JSON.stringify(objResp));
       response.end();
     });
   }
