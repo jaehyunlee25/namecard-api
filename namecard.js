@@ -798,7 +798,7 @@ function procPost(req, response, data, files) {
     }
   } else if (reqUrl == "/getKakaoToken") {
     const { code } = data;
-
+    log("code> ", code);
     const options = {
       url: "https://kauth.kakao.com/oauth/token",
       method: "POST",
@@ -808,6 +808,7 @@ function procPost(req, response, data, files) {
         code,
       },
     };
+    log("options>", options);
 
     request(options, (error, resp, body) => {
       const objResp = { body };
