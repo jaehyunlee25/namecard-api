@@ -809,8 +809,8 @@ function procPost(req, response, data, files) {
       },
     };
 
-    request(options, (error, response, body) => {
-      log(response.body);
+    request(options, (error, resp, body) => {
+      log(resp.body);
       /* const objResp = { type: response.body }; */
       response.write(response.body);
       response.end();
