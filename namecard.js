@@ -3,6 +3,8 @@ const fs = require("fs");
 const formidable = require("formidable");
 const crypto = require("crypto");
 const vision = require("@google-cloud/vision");
+const request = require("request");
+
 const client = new vision.ImageAnnotatorClient({
   keyFilename: "tzocr_keyfile.json",
 });
@@ -631,14 +633,14 @@ function LINEDETECTOR(letters) {
   }
 }
 
-function procPost(request, response, data, files) {
-  log("request url", request.url);
+function procPost(req, response, data, files) {
+  log("request url", req.url);
   log("data");
   dir(data);
 
   let url;
   let script;
-  const reqUrl = "/" + request.url.split("/").lo();
+  const reqUrl = "/" + req.url.split("/").lo();
 
   if (reqUrl == "/dummy") {
     const { file } = files;
@@ -794,6 +796,25 @@ function procPost(request, response, data, files) {
         callback(checksum);
       });
     }
+  } else if (reqUrl == "/getKakaoToken") {
+    const { code } = data;
+
+    const options = {
+      url: "https://kauth.kakao.com/oauth/token",
+      method: "POST",
+      form: {
+        grant_type: "authorization_code",
+        client_id: "3bf6acdeeb89174cd24537e4f0aaaedb",
+        code,
+      },
+    };
+
+    request(options, (error, response, body) => {
+      log(response.body);
+      /* const objResp = { type: response.body };
+      response.write(JSON.stringify(objResp));
+      response.end(); */
+    });
   }
 }
 
@@ -817,7 +838,10 @@ const server = http
     }
     if (request.method != "POST") return;
 
-    if (request.headers["content-type"].indexOf("multipart/form-data") != -1) {
+    if (
+      request.headers["content-type"] &&
+      request.headers["content-type"].indexOf("multipart/form-data") != -1
+    ) {
       // 파일처리이므로 formidable을 이용한다.
       var form = new formidable.IncomingForm({
         uploadDir: fileUploadDir,
