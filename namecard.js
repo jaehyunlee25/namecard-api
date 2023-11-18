@@ -798,7 +798,6 @@ function procPost(req, response, data, files) {
     }
   } else if (reqUrl == "/getKakaoToken") {
     const { code } = data;
-    log("code> ", code);
     const options = {
       url: "https://kauth.kakao.com/oauth/token",
       method: "POST",
@@ -808,7 +807,6 @@ function procPost(req, response, data, files) {
         code,
       },
     };
-    log("options>", options);
 
     request(options, (error, resp, body) => {
       const objResp = { body };
@@ -817,16 +815,13 @@ function procPost(req, response, data, files) {
     });
   } else if (reqUrl == "/babybell") {
     babybell(req, response, data);
-    /* curl -X POST "https://kapi.kakao.com/v2/api/talk/memo/default/send" \
-    -H "Content-Type: application/x-www-form-urlencoded" \
-    -H "Authorization: Bearer IXxniQukYZVlpLuRVFKOE6xJOdrMTAfgdFIKPXLrAAABi-FKFoaIenTzhLqDRQ" */
   }
 }
 function babybell(req, response, data) {
   const { step } = data;
   const objResp = { result: `단계 ${step}, 전송되었습니다.` };
-
-  const kakao_token =
+  sendmain(step);
+  /* const kakao_token =
     "2hULy3UPfk6JAOyJuurAgvHwJWAukkdxCgoKKiVSAAABi-FghfiIenTzhLqDRQ";
   const options = {
     url: "https://kapi.kakao.com/v2/api/talk/memo/default/send",
@@ -849,11 +844,38 @@ function babybell(req, response, data) {
 
   request(options, (error, resp, body) => {
     log(resp.body);
-  });
+  }); */
 
   response.write(JSON.stringify(objResp));
   response.end();
   return;
+}
+function sendmain(step) {
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: "tzzim.cs@gmail.com",
+      pass: "zuilsgtrsbcqeose",
+    },
+  });
+  const mailOptions = {
+    from: "티찜관리자<tzzim.cs@gmail.com>",
+    to: mailname + "<" + mailaddress + ">",
+    subject: "데이터 조회 결과입니다.",
+    /* html, */
+    text: "babybell step :: " + step,
+    /* attachments:[
+      {
+        filename:"test.csv",
+        path:"emails.txt"
+      }
+    ] */
+  };
+  transporter.sendMail(mailOptions, (err, data) => {
+    if (err) console.log(err);
+    else console.log("Email sent: " + data.response);
+    exec();
+  });
 }
 
 const server = http
