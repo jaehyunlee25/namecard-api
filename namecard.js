@@ -835,7 +835,9 @@ function babybell(req, response, data) {
       Authorization: "Bearer " + kakao_token,
     },
     body: JSON.stringify({
-      data: {},
+      data: {
+        template_object: {},
+      },
     }),
   };
   log("options>", options);
