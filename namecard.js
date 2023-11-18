@@ -816,11 +816,100 @@ function procPost(req, response, data, files) {
       response.end();
     });
   } else if (reqUrl == "/babybell") {
-    const { step } = data;
-    const objResp = { result: `단계 ${step}, 전송되었습니다.` };
-    response.write(JSON.stringify(objResp));
-    response.end();
+    babybell(req, response, data);
+    /* curl -X POST "https://kapi.kakao.com/v2/api/talk/memo/default/send" \
+    -H "Content-Type: application/x-www-form-urlencoded" \
+    -H "Authorization: Bearer IXxniQukYZVlpLuRVFKOE6xJOdrMTAfgdFIKPXLrAAABi-FKFoaIenTzhLqDRQ" */
   }
+}
+function babybell(req, response, data) {
+  const { step } = data;
+  const objResp = { result: `단계 ${step}, 전송되었습니다.` };
+
+  const kakao_token =
+    "qPuTePcSFE2hpExuv6kgR9aY9DOL7pVOmoMKKiWOAAABi-BF2ReIenTzhLqDRQ";
+  const options = {
+    url: "https://kapi.kakao.com/v2/api/talk/memo/default/send",
+    method: "POST",
+    headers: {
+      Authorization: "Bearer " + kakao_token,
+    },
+    body: {
+      data: JSON.stringify({
+        template_object: {
+          object_type: "feed",
+          content: {
+            title: "딸기 치즈 케익",
+            description: "#케익 #딸기 #삼평동 #카페 #분위기 #소개팅",
+            image_url:
+              "https://mud-kage.kakao.com/dn/Q2iNx/btqgeRgV54P/VLdBs9cvyn8BJXB3o7N8UK/kakaolink40_original.png",
+            link: {
+              web_url: "https://developers.kakao.com",
+              mobile_web_url: "https://developers.kakao.com",
+            },
+          },
+          item_content: {
+            profile_text: "Kakao",
+            profile_image_url:
+              "https://mud-kage.kakao.com/dn/Q2iNx/btqgeRgV54P/VLdBs9cvyn8BJXB3o7N8UK/kakaolink40_original.png",
+            title_image_url:
+              "https://mud-kage.kakao.com/dn/Q2iNx/btqgeRgV54P/VLdBs9cvyn8BJXB3o7N8UK/kakaolink40_original.png",
+            title_image_text: "Cheese cake",
+            title_image_category: "Cake",
+            items: [
+              {
+                item: "Cake1",
+                item_op: "1000원",
+              },
+              {
+                item: "Cake2",
+                item_op: "2000원",
+              },
+              {
+                item: "Cake3",
+                item_op: "3000원",
+              },
+              {
+                item: "Cake4",
+                item_op: "4000원",
+              },
+              {
+                item: "Cake5",
+                item_op: "5000원",
+              },
+            ],
+            sum: "Total",
+            sum_op: "15000원",
+          },
+          social: {
+            like_count: 100,
+            comment_count: 200,
+          },
+          buttons: [
+            {
+              title: "웹으로 보기",
+              link: {
+                mobile_web_url: "https://developers.kakao.com",
+                web_url: "https://developers.kakao.com",
+              },
+            },
+            {
+              title: "앱으로 보기",
+              link: {
+                mobile_web_url: "https://developers.kakao.com",
+                web_url: "https://developers.kakao.com",
+              },
+            },
+          ],
+        },
+      }),
+    },
+  };
+  log("options>", options);
+
+  request(options, (error, resp, body) => {
+    log(resp.body);
+  });
 }
 
 const server = http
