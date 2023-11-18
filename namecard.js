@@ -825,6 +825,8 @@ function procPost(req, response, data, files) {
 function babybell(req, response, data) {
   const { step } = data;
   const objResp = { result: `단계 ${step}, 전송되었습니다.` };
+  response.write(JSON.stringify(objResp));
+  response.end();
   return;
 
   const kakao_token =
