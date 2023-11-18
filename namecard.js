@@ -835,7 +835,7 @@ function babybell(req, response, data) {
       "Content-Type": "application/x-www-form-urlencoded",
       Authorization: "Bearer " + kakao_token,
     },
-    form: {
+    body: {
       template_object: {
         object_type: "text",
         text: "hello, babybell",
