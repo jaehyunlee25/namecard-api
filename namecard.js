@@ -908,7 +908,7 @@ function babybell(req, response, data) {
   log("options>", options);
 
   request(options, (error, resp, body) => {
-    log(resp.body);
+    log(resp);
   });
 }
 
