@@ -841,7 +841,7 @@ function babybell(req, response, data) {
   log("options>", options);
 
   request(options, (error, resp, body) => {
-    log(resp);
+    log(resp.body);
   });
 
   response.write(JSON.stringify(objResp));
