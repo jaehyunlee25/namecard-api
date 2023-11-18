@@ -811,11 +811,15 @@ function procPost(req, response, data, files) {
     log("options>", options);
 
     request(options, (error, resp, body) => {
-      let objResp;
-      objResp = { body };
+      const objResp = { body };
       response.write(JSON.stringify(objResp));
       response.end();
     });
+  } else if (reqUrl == "/babybell") {
+    const { step } = data;
+    const objResp = { result: `단계 ${step}, 전송되었습니다.` };
+    response.write(JSON.stringify({}));
+    response.end();
   }
 }
 
