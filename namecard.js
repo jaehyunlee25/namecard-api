@@ -862,7 +862,7 @@ function sendmain(step) {
   const mailOptions = {
     from: "티찜관리자<tzzim.cs@gmail.com>",
     to: "이재현<jaehyunlee25@gmail.com>",
-    subject: "데이터 조회 결과입니다.",
+    subject: "BabyBell Step::" + step,
     /* html, */
     text: "babybell step :: " + step,
     /* attachments:[
