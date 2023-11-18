@@ -637,7 +637,7 @@ function procPost(req, response, data, files) {
   log("request url", req.url);
   log("data");
   dir(data);
-  
+
   let url;
   let script;
   const reqUrl = "/" + req.url.split("/").lo();
@@ -818,7 +818,7 @@ function procPost(req, response, data, files) {
   } else if (reqUrl == "/babybell") {
     const { step } = data;
     const objResp = { result: `단계 ${step}, 전송되었습니다.` };
-    response.write(JSON.stringify({}));
+    response.write(JSON.stringify(objResp));
     response.end();
   }
 }
