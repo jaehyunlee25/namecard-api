@@ -3,6 +3,9 @@ const fs = require("fs");
 const formidable = require("formidable");
 const crypto = require("crypto");
 const vision = require("@google-cloud/vision");
+const request = require("request");
+const nodemailer = require("nodemailer");
+
 const client = new vision.ImageAnnotatorClient({
   keyFilename: "tzocr_keyfile.json",
 });
@@ -631,14 +634,14 @@ function LINEDETECTOR(letters) {
   }
 }
 
-function procPost(request, response, data, files) {
-  log("request url", request.url);
+function procPost(req, response, data, files) {
+  log("request url", req.url);
   log("data");
   dir(data);
 
   let url;
   let script;
-  const reqUrl = "/" + request.url.split("/").lo();
+  const reqUrl = "/" + req.url.split("/").lo();
 
   if (reqUrl == "/dummy") {
     const { file } = files;
@@ -796,7 +799,86 @@ function procPost(request, response, data, files) {
         callback(checksum);
       });
     }
+  } else if (reqUrl == "/getKakaoToken") {
+    const { code } = data;
+    const options = {
+      url: "https://kauth.kakao.com/oauth/token",
+      method: "POST",
+      form: {
+        grant_type: "authorization_code",
+        client_id: "3bf6acdeeb89174cd24537e4f0aaaedb",
+        code,
+      },
+    };
+
+    request(options, (error, resp, body) => {
+      const objResp = { body };
+      response.write(JSON.stringify(objResp));
+      response.end();
+    });
+  } else if (reqUrl == "/babybell") {
+    babybell(req, response, data);
   }
+}
+function babybell(req, response, data) {
+  const { step } = data;
+  const objResp = { result: `단계 ${step}, 전송되었습니다.` };
+  sendmain(step);
+  /* const kakao_token =
+    "2hULy3UPfk6JAOyJuurAgvHwJWAukkdxCgoKKiVSAAABi-FghfiIenTzhLqDRQ";
+  const options = {
+    url: "https://kapi.kakao.com/v2/api/talk/memo/default/send",
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      Authorization: "Bearer " + kakao_token,
+    },
+    form: {
+      template_object: JSON.stringify({
+        object_type: "text",
+        text: "hello, babybell",
+        link: {
+          web_url: "https://google.com",
+        },
+      }),
+    },
+  };
+  log("options>", options);
+
+  request(options, (error, resp, body) => {
+    log(resp.body);
+  }); */
+
+  response.write(JSON.stringify(objResp));
+  response.end();
+  return;
+}
+function sendmain(step) {
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: "tzzim.cs@gmail.com",
+      pass: "zuilsgtrsbcqeose",
+    },
+  });
+  const mailOptions = {
+    from: "티찜관리자<tzzim.cs@gmail.com>",
+    to: "이재현<jaehyunlee25@gmail.com>",
+    subject: "BabyBell Step::" + step,
+    /* html, */
+    text: "babybell step :: " + step,
+    /* attachments:[
+      {
+        filename:"test.csv",
+        path:"emails.txt"
+      }
+    ] */
+  };
+  transporter.sendMail(mailOptions, (err, data) => {
+    if (err) console.log(err);
+    else console.log("Email sent: " + data.response);
+    exec();
+  });
 }
 
 const server = http
@@ -819,7 +901,10 @@ const server = http
     }
     if (request.method != "POST") return;
 
-    if (request.headers["content-type"].indexOf("multipart/form-data") != -1) {
+    if (
+      request.headers["content-type"] &&
+      request.headers["content-type"].indexOf("multipart/form-data") != -1
+    ) {
       // 파일처리이므로 formidable을 이용한다.
       var form = new formidable.IncomingForm({
         uploadDir: fileUploadDir,

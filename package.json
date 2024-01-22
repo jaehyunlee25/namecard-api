@@ -6,6 +6,7 @@
     "formidable": "^2.1.1",
     "google-vision-api-client": "^0.0.1",
     "mysql": "^2.18.1",
-    "open-graph-scraper": "^5.2.2"
+    "open-graph-scraper": "^5.2.2",
+    "request": "^2.88.2"
   }
 }
