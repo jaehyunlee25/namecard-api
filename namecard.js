@@ -857,12 +857,15 @@ function sendmain(step) {
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-      user: "tzzim.cs@gmail.com",
-      pass: "zuilsgtrsbcqeose",
+      //user: "tzzim.cs@gmail.com",
+      user: "jaehyunlee25@gmail.com",
+      //pass: "zuilsgtrsbcqeose",
+      pass: "jvmqvqkigveaprcj",
     },
   });
   const mailOptions = {
-    from: "티찜관리자<tzzim.cs@gmail.com>",
+    from: "이재현<jaehyunlee25@gmail.com>",
+    //from: "티찜관리자<tzzim.cs@gmail.com>",
     to: "이재현<jaehyunlee25@gmail.com>",
     subject: "BabyBell Step::" + step,
     /* html, */
