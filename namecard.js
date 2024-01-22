@@ -660,6 +660,7 @@ function procPost(request, response, data, files) {
     const { file } = files;
     const { size, filepath, newFilename, mimetype, mtime, originalFilename } =
       file;
+      log(size, filepath, newFilename );
     const currentFile = "temp/" + newFilename;
     getChecksum(currentFile, (checksum) => {
       const addr = "temp/" + checksum + ".json";
@@ -673,6 +674,7 @@ function procPost(request, response, data, files) {
       }
       getTextDetection(currentFile, (results) => {
         fs.unlinkSync(currentFile);
+        console.dir(results);
         const [result] = results;
         const { fullTextAnnotation: fta } = result;
 
